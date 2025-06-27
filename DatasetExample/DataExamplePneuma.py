@@ -2,6 +2,11 @@ import pandas as pd
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
+'''
+This file provides a function which shows an example on how to acquire
+the data in the appropriate form for the tool, using the Pneuma dataset
+'''
+
 def getInfo_PNEUMA(file_path: str, sampling_period:float, time_decimals:int, position_smoothing:float) -> dict:
 
     df = pd.read_csv(file_path)
