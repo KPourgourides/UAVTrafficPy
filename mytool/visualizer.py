@@ -23,7 +23,7 @@ class _Visualization:
                 self.id,self.vtype,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(VD)
                 self.WGS, self.bbox, self.y_center,self.x_center, self.time_axis = itemgetter('WGS','bbox','y center','x center', 'time axis')(SpatioTemporalInfo)
         
-        def get_Trajectories(self) -> None:
+        def Trajectories(self) -> None:
 
             vmin = int(min([np.mean(set) for set in self.u]))
             vmax = int(max([np.mean(set) for set in self.u]))
@@ -35,8 +35,9 @@ class _Visualization:
             xlim_left,xlim_right=min(x_flat),max(x_flat)
             ylim_bottom,ylim_top = min(y_flat),max(y_flat)
 
-            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(6,6))
-            scatter = ax.scatter(x_flat,y_flat,c=u_flat,cmap='jet',vmin=vmin,vmax=vmax,s=0.05)
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,6))
+            ax.set_facecolor('black') 
+            scatter = ax.scatter(x_flat,y_flat,c=u_flat,cmap='jet',vmin=vmin,vmax=vmax,s=0.1)
 
             cbar = plt.colorbar(scatter,ax=ax)
             cbar.set_label('Speed (km/h)')
@@ -50,7 +51,7 @@ class _Visualization:
             plt.tight_layout()
             plt.show(close=True)
     
-        def get_TrajectoriesOD(self, valid_OD_pairs:list) -> None:
+        def Trajectories_OD(self, valid_OD_pairs:list) -> None:
 
             OD_pairs = Analysis(self.mother, self.VD, self.SpatioTemporalInfo).get_ODPairs()
 
@@ -111,13 +112,13 @@ class _Visualization:
 
             plt.show(close=True)
     
-        def get_VisualSpacetimeDiagram(self) -> None:
+        def SpacetimeDiagram(self) -> None:
 
             vmin = int(min([np.mean(set) for set in self.u]))
             vmax = int(max([np.mean(set) for set in self.u]))
 
             x = [value for set in self.t for value in set]
-            y = [value for set in self.get_DistanceTravelled() for value in set]
+            y = [value for set in Analysis(self.mother,self.VD,self.SpatioTemporalInfo).get_DistanceTravelled() for value in set]
             z = [value for set in self.u for value in set]
 
             fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(15,4))
@@ -130,4 +131,42 @@ class _Visualization:
             plt.xlabel('t (s)')
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
+            plt.show(close=True)
+        
+        def DistanceTravelled(self, id:int):
+
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            ax.plot(self.t[self.id.index(id)],Analysis().get_DistanceTravelled()[self.id.index(id)],color='k',label=f'Vehicle ID: {id}')
+
+            plt.title('Distance Travalled vs Time')
+            plt.xlabel('t (s)')
+            plt.ylabel('Distance Travelled vs Time')
+            plt.tight_layout()
+            plt.show(close=True)
+        
+        def Speed(self, id:int):
+
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            ax.plot(self.t[self.id.index(id)],self.u[self.id.index(id)],color='blue',label=f'Vehicle ID: {id}')
+
+            plt.title('Speed vs Time')
+            plt.xlabel('t (s)')
+            plt.ylabel('Speed (km/h)')
+            plt.tight_layout()
+            plt.grid(True)
+            plt.show(close=True)
+
+        
+        def Acceleration(self, id:int):
+            
+            a = Analysis(self.mother, self.VD, self.SpatioTemporalInfo).get_Acceleration()
+
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            ax.plot(self.t[self.id.index(id)],a[self.id.index(id)],color='red',label=f'Vehicle ID: {id}')
+
+            plt.title('Acceleration vs Time')
+            plt.xlabel('t (s)')
+            plt.ylabel(r'Acceleration $(m/s^2)$')
+            plt.tight_layout()
+            plt.grid(True)
             plt.show(close=True)

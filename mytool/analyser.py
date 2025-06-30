@@ -6,6 +6,7 @@ from shapely import Point,Polygon
 from sklearn.cluster import KMeans
 
 from operator import itemgetter
+
 class _Analysis:
 
         def __init__(self, mother, VD:dict, SpatioTemporalInfo:dict):
@@ -39,7 +40,7 @@ class _Analysis:
                     if j==0:
                         temp_distance_travelled.append(0)
                     else:
-                        temp_sum+= Distances(initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j]),WGS=self.WGS).get_Distance()
+                        temp_sum+= Distances(self.mother,initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j]),WGS=self.WGS).get_Distance()
                         temp_distance_travelled.append(temp_sum)
                 distance_travelled.append(temp_distance_travelled)
 
@@ -50,7 +51,7 @@ class _Analysis:
             
             distance_travelled = self.get_DistanceTravelled()
 
-            km_per_h=True
+            km_per_h = True
             multiplier = 3.6*(km_per_h) + 1.0*(not km_per_h)
             
             u = [[float(value) for value in np.gradient(distance_travelled[i],self.t[i])*multiplier] for i in range(len(distance_travelled))]
@@ -64,8 +65,9 @@ class _Analysis:
         def get_Acceleration(self) -> list:
 
             u = self.get_Speed()
+            multiplier  = 1000/3600
 
-            a = [[float(value) for value in np.gradient(u[i],self.t[i])] for i in range(len(u))]
+            a = [[float(value)*multiplier for value in np.gradient(u[i],self.t[i])] for i in range(len(u))]
             smoothing_factor=2
             a_smooth = [gaussian_filter(vec,sigma=smoothing_factor).tolist() for vec in a]
 
@@ -193,24 +195,23 @@ class _Analysis:
             n_clusters = int(input('How many lanes?'))
             low_lim = int(input('low limit?'))
             high_lim = int(input('high limit?'))
-            #--------------------------------------------------------
             bounded_d_from_edge = [element for element in flat_d_from_edge if low_lim<element<high_lim]
             #--------------------------------------------------------
             data_for_clustering = np.sort(np.array(bounded_d_from_edge))
             kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(data_for_clustering.reshape(-1, 1))
-            centers = np.sort(kmeans.cluster_centers_.flatten())  # Sort cluster centers
+            centers = np.sort(kmeans.cluster_centers_.flatten())
             boundaries = (centers[:-1] + centers[1:]) / 2
             #--------------------------------------------------------
-            plt.figure(figsize=(10,2))
-            nbins=100*(n_clusters>1) + 1*(n_clusters==1)
-            plt.hist(bounded_d_from_edge,bins=nbins,color=color,density=True)
-            for boundary in boundaries:
-                plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
-            plt.title("Lane Clustering with Boundaries")
-            plt.xlabel('Distance from road edge (m)')
-            plt.ylabel('Probability Density')
-            plt.tight_layout()
-            plt.show(close=True)
+            if n_clusters>1:
+                plt.figure(figsize=(10,2))
+                plt.hist(bounded_d_from_edge,bins=nbins,color=color,density=True)
+                for boundary in boundaries:
+                    plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
+                plt.title("Lane Clustering with Boundaries")
+                plt.xlabel('Distance from bbox edge (m)')
+                plt.ylabel('Probability Density')
+                plt.tight_layout()
+                plt.show(close=True)
              #--------------------------------------------------------   
             lane_boundaries = [0] + [float(value) for value in boundaries] + [1e3]
             lane_number = len(lane_boundaries)-1
