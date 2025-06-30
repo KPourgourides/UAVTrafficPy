@@ -40,7 +40,7 @@ class _Analysis:
                     if j==0:
                         temp_distance_travelled.append(0)
                     else:
-                        temp_sum+= Distances(initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j]),WGS=self.WGS).get_Distance()
+                        temp_sum+= Distances(self.mother,initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j]),WGS=self.WGS).get_Distance()
                         temp_distance_travelled.append(temp_sum)
                 distance_travelled.append(temp_distance_travelled)
 
@@ -51,7 +51,7 @@ class _Analysis:
             
             distance_travelled = self.get_DistanceTravelled()
 
-            km_per_h=True
+            km_per_h = True
             multiplier = 3.6*(km_per_h) + 1.0*(not km_per_h)
             
             u = [[float(value) for value in np.gradient(distance_travelled[i],self.t[i])*multiplier] for i in range(len(distance_travelled))]
@@ -65,8 +65,9 @@ class _Analysis:
         def get_Acceleration(self) -> list:
 
             u = self.get_Speed()
+            multiplier  = 1000/3600
 
-            a = [[float(value) for value in np.gradient(u[i],self.t[i])] for i in range(len(u))]
+            a = [[float(value)*multiplier for value in np.gradient(u[i],self.t[i])] for i in range(len(u))]
             smoothing_factor=2
             a_smooth = [gaussian_filter(vec,sigma=smoothing_factor).tolist() for vec in a]
 
