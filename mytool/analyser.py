@@ -6,6 +6,7 @@ from shapely import Point,Polygon
 from sklearn.cluster import KMeans
 
 from operator import itemgetter
+
 class _Analysis:
 
         def __init__(self, mother, VD:dict, SpatioTemporalInfo:dict):
@@ -193,24 +194,23 @@ class _Analysis:
             n_clusters = int(input('How many lanes?'))
             low_lim = int(input('low limit?'))
             high_lim = int(input('high limit?'))
-            #--------------------------------------------------------
             bounded_d_from_edge = [element for element in flat_d_from_edge if low_lim<element<high_lim]
             #--------------------------------------------------------
             data_for_clustering = np.sort(np.array(bounded_d_from_edge))
             kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(data_for_clustering.reshape(-1, 1))
-            centers = np.sort(kmeans.cluster_centers_.flatten())  # Sort cluster centers
+            centers = np.sort(kmeans.cluster_centers_.flatten())
             boundaries = (centers[:-1] + centers[1:]) / 2
             #--------------------------------------------------------
-            plt.figure(figsize=(10,2))
-            nbins=100*(n_clusters>1) + 1*(n_clusters==1)
-            plt.hist(bounded_d_from_edge,bins=nbins,color=color,density=True)
-            for boundary in boundaries:
-                plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
-            plt.title("Lane Clustering with Boundaries")
-            plt.xlabel('Distance from road edge (m)')
-            plt.ylabel('Probability Density')
-            plt.tight_layout()
-            plt.show(close=True)
+            if n_clusters>1:
+                plt.figure(figsize=(10,2))
+                plt.hist(bounded_d_from_edge,bins=nbins,color=color,density=True)
+                for boundary in boundaries:
+                    plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
+                plt.title("Lane Clustering with Boundaries")
+                plt.xlabel('Distance from bbox edge (m)')
+                plt.ylabel('Probability Density')
+                plt.tight_layout()
+                plt.show(close=True)
              #--------------------------------------------------------   
             lane_boundaries = [0] + [float(value) for value in boundaries] + [1e3]
             lane_number = len(lane_boundaries)-1
