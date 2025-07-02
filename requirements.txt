@@ -1,4 +1,3 @@
-operator
 numpy
 matplotlib
 pandas
