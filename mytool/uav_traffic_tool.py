@@ -72,7 +72,7 @@ class Wiz:
 
         def get_intersection_vd(self) -> dict:
             """docstring"""
-            box = Polygon([(lati, long) for lati, long in self.bbox])
+            box = Polygon(self.bbox)
             x_,y_,t_,u_,id_,vtype_=[],[],[],[],[],[]
             for i,vec in enumerate(self.x):
                 flag=False
@@ -86,8 +86,7 @@ class Wiz:
                         index_end=k+index_start+1
                         if box.contains(Point(self.y[i][index_end], self.x[i][index_end])):
                             continue
-                        else:
-                            break
+                        break
                     if len(self.t[i][index_start:index_end])>1:
                         id_.append(self.vehicle_id[i])
                         vtype_.append(self.vehicle_type[i])
@@ -160,7 +159,7 @@ class Wiz:
             distance_travelled = self.get_distance_travelled()
             km_per_h = True
             multiplier = 3.6*(km_per_h) + 1.0*(not km_per_h)
-            u = [[float(value) for value in np.gradient(distance_travelled[i],self.t[i])*multiplier] for i,_ in enumerate(distance_travelled)]
+            u = [[float(value) for value in np.gradient(_,self.t[i])*multiplier] for i,_ in enumerate(distance_travelled)]
             smoothing_factor=2
             u_smooth = [gaussian_filter(vec,sigma=smoothing_factor).tolist() for vec in u]
             return u_smooth
@@ -170,7 +169,7 @@ class Wiz:
 
             u = self.get_speed()
             multiplier  = 1000/3600
-            acc = [[float(value)*multiplier for value in np.gradient(u[i],self.t[i])] for i,_ in enumerate(u)]
+            acc = [[float(value)*multiplier for value in np.gradient(_,self.t[i])] for i,_ in enumerate(u)]
             smoothing_factor=2
             a_smooth = [gaussian_filter(vec,sigma=smoothing_factor).tolist() for vec in acc]
             return a_smooth
@@ -464,7 +463,7 @@ class Wiz:
                             nxty = [self.y[self.vehicle_id.index(sorted_id_in_this_lane[v+1])][self.t[self.vehicle_id.index(sorted_id_in_this_lane[v+1])].index(moment)] for v,value in enumerate(sorted_id_in_this_lane[:-1])]
                             vtypes = [self.vehicle_type[self.vehicle_id.index(value)] for v,value in enumerate(sorted_id_in_this_lane)]
                             vlengths = [5*(vt in ('Car','Taxi')) + 5.83*(vt=='Medium')+12.5*(vt in ('Heavy','Bus'))+2.5*(vt=='Motorcycle') for vt in vtypes]
-                            intralane_gaps = [self.mother.distances(initial_coordinates=(refy[i],refx[i]),final_coordinates=(nxty[i],nxtx[i]),wgs=self.wgs).get_distance() - 0.5*(vlengths[i]+vlengths[i+1]) for i,_ in enumerate(nxtx)]
+                            intralane_gaps = [self.mother.distances(initial_coordinates=(refy[i],refx[i]),final_coordinates=(nxty[i],_),wgs=self.wgs).get_distance() - 0.5*(vlengths[i]+vlengths[i+1]) for i,_ in enumerate(nxtx)]
                             final_gaps = [round(value,ndigits=1) if value>0 else 1 for value in intralane_gaps]
                             if len(final_gaps)>0:
                                 final_gaps.append(-1.0) #for the leader
