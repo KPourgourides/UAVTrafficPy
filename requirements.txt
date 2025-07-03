@@ -1,8 +1,6 @@
-sys
 numpy
 matplotlib
 pandas
 scipy
 shapely
-sklearn
-operator
+scikit-learn
