@@ -1,5 +1,5 @@
 """
-ok
+okay
 """
 
 import pandas as pd
@@ -9,7 +9,7 @@ from scipy.ndimage import gaussian_filter
 def get_info_pneuma(file_path: str, sampling_period:float, time_decimals:int, position_smoothing:float) -> dict:
 
     """
-    ok
+    okay
     """
 
     data_frame = pd.read_csv(file_path)
