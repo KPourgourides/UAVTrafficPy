@@ -39,7 +39,7 @@ class Wiz:
             self.y_i,self.x_i = initial_coordinates
             self.y_f,self.x_f = final_coordinates
             self.wgs = wgs
-            self.factor = 2*np.pi*6371000/3
+            self.factor = 2*np.pi*6371000/360
 
         def get_dx(self) -> float:
             """docstring"""
@@ -258,7 +258,7 @@ class Wiz:
             plt.xticks(np.arange(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20),2))
             plt.xlim(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20))
             plt.title("Lane Distribution")
-            plt.show(close=True)
+            plt.show()
             #--------------------------------------------------------
             n_clusters = int(input('How many lanes?'))
             if n_clusters>1:
@@ -279,7 +279,7 @@ class Wiz:
                 plt.xlabel('Distance from bbox edge (m)')
                 plt.ylabel('Probability Density')
                 plt.tight_layout()
-                plt.show(close=True)
+                plt.show()
             #--------------------------------------------------------
             try:
                 lane_boundaries = [0] + [float(value) for value in boundaries] + [1e3]
@@ -602,7 +602,7 @@ class Wiz:
             plt.ylim(ylim_bottom,ylim_top)
             plt.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labelleft=False)
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
 
         def draw_trajectories_od(self, valid_od_pairs:list) -> None:
             """docstring"""
@@ -652,7 +652,7 @@ class Wiz:
                 ax.set_yticks([])
                 ax.set_xlabel('x coordinate')
                 ax.set_ylabel('y coordinate')
-            plt.show(close=True)
+            plt.show()
 
         def draw_spacetime_diagram(self) -> None:
             """docstring"""
@@ -662,7 +662,7 @@ class Wiz:
             x = [value for set in self.t for value in set]
             y = [value for set in self.mother.analysis(self.vd,self.spatio_temporal_info).get_distance_travelled() for value in set]
             z = [value for set in self.u for value in set]
-            _fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            _fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(12,4))
             scatter = ax.scatter(x,y,c=z,cmap='jet_r',vmin=vmin,vmax=vmax,s=0.5)
             cbar = plt.colorbar(scatter, ax=ax)
             cbar.set_label('Speed (km/h)')
@@ -670,40 +670,41 @@ class Wiz:
             plt.xlabel('t (s)')
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
 
         def draw_distance_travelled(self, vehicle_id:int):
             """docstring"""
 
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.mother.analysis(self.vd, self.spatio_temporal_info).get_distance_travelled()[self.vehicle_id.index(vehicle_id)],color='k',label=f'Vehicle ID: {vehicle_id}')
             plt.title('Distance Travalled vs Time')
             plt.xlabel('t (s)')
-            plt.ylabel('Distance Travelled vs Time')
+            plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
-            plt.show(close=True)
+            plt.grid(True)
+            plt.show()
 
         def draw_speed(self, vehicle_id:int):
             """docstring"""
 
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.u[self.vehicle_id.index(vehicle_id)],color='blue',label=f'Vehicle ID: {vehicle_id}')
             plt.title('Speed vs Time')
             plt.xlabel('t (s)')
             plt.ylabel('Speed (km/h)')
             plt.tight_layout()
             plt.grid(True)
-            plt.show(close=True)
+            plt.show()
 
         def draw_acceleration(self, vehicle_id:int):
             """docstring"""
 
             a = self.mother.analysis(self.vd, self.spatio_temporal_info).get_acceleration()
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(15,4))
+            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],a[self.vehicle_id.index(vehicle_id)],color='red',label=f'Vehicle ID: {vehicle_id}')
             plt.title('Acceleration vs Time')
             plt.xlabel('t (s)')
             plt.ylabel(r'Acceleration $(m/s^2)$')
             plt.tight_layout()
             plt.grid(True)
-            plt.show(close=True)
+            plt.show()
