@@ -17,10 +17,10 @@ dependencies = [
     "shapely",
     "scikit-learn"
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 
 [tool.setuptools]
 packages = ["uav_traffic_tool"]
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/uav_traffic_tool"
+"Homepage" = "https://github.com/KPourgourides/uav_traffic_tool"
