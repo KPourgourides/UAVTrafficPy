@@ -136,6 +136,13 @@ class Wiz:
                 self.flow_info=None
                 self.normalized_flow=None
                 self.trafficlightphases=None
+                self.lane_info=None
+                self.sorted_id=None
+                self.gaps=None
+                self.d_from_edge=None
+                self.flow_direction=None
+                self.cycles=None
+                self.traffic_light_phases=None
 
         def get_distance_travelled(self) ->list:
             """docstring"""
@@ -238,16 +245,18 @@ class Wiz:
             for i,vec in enumerate(self.y):
                 temp_dfromedge=[]
                 for j,_ in enumerate(vec):
-                    a_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dx()*self.wgs + self.x[i][j]-x1*(not self.wgs)
-                    a_y = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dy()*self.wgs + self.y[i][j]-y1*(not self.wgs)
+                    a_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dx()
+                    a_y = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dy()
                     temp_dfromedge.append(abs(a_x*b_y - a_y*b_x)/b)
                 d_from_edge.append(temp_dfromedge)
+            self.d_from_edge = d_from_edge
+            self.flow_direction=flow_direction
             return d_from_edge
 
-        def get_lane_info(self, flow_direction:str) -> None:
-            """docstring"""
+        def get_lane_info(self, flow_direction) -> None:
+            """docstring""" 
 
-            d_from_edge=self.get_d_from_bbox_edge(flow_direction)
+            d_from_edge = self.get_d_from_bbox_edge(flow_direction)
             flat_d_from_edge = [element for i,vec in enumerate(d_from_edge) for j,element in enumerate(vec) if self.vehicle_type[i]!='Motorcycle']
             #--------------------------------------------------------
             plt.figure(figsize=(10,2))
@@ -283,11 +292,11 @@ class Wiz:
             #--------------------------------------------------------
             try:
                 lane_boundaries = [0] + [float(value) for value in boundaries] + [1e3]
-            except ValueError:
+            except UnboundLocalError:
                 lane_boundaries = [0,1e3]
             lane_number = len(lane_boundaries)-1
             lane_distribution=[]
-            for i,vec in enumerate(d_from_edge):
+            for i,vec in enumerate(self.d_from_edge):
                 temp_lanes=[]
                 for j,element in enumerate(vec):
                     temp_lanes.append(max(b for b,boundary in enumerate(lane_boundaries) if element>boundary))
@@ -297,14 +306,15 @@ class Wiz:
                 'boundaries':lane_boundaries,
                 'distribution':lane_distribution
                 }
+            self.lane_info = lane_info
             return lane_info
 
-        def get_flow_info(self, detector_positions:list, flow_direction:str) -> list:
+        def get_flow_info(self, detector_positions:list) -> list:
             """docstring"""
 
             x_detector_index = 1*self.wgs
             y_detector_index = 1 - x_detector_index
-            lane_distribution = self.get_lane_info(flow_direction).get('distribution')
+            lane_distribution = self.lane_info.get('distribution')
             flow_info=[]
             for m,moment in enumerate(self.time_axis):
                 tempdict={}
@@ -313,10 +323,10 @@ class Wiz:
                     if self.time_axis[m] in self.t[v] and self.time_axis[m-1] in self.t[v]:
                         lane = lane_distribution[v][self.t[v].index(moment)]
                         #qoi = quantity of interest
-                        qoi_now = (self.x[v][self.t[v].index(self.time_axis[m])])*(flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m])])*(flow_direction in ['up','down'])
-                        qoi_before = (self.x[v][self.t[v].index(self.time_axis[m-1])])*(flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m-1])])*(flow_direction in ['up','down'])
-                        qoi_detector_index = x_detector_index*(flow_direction in ['left','right']) + y_detector_index*(flow_direction in ['up','down'])
-                        before_detector = 'lower'*(flow_direction in ['up','right']) + 'higher'*(flow_direction in ['left','down'])
+                        qoi_now = (self.x[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['up','down'])
+                        qoi_before = (self.x[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['up','down'])
+                        qoi_detector_index = x_detector_index*(self.flow_direction in ['left','right']) + y_detector_index*(self.flow_direction in ['up','down'])
+                        before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['left','down'])
                         if before_detector=='lower':
                             if qoi_now>=detector_positions[lane][qoi_detector_index] and qoi_before<detector_positions[lane][qoi_detector_index]:
                                 tempid.append(self.vehicle_id[v])
@@ -389,7 +399,7 @@ class Wiz:
                     _dict['Duration OFF'] = None
                     _dict['Phase Duration'] = None
                 trafficlightphases.append(_dict)
-            self.trafficlightphases = trafficlightphases
+            self.traffic_light_phases = trafficlightphases
             return trafficlightphases
 
         def get_traffic_light_cycles(self, *traffic_lights_phases:dict) -> dict:
@@ -412,17 +422,18 @@ class Wiz:
                 else:
                     temp['End'] = temp['Stop']
                 cycles.append(temp)
+            self.cycles = cycles
             return cycles
 
-        def get_sorted_id(self, flow_direction:str):
+        def get_sorted_id(self):
             """docstring"""
 
-            lane_distriubtion = self.get_lane_info(flow_direction).get('distribution')
-            lane_number = self.get_lane_info(flow_direction).get('number')
-            if flow_direction not in ['up','down','left','right']:
+            lane_distriubtion = self.lane_info.get('distribution')
+            lane_number = self.lane_info.get('number')
+            if self.flow_direction not in ['up','down','left','right']:
                 print('Wrong flow_direction or sort_by input')
                 return()
-            qoi = self.y*(flow_direction in ['up','down']) + self.x*(flow_direction in ['left','right'])
+            qoi = self.y*(self.flow_direction in ['up','down']) + self.x*(self.flow_direction in ['left','right'])
             sorted_id=[]
             for moment in self.time_axis:
                 temp_dict = {'time stamp':moment }
@@ -436,15 +447,16 @@ class Wiz:
                     if len(temp_lane_ids)==0:
                         temp_sorted_id=None
                     else:
-                        temp_sorted_id = [temp_lane_ids for _, temp_lane_ids in sorted(zip(temp_lane_qoi, temp_lane_ids),reverse=(flow_direction in ['left','down']))]
+                        temp_sorted_id = [temp_lane_ids for _, temp_lane_ids in sorted(zip(temp_lane_qoi, temp_lane_ids),reverse=(self.flow_direction in ['left','down']))]
                     temp_dict[f'lane {l}']= temp_sorted_id
                 sorted_id.append(temp_dict)
+            self.sorted_id = sorted_id
             return sorted_id
 
-        def get_gaps(self, flow_direction:str) -> list:
+        def get_gaps(self) -> list:
             """docstring"""
 
-            sorted_id = self.get_sorted_id(flow_direction)
+            sorted_id = self.sorted_id
             gaps=[]
             for _dict in sorted_id:
                 moment = _dict.get('time stamp')
@@ -469,23 +481,22 @@ class Wiz:
                                 final_gaps.append(-1.0) #for the leader
                             temp_dict[f'lane {k-1}']=final_gaps
                 gaps.append(temp_dict)
+            self.gaps = gaps
             return gaps
 
-        def get_queue_info(self, flow_direction:str, speed_threshold:float, gap_threshold:float) -> list:
+        def get_queue_info(self, speed_threshold:float, gap_threshold:float) -> list:
             """docstring"""
-
-            traffic_light_phases = self.trafficlightphases
-            before_detector = 'lower'*(flow_direction in ['up','right']) + 'higher'*(flow_direction in ['down','left'])
-            qoi = self.x*(flow_direction in ['left','right']) + self.y*(flow_direction in ['up','down'])
+            before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['down','left'])
+            qoi = self.x*(self.flow_direction in ['left','right']) + self.y*(self.flow_direction in ['up','down'])
             detector_index = 0*(qoi==self.y) + 1*(qoi==self.x)
             queue_info=[]
-            for phase in traffic_light_phases:
+            for phase in self.traffic_light_phases:
                 phase_info=[]
                 green = phase.get('Green')
                 red = phase.get('Red')
-                for l in range(self.get_lane_info(flow_direction).get('number')):
+                for l in range(self.lane_info.get('number')):
                     temp_info={'Lane':l}
-                    id_at_green = self.get_sorted_id(flow_direction)[self.time_axis.index(green)].get(f'lane {l}')
+                    id_at_green = self.sorted_id[self.time_axis.index(green)].get(f'lane {l}')
                     if id_at_green is None:
                         temp_info['Queued Vehicles']=None
                         temp_info['Queue Length']=None
@@ -523,7 +534,7 @@ class Wiz:
                             temp_info['Queue Length']=None
                             temp_info['Dissipation Duration']=None
                         else:
-                            gaps_before_trafficlight = [self.get_gaps(flow_direction)[self.time_axis.index(green)].get(f'lane {l}')[i] for i,identity in enumerate(id_at_green) if identity in id_before_trafficlight[:-1]]
+                            gaps_before_trafficlight = [self.gaps[self.time_axis.index(green)].get(f'lane {l}')[i] for i,identity in enumerate(id_at_green) if identity in id_before_trafficlight[:-1]]
                             revised_id_before_trafficlight = [identity for i,identity in enumerate(id_before_trafficlight[:-1]) if gaps_before_trafficlight[i]<=gap_threshold]+[id_before_trafficlight[-1]]
                             types_before_trafficlight = [self.vehicle_type[self.vehicle_id.index(identity)] for i,identity in enumerate(revised_id_before_trafficlight)]
                             lengths_before_trafficlight = [5*(vt in ('Car','Taxi'))+ 5.83*(vt=='Medium') + 12.5*(vt in ('Heavy','Bus')) + 2.5*(vt=='Motorcycle') for vt in types_before_trafficlight]
