@@ -17,9 +17,9 @@ class Wiz:
         """docstring"""
         return self._distances(self, initial_coordinates, final_coordinates, wgs)
 
-    def dataloader(self, raw_vd:dict, wgs:bool, bbox:list):
+    def dataloader(self, raw_vd:dict, spatio_temporal_info:dict):
         """docstring"""
-        return self._dataloader(self, raw_vd, wgs, bbox)
+        return self._dataloader(self, raw_vd, spatio_temporal_info)
 
     def analysis(self, vd:dict, spatio_temporal_info:dict):
         """docstring"""
@@ -58,17 +58,18 @@ class Wiz:
     class _dataloader:
         """docstring"""
 
-        def __init__(self, mother:'Wiz', raw_vd:dict, wgs:bool, bbox:list):
+        def __init__(self, mother:'Wiz', raw_vd:dict, spatio_temporal_info:dict):
             """docstring"""
             self.mother = mother
-            needed_keys = ['id','vtype','x','y','time','speed']
-            if any(key not in raw_vd.keys() for key in needed_keys ):
-                print(f'Error: vehicle dictionary needs keys {needed_keys} to work!')
-            else:
-                self.raw_vd = raw_vd
-                self.vehicle_id,self.vehicle_type,self.x,self.y,self.t,self.u  = itemgetter('id','vtype','x','y','time','speed')(raw_vd)
-                self.wgs = wgs
-                self.bbox = bbox
+            needed_keys_vd = ['id','vtype','x','y','time','speed']
+            needed_keys_info = ['wgs','bbox','intersection center','time axis']
+            if any(key not in raw_vd.keys() for key in needed_keys_vd ):
+                raise KeyError(f'vehicle dictionary needs keys {needed_keys_vd} to work!')
+            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
+                raise KeyError(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
+            self.raw_vd = raw_vd
+            self.vehicle_id,self.vehicle_type,self.x,self.y,self.t,self.u  = itemgetter('id','vtype','x','y','time','speed')(raw_vd)
+            self.wgs,self.bbox = itemgetter('wgs','bbox')(spatio_temporal_info)
 
         def get_intersection_vd(self) -> dict:
             """docstring"""
@@ -97,7 +98,7 @@ class Wiz:
             intersection_vd ={'id':id_,'vtype':vtype_,'x':x_,'y':y_,'time':t_,'speed':u_}
             return intersection_vd
 
-        def get_filtered_vd(self, cursed_ids:list) -> dict:
+        def get_filtered_vd(self, cursed_ids=[-1.0]) -> dict:
             """docstring"""
             intersection_vd  = self.get_intersection_vd()
             vehicle_id,vehicle_type,x,y,t,u = itemgetter('id','vtype','x','y','time','speed')(intersection_vd)
@@ -122,27 +123,27 @@ class Wiz:
 
             self.mother = mother
             needed_keys_vd = ['id','vtype','x','y','time','speed']
-            needed_keys_info = ['wgs','bbox','y center','x center','time axis']
+            needed_keys_info = ['wgs','bbox','intersection center','time axis']
             if any(key not in vd.keys() for key in needed_keys_vd ):
-                print(f'Error: vehicle dictionary needs keys {needed_keys_vd} to work!')
+                raise KeyError(f'vehicle dictionary needs keys {needed_keys_vd} to work!')
             if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                print(f'Error: spatial info dictionary needs keys {needed_keys_info} to work!')
-            else:
-                self.vd = vd
-                self.spatio_temporal_info = spatio_temporal_info
-                self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(vd)
-                self.wgs, self.bbox, self.y_center,self.x_center, self.time_axis = itemgetter('wgs','bbox','y center','x center', 'time axis')(spatio_temporal_info)
-                self.detector_positions=None
-                self.flow_info=None
-                self.normalized_flow=None
-                self.trafficlightphases=None
-                self.lane_info=None
-                self.sorted_id=None
-                self.gaps=None
-                self.d_from_edge=None
-                self.flow_direction=None
-                self.cycles=None
-                self.traffic_light_phases=None
+                raise KeyError(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
+            self.vd = vd
+            self.spatio_temporal_info = spatio_temporal_info
+            self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(vd)
+            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.y_center,self.x_center=self.center
+            self.detector_positions=None
+            self.flow_info=None
+            self.normalized_flow=None
+            self.trafficlightphases=None
+            self.lane_info=None
+            self.sorted_id=None
+            self.gaps=None
+            self.d_from_edge=None
+            self.flow_direction=None
+            self.cycles=None
+            self.traffic_light_phases=None
 
         def get_distance_travelled(self) ->list:
             """docstring"""
@@ -214,6 +215,33 @@ class Wiz:
                 od_pairs.append((origin,destination))
             return od_pairs
 
+        def get_triangle(self) -> list:
+            """docstring"""
+            def is_inside_triangle(a,b,c,p):
+                """docstring"""
+                triangle = Polygon([a,b,c])
+                point = Point(p)
+                return triangle.contains(point) or triangle.touches(point)
+            ll_y,ll_x=self.bbox[0]
+            lr_y,lr_x=self.bbox[1]
+            ur_y,ur_x=self.bbox[2]
+            ul_y,ul_x=self.bbox[3]
+            triangle_1 = [(ll_x,ll_y),(self.x_center,self.y_center),(lr_x,lr_y)]
+            triangle_2 = [(ul_x,ul_y),(self.x_center,self.y_center),(ll_x,ll_y)]
+            triangle_3 = [(ur_x,ur_y),(self.x_center,self.y_center),(ul_x,ul_y)]
+            triangle_4 = [(lr_x,lr_y),(self.x_center,self.y_center),(ur_x,ur_y)]
+            in_triangle=[]
+            for v,vec in enumerate(self.x):
+                temp_in_triangle=[]
+                for e,_ in enumerate(vec):
+                    pos = (self.x[v][e],self.y[v][e])
+                    for t,triangle in enumerate([triangle_1,triangle_2,triangle_3,triangle_4]):
+                        if is_inside_triangle(*triangle,pos):
+                            temp_in_triangle.append(t+1)
+                            break
+                in_triangle.append(temp_in_triangle)
+            return in_triangle
+
         def get_od_vd(self, desirable_pairs:list) -> list:
             """docstring"""
 
@@ -234,8 +262,7 @@ class Wiz:
             """docstring"""
 
             if flow_direction not in ['up','down','right','left']:
-                print('Invalid flow direction')
-                return()
+                raise KeyError(f'Invalid flow direction, must be one of {['up','down','left','right']}')
             y1,x1 = self.bbox[0]
             y2,x2 = self.bbox[1]*(flow_direction in ['right','left']) + self.bbox[3]*(flow_direction in ['up','down'])
             b_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2),wgs=self.wgs).get_dx()
@@ -253,53 +280,57 @@ class Wiz:
             self.flow_direction=flow_direction
             return d_from_edge
 
-        def get_lane_info(self, flow_direction) -> None:
+        def get_lane_info(self, flow_direction, nbins=200, valid_od_pairs=None) -> None:
             """docstring""" 
 
             d_from_edge = self.get_d_from_bbox_edge(flow_direction)
-            flat_d_from_edge = [element for i,vec in enumerate(d_from_edge) for j,element in enumerate(vec) if self.vehicle_type[i]!='Motorcycle']
+            if valid_od_pairs is None:
+                flat_d_from_edge = [element for vec in d_from_edge for element in vec]
+            else:
+                od_pairs=self.get_od_pairs()
+                flat_d_from_edge = [element for i,vec in enumerate(d_from_edge) for element in vec if od_pairs[i] in valid_od_pairs]
             #--------------------------------------------------------
             plt.figure(figsize=(10,2))
-            nbins=200
             plt.hist(flat_d_from_edge, color='blue', bins=nbins, density=True)
             plt.xlabel('Distance from bbox edge (m)')
             plt.ylabel('Normalized Occurences')
             plt.xticks(np.arange(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20),2))
             plt.xlim(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20))
             plt.title("Lane Distribution")
-            plt.show()
+            plt.show(close=True)
             #--------------------------------------------------------
             n_clusters = int(input('How many lanes?'))
-            if n_clusters>1:
-                low_lim = int(input('low limit?'))
-                high_lim = int(input('high limit?'))
-                bounded_d_from_edge = [element for element in flat_d_from_edge if low_lim<element<high_lim]
-                #--------------------------------------------------------
-                data_for_clustering = np.sort(np.array(bounded_d_from_edge))
-                kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(data_for_clustering.reshape(-1, 1))
-                centers = np.sort(kmeans.cluster_centers_.flatten())
-                boundaries = (centers[:-1] + centers[1:]) / 2
-                #--------------------------------------------------------
-                plt.figure(figsize=(10,2))
-                plt.hist(bounded_d_from_edge,bins=nbins,color='red',density=True)
-                for boundary in boundaries:
-                    plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
-                plt.title("Lane Clustering with Boundaries")
-                plt.xlabel('Distance from bbox edge (m)')
-                plt.ylabel('Probability Density')
-                plt.tight_layout()
-                plt.show()
+            low_lim = int(input('low limit?'))
+            high_lim = int(input('high limit?'))
+            bounded_d_from_edge = [element for element in flat_d_from_edge if low_lim<element<high_lim]
             #--------------------------------------------------------
-            try:
-                lane_boundaries = [0] + [float(value) for value in boundaries] + [1e3]
-            except UnboundLocalError:
-                lane_boundaries = [0,1e3]
+            data_for_clustering = np.sort(np.array(bounded_d_from_edge))
+            kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(data_for_clustering.reshape(-1, 1))
+            centers = np.sort(kmeans.cluster_centers_.flatten())
+            boundaries_ = (centers[:-1] + centers[1:]) / 2
+            boundaries =[low_lim]+boundaries_.tolist()+[high_lim]
+            lane_boundaries = [round(value,ndigits=2) for value in boundaries]
+            #--------------------------------------------------------
+            plt.figure(figsize=(8.75,3))
+            plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red',density=True)
+            for boundary in boundaries:
+                plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
+            plt.title("Lane Clustering with Boundaries")
+            plt.xlabel('Distance from bbox edge (m)')
+            plt.ylabel('Probability Density')
+            plt.tight_layout()
+            plt.show(close=True)
+            #--------------------------------------------------------
             lane_number = len(lane_boundaries)-1
             lane_distribution=[]
+
             for i,vec in enumerate(self.d_from_edge):
                 temp_lanes=[]
-                for j,element in enumerate(vec):
-                    temp_lanes.append(max(b for b,boundary in enumerate(lane_boundaries) if element>boundary))
+                for element in vec:
+                    if element>max(lane_boundaries) or element<min(lane_boundaries):
+                        temp_lanes.append(None)
+                    else:
+                        temp_lanes.append(max(b for b,boundary in enumerate(lane_boundaries) if element>boundary))
                 lane_distribution.append(temp_lanes)
             lane_info = {
                 'number':lane_number,
@@ -322,11 +353,14 @@ class Wiz:
                 for v,_ in enumerate(self.x):
                     if self.time_axis[m] in self.t[v] and self.time_axis[m-1] in self.t[v]:
                         lane = lane_distribution[v][self.t[v].index(moment)]
+                        if lane is None:
+                            continue
                         #qoi = quantity of interest
                         qoi_now = (self.x[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['up','down'])
                         qoi_before = (self.x[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['up','down'])
                         qoi_detector_index = x_detector_index*(self.flow_direction in ['left','right']) + y_detector_index*(self.flow_direction in ['up','down'])
                         before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['left','down'])
+
                         if before_detector=='lower':
                             if qoi_now>=detector_positions[lane][qoi_detector_index] and qoi_before<detector_positions[lane][qoi_detector_index]:
                                 tempid.append(self.vehicle_id[v])
@@ -396,8 +430,12 @@ class Wiz:
                     _dict['Duration OFF'] = round(trafficlights[d+1].get('Green') - trafficlights[d].get('Red'),ndigits=1)
                     _dict['Phase Duration'] = round(trafficlights[d].get('Duration ON') + trafficlights[d].get('Duration OFF'),ndigits=1)
                 else:
-                    _dict['Duration OFF'] = None
-                    _dict['Phase Duration'] = None
+                    try:
+                        _dict['Duration OFF'] = round(trafficlights[d+1].get('Green') - trafficlights[d].get('Red'),ndigits=1)
+                        _dict['Phase Duration'] = round(trafficlights[d].get('Duration ON') + trafficlights[d].get('Duration OFF'),ndigits=1)
+                    except IndexError:
+                        _dict['Duration OFF'] = None
+                        _dict['Phase Duration'] = None
                 trafficlightphases.append(_dict)
             self.traffic_light_phases = trafficlightphases
             return trafficlightphases
@@ -431,8 +469,7 @@ class Wiz:
             lane_distriubtion = self.lane_info.get('distribution')
             lane_number = self.lane_info.get('number')
             if self.flow_direction not in ['up','down','left','right']:
-                print('Wrong flow_direction or sort_by input')
-                return()
+                raise KeyError(f'Invalid flow direction, must be one of {['up','down','left','right']}')
             qoi = self.y*(self.flow_direction in ['up','down']) + self.x*(self.flow_direction in ['left','right'])
             sorted_id=[]
             for moment in self.time_axis:
@@ -500,6 +537,7 @@ class Wiz:
                     if id_at_green is None:
                         temp_info['Queued Vehicles']=None
                         temp_info['Queue Length']=None
+                        temp_info['Queued IDs']=None
                         temp_info['Dissipation Duration']=None
                     else:
                         id_before_trafficlight=[]
@@ -532,17 +570,21 @@ class Wiz:
                         if len(id_before_trafficlight)==0:
                             temp_info['Queued Vehicles']=None
                             temp_info['Queue Length']=None
+                            temp_info['Queued IDs']=None
                             temp_info['Dissipation Duration']=None
                         else:
-                            gaps_before_trafficlight = [self.gaps[self.time_axis.index(green)].get(f'lane {l}')[i] for i,identity in enumerate(id_at_green) if identity in id_before_trafficlight[:-1]]
-                            revised_id_before_trafficlight = [identity for i,identity in enumerate(id_before_trafficlight[:-1]) if gaps_before_trafficlight[i]<=gap_threshold]+[id_before_trafficlight[-1]]
+                            id_gaps_before_trafficlight = [(identity,self.gaps[self.time_axis.index(green)].get(f'lane {l}')[i]) for i,identity in enumerate(id_at_green) if identity in id_before_trafficlight]
+                            revised_id_before_trafficlight = [identity for identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
+                            revised_gaps_before_trafficlight = [gap for identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
                             types_before_trafficlight = [self.vehicle_type[self.vehicle_id.index(identity)] for i,identity in enumerate(revised_id_before_trafficlight)]
-                            lengths_before_trafficlight = [5*(vt in ('Car','Taxi'))+ 5.83*(vt=='Medium') + 12.5*(vt in ('Heavy','Bus')) + 2.5*(vt=='Motorcycle') for vt in types_before_trafficlight]
+                            lengths_before_trafficlight = [5*(vt in ('Car','Taxi'))+ 5.83*(vt in ('Medium')) + 12.5*(vt in ('Heavy','Bus')) + 2.5*(vt in ('Motorcycle')) for vt in types_before_trafficlight]
+
                             critical_condition_1 = len(revised_id_before_trafficlight)>0
                             critical_condition_2 = len(revised_id_before_trafficlight)==0
                             if critical_condition_1:
                                 temp_info['Queued Vehicles'] = len(revised_id_before_trafficlight)
-                                temp_info['Queue Length'] = round(sum(gaps_before_trafficlight)+sum(lengths_before_trafficlight),ndigits=0)
+                                temp_info['Queue Length'] = round(sum(revised_gaps_before_trafficlight[:-1])+sum(lengths_before_trafficlight),ndigits=0)
+                                temp_info['Queued IDs'] = revised_id_before_trafficlight
                                 flag=False
                                 for moment in self.time_axis[self.time_axis.index(green):]:
                                     last_vehicle = id_before_trafficlight[0] #leading vehicle is last in list, last vehicle always first in list
@@ -566,6 +608,7 @@ class Wiz:
                                     temp_info['Dissipation Time'] = round(red-green,ndigits=1)
                             elif critical_condition_2:
                                 temp_info['Queued Vehicles'] = None
+                                temp_info['Queued IDs'] = None
                                 temp_info['Queue Length'] = None
                                 temp_info['Dissipation Duration'] = None
                     phase_info.append(temp_info)
@@ -580,16 +623,16 @@ class Wiz:
 
             self.mother = mother
             needed_keys_vd = ['id','vtype','x','y','time','speed']
-            needed_keys_info = ['wgs','bbox','y center','x center','time axis']
+            needed_keys_info = ['wgs','bbox','intersection center','time axis']
             if any(key not in vd.keys() for key in needed_keys_vd ):
-                print(f'Error: vehicle dictionary needs keys {needed_keys_vd} to work!')
+                raise KeyError(f'vehicle dictionary needs keys {needed_keys_vd} to work!')
             if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                print(f'Error: spatial info dictionary needs keys {needed_keys_info} to work!')
-            else:
-                self.vd = vd
-                self.spatio_temporal_info = spatio_temporal_info
-                self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(vd)
-                self.wgs, self.bbox, self.y_center,self.x_center, self.time_axis = itemgetter('wgs','bbox','y center','x center', 'time axis')(spatio_temporal_info)
+                raise KeyError(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
+            self.vd = vd
+            self.spatio_temporal_info = spatio_temporal_info
+            self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(vd)
+            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.y_center,self.x_center = self.center
 
         def draw_trajectories(self) -> None:
             """docstring"""
@@ -613,7 +656,7 @@ class Wiz:
             plt.ylim(ylim_bottom,ylim_top)
             plt.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labelleft=False)
             plt.tight_layout()
-            plt.show()
+            plt.show(close=True)
 
         def draw_trajectories_od(self, valid_od_pairs:list) -> None:
             """docstring"""
@@ -643,8 +686,8 @@ class Wiz:
                         ax[1].plot(self.x[l],self.y[l],color=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][0],linewidth=1,alpha=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][-1])
                 ax[1].plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='white')
                 for axis in ax:
-                    axis.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
-                    axis.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
+                    #axis.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
+                    #axis.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
                     axis.set_xticks([])
                     axis.set_yticks([])
                     axis.set_xlabel('x coordinate')
@@ -663,7 +706,7 @@ class Wiz:
                 ax.set_yticks([])
                 ax.set_xlabel('x coordinate')
                 ax.set_ylabel('y coordinate')
-            plt.show()
+            plt.show(close=True)
 
         def draw_spacetime_diagram(self) -> None:
             """docstring"""
@@ -673,7 +716,7 @@ class Wiz:
             x = [value for set in self.t for value in set]
             y = [value for set in self.mother.analysis(self.vd,self.spatio_temporal_info).get_distance_travelled() for value in set]
             z = [value for set in self.u for value in set]
-            _fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(12,4))
+            _fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(18,5))
             scatter = ax.scatter(x,y,c=z,cmap='jet_r',vmin=vmin,vmax=vmax,s=0.5)
             cbar = plt.colorbar(scatter, ax=ax)
             cbar.set_label('Speed (km/h)')
@@ -681,7 +724,7 @@ class Wiz:
             plt.xlabel('t (s)')
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
-            plt.show()
+            plt.show(close=True)
 
         def draw_distance_travelled(self, vehicle_id:int):
             """docstring"""
@@ -693,7 +736,7 @@ class Wiz:
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
             plt.grid(True)
-            plt.show()
+            plt.show(close=True)
 
         def draw_speed(self, vehicle_id:int):
             """docstring"""
@@ -705,7 +748,7 @@ class Wiz:
             plt.ylabel('Speed (km/h)')
             plt.tight_layout()
             plt.grid(True)
-            plt.show()
+            plt.show(close=True)
 
         def draw_acceleration(self, vehicle_id:int):
             """docstring"""
@@ -718,4 +761,4 @@ class Wiz:
             plt.ylabel(r'Acceleration $(m/s^2)$')
             plt.tight_layout()
             plt.grid(True)
-            plt.show()
+            plt.show(close=True)
