@@ -63,14 +63,12 @@ class Wiz:
             self.mother = mother
             needed_keys_data = ['id','vtype','x','y','time','speed']
             needed_keys_info = ['wgs','bbox','intersection center','time axis']
-            if any(key not in raw_data.keys() for key in needed_keys_data ):
-                raise Exception(f'vehicle dictionary needs keys {needed_keys_data} to work!')
-            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                raise Exception(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
-            else:
-                self.raw_data = raw_data
-                self.vehicle_id,self.vehicle_type,self.x,self.y,self.t,self.u  = itemgetter('id','vtype','x','y','time','speed')(raw_data)
-                self.wgs,self.bbox = itemgetter('wgs','bbox')(spatio_temporal_info)
+            if any(key not in raw_data.keys() for key in needed_keys_data) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
+                raise KeyError(f'data directory needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
+
+            self.raw_data = raw_data
+            self.vehicle_id,self.vehicle_type,self.x,self.y,self.t,self.u  = itemgetter('id','vtype','x','y','time','speed')(raw_data)
+            self.wgs,self.bbox = itemgetter('wgs','bbox')(spatio_temporal_info)
 
         def get_intersection_data(self) -> dict:
             """docstring"""
@@ -99,8 +97,11 @@ class Wiz:
             intersection_data ={'id':id_,'vtype':vtype_,'x':x_,'y':y_,'time':t_,'speed':u_}
             return intersection_data
 
-        def get_filtered_data(self, cursed_ids=[]) -> dict:
+        def get_filtered_data(self, cursed_ids=None) -> dict:
             """docstring"""
+            if cursed_ids is None:
+                cursed_ids=[]
+
             intersection_data  = self.get_intersection_data()
             vehicle_id,vehicle_type,x,y,t,u = itemgetter('id','vtype','x','y','time','speed')(intersection_data)
             id_,vtype_,x_,y_,t_,u_=[],[],[],[],[],[]
@@ -125,31 +126,25 @@ class Wiz:
             self.mother = mother
             needed_keys_data = ['id','vtype','x','y','time','speed']
             needed_keys_info = ['wgs','bbox','intersection center','time axis']
-            if any(key not in data.keys() for key in needed_keys_data ):
-                raise Exception(f'vehicle dictionary needs keys {needed_keys_data} to work!')
-            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                raise Exception(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
-            else:
-                self.data = data
-                self.spatio_temporal_info = spatio_temporal_info
-                self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
-                self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
-                self.y_center,self.x_center=self.center
+            if any(key not in data.keys() for key in needed_keys_data) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
+                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
 
-                self.detector_positions=None
-                self.flow_info=None
-                self.normalized_flow=None
-                self.trafficlightphases=None
-                self.lane_info=None
-                self.sorted_id=None
-                self.gaps=None
-                self.d_from_edge=None
-                self.flow_direction=None
-                self.cycles=None
-                self.traffic_light_phases=None
-
-                
-                
+            self.data = data
+            self.spatio_temporal_info = spatio_temporal_info
+            self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
+            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.y_center,self.x_center=self.center
+            self.detector_positions=None
+            self.flow_info=None
+            self.normalized_flow=None
+            self.trafficlightphases=None
+            self.lane_info=None
+            self.sorted_id=None
+            self.gaps=None
+            self.d_from_edge=None
+            self.flow_direction=None
+            self.cycles=None
+            self.traffic_light_phases=None
 
         def get_distance_travelled(self) ->list:
             """docstring"""
@@ -238,7 +233,7 @@ class Wiz:
             triangle_4 = [(lr_x,lr_y),(self.x_center,self.y_center),(ur_x,ur_y)]
             in_triangle=[]
             for v,vec in enumerate(self.x):
-                temp_in_triangle=[] 
+                temp_in_triangle=[]
                 for e,_ in enumerate(vec):
                     pos = (self.x[v][e],self.y[v][e])
                     for t,triangle in enumerate([triangle_1,triangle_2,triangle_3,triangle_4]):
@@ -247,7 +242,7 @@ class Wiz:
                             break
                 in_triangle.append(temp_in_triangle)
             return in_triangle
-        
+
         def get_od_data(self, desirable_pairs:list) -> list:
             """docstring"""
 
@@ -268,7 +263,7 @@ class Wiz:
             """docstring"""
 
             if flow_direction not in ['up','down','right','left']:
-                raise Exception(f'Invalid flow direction, must be one of {['up','down','left','right']}')
+                raise ValueError(f'Invalid flow direction, must be one of {['up','down','left','right']}')
             y1,x1 = self.bbox[0]
             y2,x2 = self.bbox[1]*(flow_direction in ['right','left']) + self.bbox[3]*(flow_direction in ['up','down'])
             b_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2),wgs=self.wgs).get_dx()
@@ -381,17 +376,17 @@ class Wiz:
                         lane = lane_distribution[v][self.t[v].index(moment)]
 
                         if lane is None:
-                            if all(values==None for values in lane_distribution[v]):
+                            if all(values is None for values in lane_distribution[v]):
                                 continue
                             lane_sum=[]
-                            for i,_ in enumerate(lane_distribution[v]):
-                                if _!=None:
+                            for _i,_ in enumerate(lane_distribution[v]):
+                                if _ is not None:
                                     lane_sum.append(_)
                             try:
                                 random_lane = sum(lane_sum)/(len(lane_sum))
                             except ZeroDivisionError:
                                 random_lane=0
-  
+
                             lane = min_lane*(random_lane<(0.5*(min_lane+max_lane))) + max_lane*(random_lane>=(0.5*(min_lane+max_lane)))
 
                         #qoi = quantity of interest
@@ -417,7 +412,6 @@ class Wiz:
             self.flow_info = flow_info
             self.detector_positions = detector_positions
             return flow_info
-        
 
         def get_normalized_flow(self, threshold:int) -> tuple[list,list]:
             """docstring"""
@@ -477,7 +471,7 @@ class Wiz:
                     try:
                         _dict['Duration OFF'] = round(trafficlights[d+1].get('Green') - trafficlights[d].get('Red'),ndigits=1)
                         _dict['Phase Duration'] = round(trafficlights[d].get('Duration ON') + trafficlights[d].get('Duration OFF'),ndigits=1)
-                    except:
+                    except (IndexError, KeyError):
                         _dict['Duration OFF'] = None
                         _dict['Phase Duration'] = None
                 trafficlightphases.append(_dict)
@@ -513,7 +507,7 @@ class Wiz:
             lane_distriubtion = self.lane_info.get('distribution')
             lane_number = self.lane_info.get('number')
             if self.flow_direction not in ['up','down','left','right']:
-                raise Exception(f'Invalid flow direction, must be one of {['up','down','left','right']}')
+                raise ValueError(f'Invalid flow direction, must be one of {['up','down','left','right']}')
             qoi = self.y*(self.flow_direction in ['up','down']) + self.x*(self.flow_direction in ['left','right'])
             sorted_id=[]
             for moment in self.time_axis:
@@ -668,23 +662,21 @@ class Wiz:
             self.mother = mother
             needed_keys_data = ['id','vtype','x','y','time','speed']
             needed_keys_info = ['wgs','bbox','intersection center','time axis']
-            if any(key not in data.keys() for key in needed_keys_data ):
-                raise Exception(f'vehicle dictionary needs keys {needed_keys_data} to work!')
-            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                raise Exception(f'spatiotemporal info dictionary needs keys {needed_keys_info} to work!')
-            else:
-                self.data = data
-                self.spatio_temporal_info = spatio_temporal_info
-                self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
-                self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
-                self.y_center,self.x_center = self.center
+            if any(key not in data.keys() for key in needed_keys_data ) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
+                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
+
+            self.data = data
+            self.spatio_temporal_info = spatio_temporal_info
+            self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
+            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.y_center,self.x_center = self.center
 
         def draw_trajectories(self) -> None:
             """docstring"""
 
             vmin = int(min(np.mean(set) for set in self.u))
             vmax = int(max(np.mean(set) for set in self.u))
-            
+
             x_flat = [value for i,vec in enumerate(self.x) for value in vec if self.vehicle_type[i]!='Motorcycle']
             y_flat = [value for i,vec in enumerate(self.y) for value in vec if self.vehicle_type[i]!='Motorcycle']
 
