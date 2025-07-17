@@ -22,5 +22,9 @@ requires-python = ">=3.12"
 [tool.setuptools]
 packages = ["mytool","tests","usage_example"]
 
+[tool.pylint."MESSAGES CONTROL"]
+disable = ["W0102"]
+
 [project.urls]
 "Homepage" = "https://github.com/KPourgourides/uav_traffic_tool"
+
