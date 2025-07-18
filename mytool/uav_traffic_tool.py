@@ -353,13 +353,13 @@ class Wiz:
 
         def get_flow_info(self, detector_positions:list) -> list:
             """docstring"""
-
-            x_detector_index = 1*self.wgs
-            y_detector_index = 1 - x_detector_index
-            lane_distribution = self.lane_info.get('distribution')
-            min_lane,max_lane = 0,self.lane_info.get('number')-1
+            
+            qoi = self.x*(self.flow_direction in ['left','right']) + self.y*(self.flow_direction in ['up','down'])
+            detector_index = 1*(qoi == self.x) + 0*(qoi == self.y)
+            before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['left','down'])
             counted_ids=[]
             flow_info=[]
+
             for m,moment in enumerate(self.time_axis):
                 if m==0:
                     tempdict={'time stamp':moment, 'flow':0, 'id':[]}
@@ -373,34 +373,17 @@ class Wiz:
                         continue
 
                     if self.time_axis[m] in self.t[v] and self.time_axis[m-1] in self.t[v]:
-                        lane = lane_distribution[v][self.t[v].index(moment)]
-
-                        if lane is None:
-                            if all(values is None for values in lane_distribution[v]):
-                                continue
-                            lane_sum=[]
-                            for _i,_ in enumerate(lane_distribution[v]):
-                                if _ is not None:
-                                    lane_sum.append(_)
-                            try:
-                                random_lane = sum(lane_sum)/(len(lane_sum))
-                            except ZeroDivisionError:
-                                random_lane=0
-
-                            lane = min_lane*(random_lane<(0.5*(min_lane+max_lane))) + max_lane*(random_lane>=(0.5*(min_lane+max_lane)))
 
                         #qoi = quantity of interest
-                        qoi_now = (self.x[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m])])*(self.flow_direction in ['up','down'])
-                        qoi_before = (self.x[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['left','right']) + (self.y[v][self.t[v].index(self.time_axis[m-1])])*(self.flow_direction in ['up','down'])
-                        qoi_detector_index = x_detector_index*(self.flow_direction in ['left','right']) + y_detector_index*(self.flow_direction in ['up','down'])
-                        before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['left','down'])
+                        qoi_now = qoi[v][self.t[v].index(self.time_axis[m])]
+                        qoi_before =  qoi[v][self.t[v].index(self.time_axis[m-1])]
 
                         if before_detector=='lower':
-                            if qoi_before<= detector_positions[lane][qoi_detector_index] <= qoi_now:
+                            if qoi_before<= detector_positions[detector_index] <= qoi_now:
                                 tempid.append(self.vehicle_id[v])
                                 counted_ids.append(self.vehicle_id[v])
                         elif before_detector=='higher':
-                            if qoi_now<= detector_positions[lane][qoi_detector_index] <= qoi_before:
+                            if qoi_now<= detector_positions[detector_index] <= qoi_before:
                                 tempid.append(self.vehicle_id[v])
                                 counted_ids.append(self.vehicle_id[v])
 
@@ -440,6 +423,8 @@ class Wiz:
             sampling_period = round(self.time_axis[1]-self.time_axis[0])
             for _ in self.flow_info:
                 if _.get('time stamp') in  np.arange(low_lim,high_lim+sampling_period,sampling_period):
+                    if len(_.get('id'))==0:
+                        continue
                     print(f"ids {_.get('id')} passed at time {_.get('time stamp')}")
 
         def get_traffic_light_phases(self):
@@ -561,15 +546,21 @@ class Wiz:
 
         def get_queue_info(self, speed_threshold:float, gap_threshold:float) -> list:
             """docstring"""
-            before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['down','left'])
+            
             qoi = self.x*(self.flow_direction in ['left','right']) + self.y*(self.flow_direction in ['up','down'])
-            detector_index = 0*(qoi==self.y) + 1*(qoi==self.x)
+            detector_index = 1*(qoi==self.x) + 0*(qoi==self.y)
+            before_detector = 'lower'*(self.flow_direction in ['up','right']) + 'higher'*(self.flow_direction in ['down','left'])
             queue_info=[]
+
             for phase in self.traffic_light_phases:
+
                 phase_info=[]
-                green = phase.get('Green')
+                offset_digits=0
+                green = phase.get('Green')-offset_digits
                 red = phase.get('Red')
+
                 for l in range(self.lane_info.get('number')):
+
                     temp_info={'Lane':l}
                     id_at_green = self.sorted_id[self.time_axis.index(green)].get(f'lane {l}')
                     if id_at_green is None:
@@ -577,78 +568,72 @@ class Wiz:
                         temp_info['Queue Length']=None
                         temp_info['Queued IDs']=None
                         temp_info['Dissipation Duration']=None
-                    else:
-                        id_before_trafficlight=[]
-                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        for i,identity in enumerate(id_at_green):
-                            vehicle_index = self.vehicle_id.index(identity)
-                            green_index  = self.t[self.vehicle_id.index(identity)].index(green)
-                            if self.u[vehicle_index][green_index]<=speed_threshold:
-                                #---------------------------
-                                if before_detector=='lower':
-                                    #-----------------------------------------------------------------------------
-                                    if qoi[vehicle_index][green_index]<=self.detector_positions[l][detector_index]:
-                                        if red not in self.t[vehicle_index]:
-                                            id_before_trafficlight.append(identity)
-                                        else:
-                                            red_index  = self.t[vehicle_index].index(red)
-                                            if qoi[vehicle_index][red_index]>=self.detector_positions[l][detector_index]:
-                                                id_before_trafficlight.append(identity)
-                                #---------------------------
-                                elif before_detector=='higher':
-                                    #-----------------------------------------------------------------------------
-                                    if qoi[vehicle_index][green_index]>=self.detector_positions[l][detector_index]:
-                                        if red not in self.t[vehicle_index]:
-                                            id_before_trafficlight.append(identity)
-                                        else:
-                                            red_index  = self.t[vehicle_index].index(red)
-                                            if qoi[vehicle_index][red_index]<=self.detector_positions[l][detector_index]:
-                                                id_before_trafficlight.append(identity)
-                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        if len(id_before_trafficlight)==0:
-                            temp_info['Queued Vehicles']=None
-                            temp_info['Queue Length']=None
-                            temp_info['Queued IDs']=None
-                            temp_info['Dissipation Duration']=None
-                        else:
-                            id_gaps_before_trafficlight = [(identity,self.gaps[self.time_axis.index(green)].get(f'lane {l}')[i]) for i,identity in enumerate(id_at_green) if identity in id_before_trafficlight]
-                            revised_id_before_trafficlight = [identity for identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
-                            revised_gaps_before_trafficlight = [gap for identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
-                            types_before_trafficlight = [self.vehicle_type[self.vehicle_id.index(identity)] for i,identity in enumerate(revised_id_before_trafficlight)]
-                            lengths_before_trafficlight = [5*(vt in ('Car','Taxi'))+ 5.83*(vt in ('Medium')) + 12.5*(vt in ('Heavy','Bus')) + 2.5*(vt in ('Motorcycle')) for vt in types_before_trafficlight]
+                        phase_info.append(temp_info)
+                        continue
 
-                            critical_condition_1 = len(revised_id_before_trafficlight)>0
-                            critical_condition_2 = len(revised_id_before_trafficlight)==0
-                            if critical_condition_1:
-                                temp_info['Queued Vehicles'] = len(revised_id_before_trafficlight)
-                                temp_info['Queue Length'] = round(sum(revised_gaps_before_trafficlight[:-1])+sum(lengths_before_trafficlight),ndigits=0)
-                                temp_info['Queued IDs'] = revised_id_before_trafficlight
-                                flag=False
-                                for moment in self.time_axis[self.time_axis.index(green):]:
-                                    last_vehicle = id_before_trafficlight[0] #leading vehicle is last in list, last vehicle always first in list
-                                    if moment in self.t[self.vehicle_id.index(last_vehicle)]:
-                                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                        if before_detector=='lower':
-                                            if qoi[self.vehicle_id.index(last_vehicle)][self.t[self.vehicle_id.index(last_vehicle)].index(moment)]>=self.detector_positions[l][detector_index]:
-                                                temp_info['Dissipation Duration'] = round(moment-green,ndigits=1)
-                                                flag=True
-                                                break
-                                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                        elif before_detector=='higher':
-                                            if qoi[self.vehicle_id.index(last_vehicle)][self.t[self.vehicle_id.index(last_vehicle)].index(moment)]<=self.detector_positions[l][detector_index]:
-                                                temp_info['Dissipation Duration'] = round(moment-green,ndigits=1)
-                                                flag=True
-                                                break
-                                        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                    else:
-                                        continue
-                                if flag is False:
-                                    temp_info['Dissipation Time'] = round(red-green,ndigits=1)
-                            elif critical_condition_2:
-                                temp_info['Queued Vehicles'] = None
-                                temp_info['Queued IDs'] = None
-                                temp_info['Queue Length'] = None
-                                temp_info['Dissipation Duration'] = None
+                    id_before_trafficlight=[]
+                    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    for i,identity in enumerate(id_at_green):
+                        vehicle_index = self.vehicle_id.index(identity)
+                        green_index  = self.t[self.vehicle_id.index(identity)].index(green)
+                        if self.u[vehicle_index][green_index]>=speed_threshold:
+                            continue
+                        #---------------------------
+                        if before_detector=='lower':
+                            if qoi[vehicle_index][green_index]<=self.detector_positions[detector_index]:
+                                id_before_trafficlight.append(identity)
+                        #---------------------------
+                        elif before_detector=='higher':
+                            #-----------------------------------------------------------------------------
+                            if qoi[vehicle_index][green_index]>=self.detector_positions[detector_index]:
+                                id_before_trafficlight.append(identity)
+                    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    if len(id_before_trafficlight)==0:
+                        temp_info['Queued Vehicles']=None
+                        temp_info['Queue Length']=None
+                        temp_info['Queued IDs']=None
+                        temp_info['Dissipation Duration']=None
+                        phase_info.append(temp_info)
+                        continue
+                    
+                    id_gaps_before_trafficlight = [(_identity,self.gaps[self.time_axis.index(green)].get(f'lane {l}')[j]) for j,_identity in enumerate(id_at_green) if _identity in id_before_trafficlight]
+                    revised_id_before_trafficlight = [_identity for _identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
+                    revised_gaps_before_trafficlight = [gap for _identity,gap in id_gaps_before_trafficlight if gap<=gap_threshold]
+                    types_before_trafficlight = [self.vehicle_type[self.vehicle_id.index(_identity)] for _j,_identity in enumerate(revised_id_before_trafficlight)]
+                    lengths_before_trafficlight = [5*(vt in ('Car','Taxi'))+ 5.83*(vt in ('Medium')) + 12.5*(vt in ('Heavy','Bus')) + 2.5*(vt in ('Motorcycle')) for vt in types_before_trafficlight]
+
+                    if len(revised_id_before_trafficlight)>0:
+                        temp_info['Queued Vehicles'] = len(revised_id_before_trafficlight)
+                        temp_info['Queue Length'] = round(sum(revised_gaps_before_trafficlight[:-1])+sum(lengths_before_trafficlight),ndigits=0)
+                        temp_info['Queued IDs'] = revised_id_before_trafficlight
+
+                        flag=False
+                        for moment in self.time_axis[self.time_axis.index(green):]:
+                            last_vehicle = id_before_trafficlight[0] #leading vehicle is last in list, last vehicle always first in list
+                            if moment in self.t[self.vehicle_id.index(last_vehicle)]:
+
+                                #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                if before_detector=='lower':
+                                    if qoi[self.vehicle_id.index(last_vehicle)][self.t[self.vehicle_id.index(last_vehicle)].index(moment)]>=self.detector_positions[detector_index]:
+                                        temp_info['Dissipation Duration'] = round(moment-green+offset_digits,ndigits=1)
+                                        flag=True
+                                        break
+                                #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                elif before_detector=='higher':
+                                    if qoi[self.vehicle_id.index(last_vehicle)][self.t[self.vehicle_id.index(last_vehicle)].index(moment)]<=self.detector_positions[detector_index]:
+                                        temp_info['Dissipation Duration'] = round(moment-green+offset_digits,ndigits=1)
+                                        flag=True
+                                        break
+                                #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                        if flag is False:
+                            temp_info['Dissipation Time'] = round(red-green+offset_digits,ndigits=1)
+                    else:
+                        temp_info['Queued Vehicles'] = None
+                        temp_info['Queued IDs'] = None
+                        temp_info['Queue Length'] = None
+                        temp_info['Dissipation Duration'] = None
+
                     phase_info.append(temp_info)
                 queue_info.append(phase_info)
             return queue_info
@@ -700,7 +685,7 @@ class Wiz:
             plt.tight_layout()
             plt.show(close=True)
 
-        def draw_trajectories_od(self, valid_od_pairs:list) -> None:
+        def draw_trajectories_od(self, valid_od_pairs:list, only_colored_trajectories=False) -> None:
             """docstring"""
 
             od_pairs = self.mother.analysis(self.data, self.spatio_temporal_info).get_od_pairs()
@@ -708,8 +693,8 @@ class Wiz:
             lr_y,lr_x=self.bbox[1]
             ur_y,ur_x=self.bbox[2]
             ul_y,ul_x=self.bbox[3]
-            colors_and_alphas = [('blue',0.05),('orange',0.5),('red',1),('green',0.5),('violet',1),('magenta',1)]
-            only_colored_trajectories=True
+            colors_and_alphas = [('blue',0.05),('orange',1),('red',1),('green',1),('violet',0.7),('cyan',1)]
+            
             if only_colored_trajectories is False:
                 _fig,ax=plt.subplots(nrows=1,ncols=2,figsize=(12,5))
                 for l,_ in enumerate(self.x):
@@ -735,19 +720,21 @@ class Wiz:
                     axis.set_xlabel('x coordinate')
                     axis.set_ylabel('y coordinate')
             else:
-                _fig,ax = plt.subplots(figsize=(6,6),dpi=400)
+    
+                _fig,ax = plt.subplots(figsize=(10,8))
                 ax.set_title('Vehicle Trajectories')
-                ax.set_facecolor('black')
+                ax.set_facecolor('white')
                 for l,_lista in enumerate(self.x):
                     if od_pairs[l] in valid_od_pairs and self.vehicle_type[l]!='Motorcycle':
                         ax.plot(self.x[l],self.y[l],color=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][0],linewidth=1,alpha=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][-1])
-                ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='white')
-                ax.set_xlim(ul_x,lr_x)
-                ax.set_ylim(ll_y,ur_y)
+                ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='k')
+                ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
+                ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
                 ax.set_xticks([])
                 ax.set_yticks([])
                 ax.set_xlabel('x coordinate')
                 ax.set_ylabel('y coordinate')
+
             plt.show(close=True)
 
         def draw_spacetime_diagram(self) -> None:
