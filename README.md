@@ -33,14 +33,7 @@ time).
 An example of the correct data format is
 
 ```
-data = { 
-          'id' : id,
-          'vtype' : vtype,
-          'x' : x,
-          'y' : y,
-          'time' : t,
-          'speed' : u
-        }
+data = {'id' : id, 'vtype' : vtype, 'x' : x, 'y' : y, 'time' : t, 'speed' : u}
 ```
 
 An example of what they keys could correspond to
@@ -118,12 +111,7 @@ intersection at least once at any point during the recording. Data for the rest 
 discarded. The `bbox` has the following form
 
 ```
-bbox = [
-        (ll_y,ll_x),
-        (lr_y,lr_x),
-        (ur_y,ur_x),
-        (ul_y,ul_x),
-        ]
+bbox = [(ll_y,ll_x),(lr_y,lr_x),(ur_y,ur_x),(ul_y,ul_x)]
 ```
 
 Where ll,lr,ur, and ul correspond to lower left, lower right, upper right, upper left respectively. If `wgs is
@@ -253,7 +241,7 @@ commands
 ```
 analysis_13_12 = tool.analysis(data_13_12,spatio_temporal_info)
 visualization_13_12 = tool.visualization(data_13_12,spatio_temporal_info)
-#------------------------------------------------------------------------
+
 analysis_43_42 = tool.analysis(data_43_42,spatio_temporal_info)
 visualization_43_42 = tool.visualization(data_43_42,spatio_temporal_info)
 ```
@@ -404,8 +392,58 @@ cycles[0] = {
             }
 ```
 
+## Extracting relative dynamic gaps 
+
+In order to extract vehicle ids sorted from last to first according to their direction of motion, and the corresponding gaps between them per step of the `time_axis`, we must run the following commands
+
+```
+sorted_id_13_12 = analysis_13_12.get_sorted_id()
+gaps_13_12 = analysis_13_12.get_gaps()
+
+sorted_id_43_42 = analysis_43_42.get_sorted_id()
+gaps_43_42 = analysis_43_42.get_gaps()
+```
+
+The gaps are calculated from front bumper to rear bumper. This information will later help us to extract queue-wise
+information, such as the queue length. The output of both methods is a list of dictionaries, where each dictionary
+has the keys `time stamp`, and `lane 0` through `lane L`, where L+1 the total number of lanes. The `time
+stamp` corresponds to the current step of the `time_axis`, and each lane-specific key is a list with the sorted ids or gaps (in meters). For example,
+
+```
+sorted_id_13_12[time_axis.index(tlp_13_12[7].get("Green"))] = {
+                                                               "time stamp": 551.0,
+                                                               "lane 0": None,
+                                                               "lane 1": [1778],
+                                                               "lane 2": [1922, 2021],
+                                                               "lane 3": [2045, 1659],
+                                                               "lane 4": [2062]
+                                                               }
+```
+
+```
+gaps_13_12[time_axis.index(tlp_13_12[7].get("Green"))] = {
+                                                          "time stamp": 551.0,
+                                                          "lane 0": None,
+                                                          "lane 1": [-1.0],
+                                                          "lane 2": [9.4, -1.0],
+                                                          "lane 3": [14.7, -1.0],
+                                                          "lane 4": [-1.0]
+                                                          }
+```
+
+The value `None` is for when there are no vehicles in the lane, and the value `-1.0` corresponds to lane leaders
+that have no vehicles in front of them.
+
 ## Extracting queue-wise information
 
+In order to find the queue characteristics, we use the above information. We calculate the characteristics when the queue has its maximum potential,
+i.e. the moments when the traffic light turns green for the different phases. For each street, and for each of its lanes, a vehicle is considered to be part of the
+queue at the time of the corresponding green light if it satisfies the following conditions:
 
+- It is physically behind the virtual detector that represents the traffic light pole
+- Its instantaneous speed is lower than a given threshold 
+- Its gap from the next vehicle is lower than a given threshold *(except the queue leader)*
+
+The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
 
