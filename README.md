@@ -436,7 +436,7 @@ that have no vehicles in front of them.
 
 ## Extracting queue-wise information
 
-In order to find the queue characteristics, we use the above information. We calculate the characteristics when the queue has its maximum potential,
+We calculate the queue-wise information when the queue has its maximum potential,
 i.e. the moments when the traffic light turns green for the different phases. For each street, and for each of its lanes, a vehicle is considered to be part of the
 queue at the time of the corresponding green light if it satisfies the following conditions:
 
@@ -446,4 +446,33 @@ queue at the time of the corresponding green light if it satisfies the following
 
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
+<img src="pictures/queue.png" width="100%"/>
 
+To extract the above, we run the following commands
+
+```
+queue_info_13_12 = analysis_13_12.get_queue_info(speed_threshold, gap_threshold)
+queue_info_43_42 = analysis_43_42.get_queue_info(speed_threshold, gap_threshold)
+```
+
+The output of the above methods is a list of lists, where each nested list corresponds to a traffic light phase,
+and has L+1 dictionaries inside, corresponding to the total number of lanes. Each nested dictionary has the 
+keys `Lane`,`Queued Vehicles`,`Queue Length`,`Queued IDs`,`Dissipation Duration`, which respectively correspond
+to the lane in question, the number of queued vehicles at the time of green light, the queue length in meters, the
+ids of the queued vehicles, and the queue dissipation duration in seconds. The latter is the time it
+takes for all the queued vehicles to move past the green light pole. If only a part of the queue dissipates before the
+light turns red again, the queue dissipation duration is then equal to the duration of the green light. For example,
+
+```
+queue_info_43_42[6] = [
+                       {
+                        "Lane": 0,
+                        "Queued Vehicles": 6,
+                        "Queue Length": 38.0,
+                        "Queued IDs": [2192, 2166, 2139, 2067, 2029, 1784],
+                        "Dissipation Duration": 11.0
+                        }
+                       ]
+```
+
+This concludes the usage walkthrough of the tool.
