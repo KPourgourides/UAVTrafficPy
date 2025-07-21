@@ -2,6 +2,25 @@
 Python tool for analysis and visualization of UAV-based traffic data obtained in urban environments. 
 
 # How to use UAV-traffic-tool for intersections
+
+## Table of contents
+- [Introduction](#introduction)
+- [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
+- [Setting up the analysis](#setting-up-the-analysis)
+  - [Defining the intersection under study](#defining-the-intersection-under-study)
+  - [Acquiring preliminary information on the intersection](#acquiring-preliminary-information-on-the-intersection)
+- [Analysis & Visualization](#analysis--visualization)
+  - [Loading the tool](#loading-the-tool)
+  - [Filtering the data](#filtering-the-data)
+  - [Categorizing the trajectories based on their entry and exit points in the intersection](#categorizing-the-trajectories-based-on-their-entry-and-exit-points-in-the-intersection)
+  - [Separating the data based on od pairs](separating-the-data-based-on-od-pairs)
+  - [Extracting lane-wise information](#extracting-lane-wise-information)
+  - [Extracting traffic light phases & cycles](#extracting-traffic-light-phases--cycles)
+      - [Traffic light phases](#traffic-light-phases)
+      - [Traffic light cycles](#traffic-light-cycles)
+  - [Extracting relative dynamic gaps](#extracting-relative-dynamic-gaps)
+  - [Extracting queue-wise information](#extracting-queue-wise-information)
+
 ## Introduction
 
 This section provides a detailed walkthrough on how to use `UAV-Traffic-Tool` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/usage%20example/intersection_pipeline_example.ipynb).
@@ -274,9 +293,9 @@ We can also optionally pass some extra arguments to the `get_lane_info()` method
 For example, for Panepistimiou Ave., we can potentially only visualize the distribution for od pair `(1,3`, as vehicles with od pairs `(1,2)` will at some point turn into Omirou Str.), `avg_d_from_bbox_edge` (boolean, whether the average value or all the values of the perpendicular distance are plotted in the distribution per vehicle), and `custom_boundaries` (if we are unsatisfied with the boundaries provided by the clustering algorithm, we can se custom boundaries through inputs). The default values for these optional arguments are `200`,`None`, `False` and `False`.
 
 
-## Extracting traffic light phases & cycles
+### Extracting traffic light phases & cycles
 
-### Traffic Light Phases
+#### Traffic Light Phases
 
 Another useful task when it comes to signalized intersections is studying the different traffic light phases, i.e. when the light becomes green, for how long it stays green, when it turns red, and when it goes to green
 again. In order to achieve that for a certain traffic light, a virtual detector 
@@ -369,7 +388,7 @@ If the recording had stopped before the completion of a phase, the appropriate k
 `None`. For example, if the recording stopped while the traffic light was red, the key `Duration OFF` cannot be
 calculated, and the same holds for key `Phase Duration`.
 
-### Traffic Light Cycles
+#### Traffic Light Cycles
 
 We combine `tlp_13_12`, `tlp_43_42`  in order to get the information on the full cycles, i.e. the
 subsequent completion of the 2 individual phases. To do so, we run the following command
@@ -392,7 +411,7 @@ cycles[0] = {
             }
 ```
 
-## Extracting relative dynamic gaps 
+### Extracting relative dynamic gaps 
 
 In order to extract vehicle ids sorted from last to first according to their direction of motion, and the corresponding gaps between them per step of the `time_axis`, we must run the following commands
 
@@ -434,7 +453,7 @@ gaps_13_12[time_axis.index(tlp_13_12[7].get("Green"))] = {
 The value `None` is for when there are no vehicles in the lane, and the value `-1.0` corresponds to lane leaders
 that have no vehicles in front of them.
 
-## Extracting queue-wise information
+### Extracting queue-wise information
 
 We calculate the queue-wise information when the queue has its maximum potential,
 i.e. the moments when the traffic light turns green for the different phases. For each street, and for each of its lanes, a vehicle is considered to be part of the
