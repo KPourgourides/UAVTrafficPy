@@ -1284,3 +1284,62 @@ class Wiz:
             plt.tight_layout()
             plt.grid(True)
             plt.show(close=True)
+        
+        def draw_traffic_light_phases(self, od_1:str, od_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
+            """
+            description
+            -----------
+            this function draws the normalized/unnormalized flows of the intersection to
+            visualize the traffic light cycles
+
+            arguments
+            ---------
+            1) name of origins-destinations for the first flow
+            2) name of origins-destinations for the second flow
+            3) the normalized first flow
+            4) the normalized second flow
+            5) the unnormalized first flow
+            6) the unnormalized second flow
+            7) (optional) bool; plot the normalized first flow
+            8) (optional) bool; plot the normalized second flow
+            9) (optional) bool; plot the unnormalized first flow
+            10) (optional) bool; plot the unnormalized second flow
+            11) (optional) bool; zoom in activate the get_cursed_id() function to spot vehicles that cause problematic counts 
+                if above is True:
+                    12) lower limit of zoom
+                    13) higher limit of zoom
+
+            output
+            ------
+            plot of the information written in the description 
+            """
+            _fig,ax=plt.subplots(nrows=1,ncols=1,figsize=(18,5),dpi=300)
+
+            ax.set_facecolor('black')
+            ax.set_title('Flow vs Time')
+            ax.set_xlabel('Time (s)')
+            ax.set_xticks(np.arange(0,self.time_axis[-1],25))
+
+            if plt_norm_flow_1:
+                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{od_1}',linewidth=2)
+            if plt_norm_flow_2:
+                ax.plot(self.time_axis,norm_flow_2,color='gold',alpha=1,label=f'{od_2}',linewidth=3)
+            if plt_flow_1:
+                ax.plot(self.time_axis,flow_1,color='violet',alpha=0.4)
+            if plt_flow_2:
+                ax.plot(self.time_axis,flow_2,color='gold',alpha=0.4)
+
+            if plt_flow_1 is False and plt_flow_2 is False:
+                ax.set_ylim(-0.1,2)
+                ax.set_yticks([0,1],['Detector OFF (0)','Detector ON (1)'])
+            else:
+                ax.set_ylabel('Counts')
+
+            if activate_zoom:
+                ax.set_xlim(low_lim,high_lim)
+                ax.set_xticks(np.arange(low_lim,high_lim+1,1))
+
+            ax.axhline(y=0,color='k',linewidth=3)
+            plt.legend()
+            plt.tight_layout()
+            plt.show(close=True)
