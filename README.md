@@ -1,5 +1,11 @@
 # UAV-Traffic-Tool
-Python tool for analysis and visualization of UAV-based traffic data obtained in urban environments. 
+
+The recent introduction of drone-based data collection methods in Intelligent
+Transportation Systems research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
+sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
+network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
+resolution, which greatly benefits data analysis. `UAV-Traffic-Tool` is an open-source Python-based software dedicated to detailed and scientific analysis and visulization of 
+drone-based traffic data, especially regarding signalized intersections in urban networks.
 
 # How to use UAV-traffic-tool for intersections
 
@@ -104,7 +110,7 @@ Initially, we must locate the intersection we want to work with by using satelli
 turning directions. In this document, the signalized intersection between Panepistimiou Ave. and Omirou Str. in Athens, Greece is examined.
 
 
-<img src="pictures/intersection.png" width="100%"/>
+<img src="pictures/intersection_athens.png" width="100%"/>
 
 In this case, for Panepistimiou Ave., there are 5 lanes in total (4 normal + 1 bus lane), and drivers can either
 drive forward or turn leftwards into Omirou Str. Only 4 lanes are visible above, as the picture is from 2024, while the recording dataset was collected in 2018, when there were 5 lanes.
