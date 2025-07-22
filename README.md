@@ -234,7 +234,7 @@ be normally distributed around the center of each existent lane. For example, to
 
 Where `flow_direction` is one of `['up','down','left','right]`; flow towards the north corresponds to `'up'`, towards the south corresponds to `down`, etc.. Initially, we will see this histogram
 
-<img src="pictures/raw_lanes.png" width="100%"/>
+
 
 Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 5)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
 
