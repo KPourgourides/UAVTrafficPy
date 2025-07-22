@@ -19,7 +19,7 @@ drone-based traffic data, especially regarding signalized intersections in urban
   - [Loading the tool](#loading-the-tool)
   - [Filtering the data](#filtering-the-data)
   - [Categorizing the trajectories based on their entry and exit points in the intersection](#categorizing-the-trajectories-based-on-their-entry-and-exit-points-in-the-intersection)
-  - [Separating the data based on od pairs](separating-the-data-based-on-od-pairs)
+  - [Separating the data based on od pairs](#separating-the-data-based-on-od-pairs)
   - [Extracting lane-wise information](#extracting-lane-wise-information)
   - [Extracting traffic light phases & cycles](#extracting-traffic-light-phases--cycles)
       - [Traffic light phases](#traffic-light-phases)
