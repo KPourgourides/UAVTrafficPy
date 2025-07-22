@@ -255,7 +255,7 @@ flow_info_b = analysis_b.get_flow_info(detector_position_b)
 ```
 
 Where the `detector_position` argument is a tuple with the coordinates (y,x) of the virtual detector. The
-result of the `get_flow_info()` methods is a dictionary of dictionaries, where each nested dictionary has the keys
+result of the `get_flow_info()` methods is a list of dictionaries, where each nested dictionary has the keys
 `time stamp` *(float)*, `flow` *(integer)* and `id` *(list)*, which respectively correspond to the moment of measurement with respect to
 the `time_axis`, the number of registered counts between the current and previous time stamp, and
 the IDs of the vehicles responsible for the registered count hits. The `id` list is empty if 0 counts were
