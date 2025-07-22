@@ -565,13 +565,14 @@ class Wiz:
                 od_pairs=self.get_od_pairs()
                 flat_d_from_edge = [element for i,vec in enumerate(d_from_edge) for element in vec if od_pairs[i] in valid_od_pairs]*(not avg_d_from_bbox_edge) + [float(np.mean(vec)) for i,vec in enumerate(d_from_edge) if od_pairs[i] in valid_od_pairs]*(avg_d_from_bbox_edge)
 
-            plt.figure(figsize=(10,2))
+            plt.figure(figsize=(10,3))
             plt.hist(flat_d_from_edge, color='blue', bins=nbins, density=True)
             plt.xlabel('Distance from bbox edge (m)')
             plt.ylabel('Normalized Occurences')
             plt.xticks(np.arange(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20),2))
             plt.xlim(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20))
             plt.title("Lane Distribution")
+            plt.tight_layout()
             plt.show(close=True)
 
             n_clusters = int(input('How many lanes?'))
@@ -596,7 +597,7 @@ class Wiz:
                 boundaries =[low_lim]+boundaries_.tolist()+[high_lim]
                 lane_boundaries = [round(value,ndigits=2) for value in boundaries]
 
-            plt.figure(figsize=(8.75,3))
+            plt.figure(figsize=(10,3))
             plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red',density=True)
             for boundary in lane_boundaries:
                 plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
@@ -1285,7 +1286,7 @@ class Wiz:
             plt.grid(True)
             plt.show(close=True)
         
-        def draw_traffic_light_phases(self, od_1:str, od_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
+        def draw_traffic_light_phases(self, legend_1:str, legend_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
             """
             description
             -----------
@@ -1321,9 +1322,9 @@ class Wiz:
             ax.set_xticks(np.arange(0,self.time_axis[-1],25))
 
             if plt_norm_flow_1:
-                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{od_1}',linewidth=2)
+                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{legend_1}',linewidth=2)
             if plt_norm_flow_2:
-                ax.plot(self.time_axis,norm_flow_2,color='gold',alpha=1,label=f'{od_2}',linewidth=3)
+                ax.plot(self.time_axis,norm_flow_2,color='gold',alpha=1,label=f'{legend_2}',linewidth=3)
             if plt_flow_1:
                 ax.plot(self.time_axis,flow_1,color='violet',alpha=0.4)
             if plt_flow_2:
