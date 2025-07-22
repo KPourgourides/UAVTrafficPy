@@ -309,7 +309,7 @@ If the recording had stopped before the completion of a phase, the appropriate k
 `None`. For example, if the recording stopped while a traffic light was red, the key `Duration OFF` cannot be
 calculated, and the same holds for key `Phase Duration`.
 
-#### Traffic light lycles
+#### Traffic light cycles
 
 Next, we combine `tlp_a`, `tlp_b`  in order to get the information on the full cycles, i.e. the
 subsequent completion of the 2 individual phases. To do so, we run the following command
