@@ -4,7 +4,7 @@ The recent introduction of drone-based data collection methods in Intelligent
 Transportation Systems research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
-resolution, which greatly benefits data analysis. `UAV-Traffic-Tool` is an open-source Python-based software dedicated to detailed and scientific analysis and visulization of 
+resolution, which greatly benefits data analysis. `UAV-Traffic-Tool` is an open-source Python-based software dedicated to detailed scientific analysis and visulization of 
 drone-based traffic data, especially regarding signalized intersections in urban networks.
 
 # How to use UAV-traffic-tool for intersections
@@ -14,11 +14,11 @@ drone-based traffic data, especially regarding signalized intersections in urban
 - [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
 - [Setting up the analysis](#setting-up-the-analysis)
   - [Defining the intersection under study](#defining-the-intersection-under-study)
-  - [Acquiring preliminary information on the intersection](#acquiring-preliminary-information-on-the-intersection)
+  - [Acquiring important spatio-temporal information on the intersection](#acquiring-important-spatio-temporal-information-on-the-intersection)
 - [Analysis & Visualization](#analysis--visualization)
   - [Loading the tool](#loading-the-tool)
   - [Filtering the data](#filtering-the-data)
-  - [Categorizing the trajectories based on their entry and exit points in the intersection](#categorizing-the-trajectories-based-on-their-entry-and-exit-points-in-the-intersection)
+  - [Categorizing the trajectories based on their routes](#categorizing-the-trajectories-based-on-their-routes)
   - [Separating the data based on od pairs](#separating-the-data-based-on-od-pairs)
   - [Extracting lane-wise information](#extracting-lane-wise-information)
   - [Extracting traffic light phases & cycles](#extracting-traffic-light-phases--cycles)
@@ -35,148 +35,104 @@ This section provides a detailed walkthrough on how to use `UAV-Traffic-Tool` pr
 
 ## Acquiring the data in the correct format
 
-In order to use the tool properly in later stages, the first and most important task of all is to acquire the drone-based
-traffic data we want to analyze in the correct format. Different datasets use different formats, and oftentimes
-they are not very intuitive for the sake of compactness. For this reason, the tool was designed
-to take the input data in a universal and well structured format, which will be explained in detail below.
-Thus, we might have to do some data pre-processing before being able to successfully deploy the tool for
-their research.
+In order to use the tool properly in later stages, the first and most important task is to acquire the drone-based
+data we want to analyze in the **correct format**. Different datasets use different formats which are oftentimes
+unclear for the sake of compactness. Because of this, the tool was designed
+to take the input data **only in one format**. Thus, we might have to do some data pre-processing before being able to successfully deploy the tool for
+our research.
 
-Usually, drone-based traffic datasets include information for the different vehicles in the recording,
-such as the id and the vehicle type (e.g., car, motorcycle, bus). Additionally, they also include the positions, instantaneous speeds and accelerations, all as a functions of time. 
+Drone-based traffic datasets usually include information on the different individual vehicles in the recording,
+such as the **IDs** (unique numbers) and the **types** (e.g., car, motorcycle, bus). Additionally, they also include the **positions** and instantaneous **speeds** labeled by **time**.
 
-**Note:** *The positions are typically 2 dimensional coordinates, and they are always given with respect to a reference system; for example, this system could be the World Geodetic System 84, which uses latitude and lognitude coordinates.*
+**Note:** *The positions are 2 dimensional coordinates (y,x), and are always given with respect to a reference system; for example, the World Geodetic System 84, which uses latitude and lognitude.*
 
-The correct format in which to give these data as
-an input to the tool is to create a dictionary that contains different keys, where each key corresponds to a list.
-Each list corresponds to a piece of the information mentioned above per vehicle, and either includes scalar values (such as ids and types, which
-remain constant throughout the dataset), or lists (such as position, speed, which evolve through
-time).
-
-**Note:** *Acceleration is not needed as an input to the tool, as it can be extracted later through time differentiation of speed, which is almost always provided.*
-
-An example of the correct data format is
+`UAV-Traffic-Tool` takes the above data as input in order to perform analysis and visualization tasks. The correct way to pass the data to `UAV-Traffic-Tool` is to create a **dictionary**, where each key corresponds to a different piece of information (e.g., IDs, type, position, speed, time). For example,
 
 ```
-data = {'id' : id, 'vtype' : vtype, 'x' : x, 'y' : y, 'time' : t, 'speed' : u}
+data = {'id':id, 'vtype':vtype, 'x':X, 'y':Y, 'time':T, 'speed':U}
 ```
 
-An example of what they keys could correspond to
+Each key of this dictionary corresponds to a list. For **id** and **vtype** the lists contain integer and string elements which respectively correspond to a unique number and a type for each vehicle. For example,
 
-`data.get('id') =` [0,1,...,N] $\to$ N+1 total vehicles
+```
+data.get('id') = [0,1,...,N]
 
-`data.get('vtype') =` ['Car','Bus',...,'Taxi']
+data.get('vtype') = ['Car','Motorcycle',...,'Bus']
+```
 
-`data.get('x') =` $[x^0,x^1,...,x^N]$ $\to$ Each element is a list
+Where N+1 the total number of vehicles. The rest of the dictionary keys also correspond to lists that have more lists inside, one per vehicle in the dataset. The elements of each nested list correspond to different time stamps, and their length varies based on how much time the corresponding vehicle spent in the recording. For example,
 
-`data.get('y') =` $[y^0,y^1,...,y^N]$ $\to$ Each element is a list
+`data.get('time')` = $[T^0,T^1,...,T^N]$
 
-`data.get('time') =` $[t^0,t^1,...,t^N]$ $\to$ Each element is a list
+`data.get('x')` = $[X^0,X^1,...,X^N]$
 
-`data.get('speed') =` $[u^0,u^1,...,u^N]$ $\to$ Each element is a list
+`data.get('y')` = $[Y^0,Y^1,...,Y^N]$
 
-In order to undestand the content of the keys for a vehicle with id i, an example is given below in the case where the drone camera is 30FPS and the vehicle spent 1 second in the recording
+`data.get('speed')` = $[U^0,U^1,...,U^N]$
 
-`index_i = data.get('id').index(i)`
+To understand the content of the nested lists, we see below how they would look like for a vehicle with id $i$
 
-`data.get('id')[index_i]` = $i$
+$T^i$  = $[t_0,...,t_k]^i$
 
-`data.get('vtype')[index_i] = 'Car'`
+$X^i$  = $[x(t_0),...,x(t_k)]^i$
 
-`data.get('time')[index_i]` = $t^i$ = [0,1,...,29]
+$Y^i$  = $[y(t_0),...,y(t_k)]^i$
 
-`data.get('x')[index_i]` = $x^i$ = $[x(0),x(1),...,x(29)]^i$
+$U^i$  = $[u(t_0),...,u(t_k)]^i$
 
-`data.get('y')[index_i]` = $y^i$ = $[y(0),y(1),...,y(29)]^i$
+Where $k+1$ the total number of time steps *(or measurements)* of the vehicle in the recording. The frequency of the time steps *(how many of them in 1 second)* is equal to the refresh rate of the drone's camera. 
 
-`data.get('speed')[index_i]` = $u^i$ = $[u(0),u(1),...,u(29)]^i$
-
-The time list includes the time stamps when the vehicle was in the recording, with respect to
-the beginning of the recording, which is usually set to 0 seconds. The rest of the lists include the values of
-the corresponding quantities at each time stamp. 
-
-When a drone-based traffic dataset is converted to the format described above, the user is ready to use
-the tool to conduct their analysis and visualization tasks for an intersection (or link) of their choice. An example on
-how to do the above data transformations on the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py).
+When we convert a drone-based traffic dataset in the format described above, we are ready to use
+`UAV-Traffic-Tool` to conduct our analysis and visualization tasks for an intersection of our choice. An example on
+how to do the above data transformations on the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository.
 
 ## Setting up the analysis
 
-After we have transformed the original data (also referred to as `raw_data`) to the correct format by following
-the instructions of the previous, we can proceed further with analysis and visualization tasks.
-
 ### Defining the intersection under study
 
-Initially, we must locate the intersection we want to work with by using satellite imagery software, for example GoogleMaps, and spot key information, such as the different movement and
-turning directions. In this document, the signalized intersection between Panepistimiou Ave. and Omirou Str. in Athens, Greece is examined.
-
+Initially, we must identify the intersection we want to work with through satellite imagery software, for example GoogleMaps, and spot important information such as the different movement and
+turning directions. In this walkthrough, we study the signalized intersection between Panepistimiou Ave. and Omirou Str. in Athens, Greece, which is pictured below.
 
 <img src="pictures/intersection_athens.png" width="100%"/>
 
-In this case, for Panepistimiou Ave., there are 5 lanes in total (4 normal + 1 bus lane), and drivers can either
-drive forward or turn leftwards into Omirou Str. Only 4 lanes are visible above, as the picture is from 2024, while the recording dataset was collected in 2018, when there were 5 lanes.
+For Panepistimiou Ave., there are 5 lanes in total *(4 normal + 1 bus lane)*, and drivers can either
+drive forward or turn leftwards into Omirou Str.. Only 4 lanes are visible above as the picture is from 2024, while the recording was conducted in 2018, when there was an extra lane. For Omirou Str., there is only 1 lane, and drivers can either drive forward or turn rightwards into Panepistimiou Ave..
 
-For Omirou Str., there is only one lane, and drivers can either drive forward
-or turn rightwards into Panepistimiou Ave..
+### Acquiring important spatio-temporal information on the intersection
 
-### Acquiring preliminary information on the intersection
+Before proceeding further, we must acquire some important spatio-temporal information on the intersection we want to work with, which will serve as a stepping stone for later.
 
-Before proceeding further, we must acquire some preliminary spatio-temporal information on the intersec-
-tion, which will be a stepping stone for later.
+The first task is to define the status of a boolean constant called `wgs` which stands for Word Geodesic System. This constant will let
+the tool know whether it is about to handle geo-spatial position coordinates in the
+case where `wgs is True`, or coordinates in another reference system *(e.g., camera pixels)*, if `wgs is False`. This differentiation is important because some mathematical formulas for distances have altered form when using geo-spatial position coordinates due to Earth's curve.
 
-The first task is to define the status of a boolean constant called `wgs` (Word Geodesic System), which will let
-the tool know whether it is about to handle geo-spatial (i.e. latitude and longitude coordinates) information, in the
-case `wgs is True`, or position coordinates in another reference system (e.g., coordinates for camera pixels), if `wgs is False`.
-
-
-The next piece of information we need to gather is the `bbox ` (bounding box), which is essentially four sets of spatial coordinates that
-define (are the vertices of) a box which encloses the intersection. It is important to note that the box edges should be parallel to the roads of the intersection. 
-The `bbox` will help with reducing the dataset to include information only
-about the vehicles which belong to the area of interest, i.e. keep data for the vehicles that have traversed the
-intersection at least once at any point during the recording. Data for the rest of the vehicles will be
-discarded. The `bbox` has the following form
+The next piece of information we need to gather is the `bbox ` *(bounding box)*, which is essentially a list of four sets of spatial coordinates that
+define *(are the vertices of)* a box that encloses the intersection. It is important that the box edges perpendiculary intersect the components of *(roads that make up)* the intersection. 
+The tool will use the `bbox` to only keep data for vehicles that have traversed it at some point in the recording, and discard the rest that are irrelevant to the intersection, thus reducing the original dataset and making future analysis & visualization steps quicker. The `bbox` has the following form
 
 ```
 bbox = [(ll_y,ll_x),(lr_y,lr_x),(ur_y,ur_x),(ul_y,ul_x)]
 ```
 
-Where ll,lr,ur, and ul correspond to lower left, lower right, upper right, upper left respectively. If `wgs is
-True`, these coordinates can be picked up from GoogleMaps; if not, we must provide appropriate coordinates
+Where ll, lr, ur, and ul respectively correspond to lower left, lower right, upper right, and upper left. If `wgs is
+True`, we can pick up these coordinates from GoogleMaps; if not, we must provide appropriate coordinates
 according to the reference system for positions. 
 
-Additionally, we must provide a tuple with the center coordinates of the intersection
+Additionally, we must provide a tuple with the center coordinates of the intersection, which will be used for some specific tasks later.
 
 `intersection_center = (y_center,x_center)`
 
-The last piece of preliminary information is a global `time_axis` for the recording. For example, if the recording
-lasted for 3 minutes, the global `time_axis` should start at 0 seconds and end at 180 seconds. We
-obtain the start and end of the `time_axis` in the following fashion
+The last piece of information we need to gather is the `time_axis` of the recording. It is a list that contains all the time steps of the recording, independent of when individual vehicles entered or exited the intersection. Mathematically, the individual time axes of the vehicles, $[T^0,...,T^N]$, are subsets of the global `time_axis`. It is defined as
 
-```
-start = min(min(vector) for _i,vector in enumerate(raw_data.get('time')))
-end = max(max(vector) for _i,vector in enumerate(raw_data.get('time')))
-```
+`time_axis`  = $[t^{\text{start}},...,t^{\text{end}}]$
 
-The length of the `time_axis` (i.e. the update period of measurements in it) can be set by the user to correspond
-the refresh period of the measurements of the recording, or any other integer multiple of that. Also, the decimal
-points in the values of the `time_axis` should correspond to that of the original measurements from the recording.
-Finally, we define the `time_axis`  through the following commands
+The length *(the update period of measurements)* of the `time_axis` is equal to the refresh rate of the drone's camera.
 
-```
-time_axis = np.arange(start,end+update_period,update_period)
-time_axis = list(np.round(time_axis,decimals=correct_decimals))
-```
-
-Once we have gathered all the above information, it should be stored in a dictionary in
-the following fashion
+Once we have gathered all the above information, we store it in a dictionary in the following fashion
 
 
 ```
-spatio_temporal_info = {
-                        'wgs' : wgs,
-                        'bbox' : bbox,
-                        'intersection center' : intersection_center',
-                        'time axis' : time_axis
-                        }                  
+spatio_temporal_info = {'wgs':wgs, 'bbox':bbox, 'intersection center':intersection_center', 'time axis':time_axis}                  
 ```
 
 
@@ -184,83 +140,76 @@ spatio_temporal_info = {
 
 ### Loading the tool
 
-To load the tool, we run the following commands
+To load the tool in the Python environment, we run the following commands
 
 ```
 import mytool.uav_traffic_tool as uav
 tool = uav.Wiz()
 ```
 
-In order to load classes and their methods, we simply run the following
+To set up the analysis and visualization classes, we simply run the following
 
 ```
-class = tool.class_name(args)
-method = class.method_name(args)
+analysis = tool.analysis(raw_data,spatio_temporal_info)
+visualization = tool.visualization(raw_data,spatio_temporal_info)
 ```
 
 ### Filtering the data
 
-Before proceeding with the rest of the analysis, we can optionally apply some filters to the data
-to flush out parked vehicles. A vehicle is considered to be parked when it spent more than 95% of its presence in the dataset being immovable. 
-This is achieved when we run the following command
+Before proceeding, we can optionally apply some filters to the original data dictionary `raw_data`
+to flush out parked vehicles, as they do not contribute in the traffic. A vehicle is considered to be parked if it spent more than 95% of its presence in the recording being immovable. 
+This is achieved with the following command
 
 `data = tool.dataloader(raw_data,spatio_temporal_info).get_filtered_data()`
 
-Optionally, we can also pass an argument called `cursed_ids`, where we can list any vehicle ids that we
-desire to have explicitly removed from the dataset, even if they are not considered to be parked.
+We can also optionally pass an argument to `get_filtered_data()` called `cursed_ids`, where we can list any vehicle IDs that we
+desire to have explicitly removed from the dataset, even if they do not satisfy the parking condition.
 
-### Categorizing the trajectories based on their entry and exit points in the intersection
+### Categorizing the trajectories based on their routes
 
-The first task is to group trajectories based on their origin (o) and destination (d), i.e. entry and exit points within
+The first task is to categorize the different vehicle trajectories based on their routes, or more specifically, based on their origin (o) and destination (d) within
 the intersection. This will be important for later steps when we want to separate the data based on their od pair
-and conduct separate analyses.
+to conduct separate analyses.
 
-Initially, the intersection is split into 4 triangles using the `intersection_center` and the `bbox `. Each triangle is labeled with numbers 1 through 4, starting
-from the lower part of the intersection and proceeding clockwise. For each vehicle, an od pair is assigned; for
-example, if a vehicle enters the intersection within triangle 1 and exits it within triangle 3 (i.e. driving forward on
-Panepistimiou Ave.), then the assigned od pair will be `(1,3)`. We achieve this by running the following commands
+To achieve this, the intersection is split into 4 triangles using the `intersection_center` and the `bbox`. Each triangle is labeled with numbers 1 through 4, starting
+from the lower part of the intersection and proceeding clockwise. An od pair is assigned for each vehicle. For
+example, if a vehicle enters the intersection within triangle 1 and exits it within triangle 3 *(driving forward on
+Panepistimiou Ave.)*, then the assigned od pair will be `(1,3)`. We do this by running the following command
 
-```
-analysis = tool.analysis(data,spatio_temporal_info)
-od_pairs = analysis.get_od_pairs()
-```
+`od_pairs = analysis.get_od_pairs()`
 
-For our intersection, the correct od pairs are `(1,3)` (Driving forward on Panepistimiou Ave.),
-`(1,2)` (Initially driving on Panepistimiou Ave. and then turning leftwards into Omirou Str.), `(4,3)` (Initially driving on
-Omirou Str. and then turning rightwards into Panepistimiou Ave.), and finally `(4,2)` (Driving forward on Omirou Str.).
+For our intersection, the correct od pairs are `(1,3)` *(Driving forward on Panepistimiou Ave.)*,
+`(1,2)` *(Initially driving on Panepistimiou Ave. and then turning leftwards into Omirou Str.)*, `(4,3)` *(Initially driving on
+Omirou Str. and then turning rightwards into Panepistimiou Ave.)*, and finally `(4,2)` *(Driving forward on Omirou Str.)*.
 
-We can visualize the trajectories of the different od groups with different colors for clarity by
-running the following commands
+We can visualize the vehicle trajectories with different colors based on their od pair for clarity by
+running the following command
 
-```
-visualization = tool.visualization(data,spatio_temporal_info)
-visualization.draw_trajectories_od(valid_od_pairs)
-```
+
+`visualization.draw_trajectories_od(valid_od_pairs)`
+
+The argument `valid_od_pairs` is a list that contains the correct od pairs. In our case, it would be `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`. The output is
 
 <img src="pictures/trajectories.png" width="100%"/>
-
-The argument `valid_od_pairs` is a list that must contain the correct od pairs. In our case, it would be `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`.
-This is done to avoid visualizing any vehicles that have unwanted od pairs. This can happen, for
-example, when a motorcycle is driving in the opposite direction of normal traffic on a pavement to deliver a package. 
-
-The trajectory categorization can also help us with figuring out the turn ratios for each street
+ 
+This trajectory categorization is also helpful when it comes to figuring out the turn ratios for each street. In our case, they are depicted below
 
 <img src="pictures/turn_ratios.png" width="100%"/>
 
-
 ### Separating the data based on od pairs
 
-The next step is to separate the data into smaller sub-dictionaries based on the different trajectory origins. Essentially,
+The next step is to separate the data dictionary into smaller sub-dictionaries based on the different trajectory origins. Essentially,
 the objective is to isolate data which belong to the same traffic light phase, i.e. have the same origin within the
-intersection. Their destination need not be the same. In our case, we must make two data sub-dictionaries
+intersection. **Their destination need not be the same**. In our case, we must make two data sub-dictionaries
 for od pairs `[(1,3),(1,2)]` and `[(4,3),(4,2)]` respectively. To do this, we run these commands
 
 ```
 data_13_12 = analysis.get_od_data(desirable_pairs=[(1,3),(1,2)])
 data_43_42 = analysis.get_od_data(desirable_pairs=[(4,3),(4,2)])
 ```
-In the following steps of the analysis and visualization process, the methods are applied separately on the
-two sub-dictionaries. To do this, we activate separate analysis and visualization classes with the following
+
+In the following steps of the analysis and visualization process, the methods we will discuss are applied separately on the
+two data sub-dictionaries. To do this, we set up separate analysis and visualization classes with the following
 commands
 
 ```
