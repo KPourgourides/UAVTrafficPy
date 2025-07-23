@@ -302,12 +302,17 @@ spective traffic light turned green, the duration of green, the moment it turned
 entire phase duration *(green until next green)*, all in seconds. For example,
 
 ```
-tlp_a[0] = {'Green': 10.0, 'Duration ON': 60.0, 'Red': 70.0, 'Duration OFF': 32.0, 'Phase Duration': 92.0}
+tlp_a[0] = {'Green':9.0, 'Duration ON':61.0, 'Red':70.0, 'Duration OFF':32.0, 'Phase Duration':93.0}
 ```
 
 If the recording had stopped before the completion of a phase, the appropriate keys will have the value
 `None`. For example, if the recording stopped while a traffic light was red, the key `Duration OFF` cannot be
-calculated, and the same holds for key `Phase Duration`.
+calculated, and the same holds for key `Phase Duration`. Below we have a visualization for the average duration of the green light, red light, and the entire phase
+for Panepistimiou Ave. and Omirou Str.
+
+<img src="pictures/trafficlightspanepistimiou.png" width="100%"/>
+<img src="pictures/trafficlightsomirou.png" width="100%"/>
+
 
 #### Traffic light cycles
 
@@ -323,8 +328,12 @@ second phase started)*, the moment the cycle stops *(i.e. the second phase goes 
 the cycle restarts *(i.e. the first phase has re-started)*, all in seconds. For example,
 
 ```
-cycles[0] = {"Start": 10.0, "Break": 70.0, "Continue": 76.0, "Stop": 96.0, "End": 102.0}
+cycles[0] = {'Start': 9.0, 'Break': 70.0, 'Continue': 76.0, 'Stop': 96.0, 'End': 102.0}
 ```
+
+Below we have the visualization of the first cycle in the dataset
+
+<img src="pictures/trafficcycles.png" width="100%"/>
 
 ### Extracting relative dynamic gaps 
 
