@@ -280,7 +280,7 @@ is also a list, but this time with the normalized and grouped hits per step of t
 visualization.draw_traffic_light_phases(legend_a,legend_b,norm_flow_a,norm_flow_b,flow_a,flow_b)
 ```
 
-<img src="pictures/traffic_phases_raw.png" width="100%"/>
+<img src="pictures/traffic_phases.png" width="100%"/>
 
 Here, `legend_a`,`legend_b` are strings that will serve as legends in the plot to name the different flows *(e.g., `legend_a`='Panepistimiou Ave.')*. If there are any count hits that visibly violate the red traffic light *(e.g., a violet count hit while a golden phase in on)*, we can find the respective id in order to remove it from the dataset. To do this, we run one of the two commands, depending on which data sub-dictionary the violating vehicle belongs to
 
@@ -333,7 +333,7 @@ cycles[0] = {'Start': 9.0, 'Break': 70.0, 'Continue': 76.0, 'Stop': 96.0, 'End':
 
 Below we have the visualization of the first cycle in the dataset
 
-<img src="pictures/trafficcycless.png" width="100%"/>
+<img src="pictures/trafficcycles.png" width="100%"/>
 
 ### Extracting relative dynamic gaps 
 
