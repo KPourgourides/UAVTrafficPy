@@ -19,7 +19,7 @@ To install `UAV-Traffic-Tool`, you can clone the repository and install all the 
 
 `pip install -r requirements.txt`
 
-You need to run this command in the terminal from the `UAV-Taffic-Tool` folder. You are now ready to use the software!
+You need to run this command in the terminal from the `UAV-Taffic-Tool` folder. You are now *almost* ready to use the software!
 
 In order to use the functions provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
 A fraction of this dataset exists in [this location]() in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
