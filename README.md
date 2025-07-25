@@ -50,9 +50,11 @@ detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-
 
 This section provides a detailed walkthrough on how to use `UAV-Traffic-Tool` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/usage%20example/intersection_pipeline_example.ipynb).
 
-**Warning**: *in this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection, data of which are contained in this dataset. This intersection has a certain topology, entry and exit points, possible routes, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications.*
+>[!IMPORTANT]
+> In this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection, data of which are contained in this dataset. This intersection has a certain topology, entry and exit points, possible routes, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications in the inputs of the methods described below.
 
-**Note**: I recommended using a Python-based Jupyter Notebook to work with the tool as it acts as a pipeline to complete a number of subsequent tasks that each have their own separate results and outputs.
+>[!IMPORTANT]
+> I recommended using a Python-based Jupyter Notebook to work with the tool as it acts as a pipeline to complete a number of subsequent tasks that each have their own separate results and outputs.
 
 ### Acquiring the data in the correct format
 
