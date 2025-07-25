@@ -11,6 +11,8 @@ drone-based traffic data, specifically focusing on signalized intersections in u
 It provides users with data-driven methods to extract information on lanes (number, spatial extend, distribution of vehicles in them), traffic light phases (moments traffic lights
 turn to green or red and their respective durations), queues (number of queued vehicles, queue length, queue dissipation time). Users also have the ability to extract and visualize a number of physical quantities starting with just vehicle trajectories, such as speed, acceleration and cumulative distance travelled. Apart from intersections, these tools can be of course applied to other traffic network components such as simple road links. Users also have the ability
 
+`UAV-Traffic-Tool` was tested with Python >=3.12 on Windows.
+
 # How to use UAV-traffic-tool for intersections
 
 ## Table of contents
