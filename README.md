@@ -1,15 +1,34 @@
 # UAV-Traffic-Tool
 
-The recent introduction of drone-based data collection methods in Intelligent
-Transportation Systems research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
+The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
-resolution, which greatly benefits data analysis. `UAV-Traffic-Tool` is an open-source Python-based software dedicated to detailed scientific analysis and visulization of 
-drone-based traffic data, especially regarding signalized intersections in urban networks.
+resolution. This has the potential to transform the landscape of data science in transportation. 
 
-# How to use UAV-traffic-tool for intersections
+`UAV-Traffic-Tool` is an open-source, Python-based software package dedicated to scientific analysis and visulization of 
+drone-based traffic data, specifically focusing on signalized intersections in urban networks. 
 
-## Table of contents
+It provides users with data-driven methods to extract information on lanes (number, spatial extend, distribution of vehicles in them), traffic light phases (moments traffic lights
+turn to green or red and their respective durations), queues (number of queued vehicles, queue length, queue dissipation time). Users also have the ability to extract and visualize a number of physical quantities starting with just vehicle trajectories, such as speed, acceleration and cumulative distance travelled. Apart from intersections, these tools can be of course applied to other traffic network components such as simple road links. Users also have the ability
+
+`UAV-Traffic-Tool` was tested with Python >=3.12 on Windows.
+
+## Installation & Usage
+
+To install `UAV-Traffic-Tool`, you can clone the repository and install all the required packages from the `requirements.txt` by running 
+
+`pip install -r requirements.txt` 
+
+in the terminal from the `UAV-Taffic-Tool` folder. 
+
+>[!IMPORTANT]
+> In order to use the methods provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
+A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
+detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-use-UAV-traffic-tool-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
+
+## How to use UAV-traffic-tool for intersections
+
+### Table of contents
 - [Introduction](#introduction)
 - [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
 - [Setting up the analysis](#setting-up-the-analysis)
@@ -27,15 +46,17 @@ drone-based traffic data, especially regarding signalized intersections in urban
   - [Extracting relative dynamic gaps](#extracting-relative-dynamic-gaps)
   - [Extracting queue-wise information](#extracting-queue-wise-information)
 
-## Introduction
+### Introduction
 
 This section provides a detailed walkthrough on how to use `UAV-Traffic-Tool` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/usage%20example/intersection_pipeline_example.ipynb).
 
-**Warning**: *in this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection contained in this dataset, which has a certain topology, entry and exit points, components, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications.*
+>[!IMPORTANT]
+> In this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection, data of which are contained in this dataset. This intersection has a certain topology, entry and exit points, possible routes, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications in the inputs of the methods described below.
 
-**Note**: I recommended using a Python-based Jupyter Notebook to work with the tool as it acts as a pipeline to complete a number of subsequent tasks that each have their own separate results and outputs.
+>[!IMPORTANT]
+> I recommended using a Python-based Jupyter Notebook to work with the tool as it acts as a pipeline to complete a number of subsequent tasks that each have their own separate results and outputs.
 
-## Acquiring the data in the correct format
+### Acquiring the data in the correct format
 
 In order to use the tool properly in later stages, the first and most important task is to acquire the drone-based
 data we want to analyze in the **correct format**. Different datasets use different formats which are oftentimes
@@ -88,9 +109,9 @@ When we convert a drone-based traffic dataset in the format described above, we 
 `UAV-Traffic-Tool` to conduct our analysis and visualization tasks for an intersection of our choice. An example on
 how to do the above data transformations on the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository.
 
-## Setting up the analysis
+### Setting up the analysis
 
-### Defining the intersection under study
+#### Defining the intersection under study
 
 Initially, we must identify the intersection we want to work with through satellite imagery software, for example GoogleMaps, and spot important information such as the different movement and
 turning directions. In this walkthrough, we study the signalized intersection between Panepistimiou Ave. and Omirou Str. in Athens, Greece, which is pictured below.
@@ -100,7 +121,7 @@ turning directions. In this walkthrough, we study the signalized intersection be
 For Panepistimiou Ave., there are 5 lanes in total *(4 normal + 1 bus lane)*, and drivers can either
 drive forward or turn leftwards into Omirou Str.. Only 4 lanes are visible above as the picture is from 2024, while the recording was conducted in 2018, when there was an extra lane. For Omirou Str., there is only 1 lane, and drivers can either drive forward or turn rightwards into Panepistimiou Ave..
 
-### Acquiring important spatio-temporal information on the intersection
+#### Acquiring important spatio-temporal information on the intersection
 
 Before proceeding further, we must acquire some important spatio-temporal information on the intersection we want to work with, which will serve as a stepping stone for later.
 
@@ -138,9 +159,9 @@ spatio_temporal_info = {'wgs':wgs, 'bbox':bbox, 'intersection center':intersecti
 ```
 
 
-## Analysis & Visualization
+### Analysis & Visualization
 
-### Loading the tool
+#### Loading the tool
 
 To load the tool in the Python environment, we run the following commands
 
@@ -156,7 +177,7 @@ analysis = tool.analysis(raw_data,spatio_temporal_info)
 visualization = tool.visualization(raw_data,spatio_temporal_info)
 ```
 
-### Filtering the data
+#### Filtering the data
 
 Before proceeding, we can optionally apply some filters to the original data dictionary `raw_data`
 to flush out parked vehicles, as they do not contribute in the traffic. A vehicle is considered to be parked if it spent more than 95% of its presence in the recording being immovable. 
@@ -167,7 +188,7 @@ This is achieved with the following command
 We can also optionally pass an argument to `get_filtered_data()` called `cursed_ids`, where we can list any vehicle IDs that we
 desire to have explicitly removed from the dataset, even if they do not satisfy the parking condition.
 
-### Categorizing the trajectories based on their routes
+#### Categorizing the trajectories based on their routes
 
 The first task is to categorize the different vehicle trajectories based on their routes, or more specifically, based on their origin (o) and destination (d) within
 the intersection. This will be important for later steps when we want to separate the data based on their od pair
@@ -198,7 +219,7 @@ This trajectory categorization is also helpful when it comes to figuring out the
 
 <img src="pictures/turn_ratios.png" width="100%"/>
 
-### Separating the data based on od pairs
+#### Separating the data based on od pairs
 
 The next step is to separate the data dictionary into smaller sub-dictionaries based on the different trajectory origins. Essentially,
 the objective is to isolate data which belong to the same traffic light phase, i.e. have the same origin within the
@@ -222,7 +243,7 @@ analysis_b = tool.analysis(data_b,spatio_temporal_info)
 visualization_b = tool.visualization(data_b,spatio_temporal_info)
 ```
 
-### Extracting lane-wise information
+#### Extracting lane-wise information
 
 The next task is to extract lane-wise information for the components of the intersection. By lane-wise information, we mean the number of lanes, their spatial boundaries, and the distribution of vehicles in them for each of their time steps.
 
@@ -242,9 +263,9 @@ Now, We will be asked to input the number of lanes we see *(i.e. the number of p
 
 Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which are 5 and `[55.0, 58.96, 61.85, 64.77, 67.61, 71.0]` respectively in our case. Also, it has an additional key called `distribution`, which is a list of lists. Each nested list corresponds to a different vehicle, and includes the lane in which the vehicle belonged to per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
 
-### Extracting traffic light phases & cycles
+#### Extracting traffic light phases & cycles
 
-#### Traffic light phases
+##### Traffic light phases
 
 Another useful task when it comes to signalized intersections is the calculation of the different traffic light phases; For example, when the light becomes green, for how long it stays green, when it turns red, and when it goes to green again. In order to achieve this for a certain traffic light, a virtual detector is placed at the position of the real traffic light pole. The
 detector measures flow counts per step of the time axis. Initially, we type these commands
@@ -314,7 +335,7 @@ for Panepistimiou Ave. and Omirou Str.
 <img src="pictures/trafficlightsomirou.png" width="100%"/>
 
 
-#### Traffic light cycles
+##### Traffic light cycles
 
 Next, we combine `tlp_a`, `tlp_b`  in order to get the information on the full cycles, i.e. the
 subsequent completion of the 2 individual phases. To do so, we run the following command
@@ -335,7 +356,7 @@ Below we have the visualization of the first cycle in the dataset
 
 <img src="pictures/trafficcycles.png" width="100%"/>
 
-### Extracting relative dynamic gaps 
+#### Extracting relative dynamic gaps 
 
 In order to extract the vehicle IDs sorted from last to first according to their direction of motion, and consequently the corresponding gaps *(front to rear bumper)* between them per step of the `time_axis`, we run the following commands
 
@@ -374,8 +395,8 @@ The vehicles that satisfy the above conditions form the queue at the correspondi
 To formally extract the queue-wise information, we run the following commands
 
 ```
-queue_info_a = analysis_a.get_queue_info(speed_threshold, gap_threshold)
-queue_info_b = analysis_b.get_queue_info(speed_threshold, gap_threshold)
+queue_info_a = analysis_a.get_queue_info(speed_threshold,gap_threshold)
+queue_info_b = analysis_b.get_queue_info(speed_threshold,gap_threshold)
 ```
 
 The output of the above methods is a list of lists, where each nested list corresponds to a traffic light phase,
