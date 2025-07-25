@@ -23,7 +23,7 @@ You need to run this command in the terminal from the `UAV-Taffic-Tool` folder. 
 
 In order to use the functions provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
 A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
-detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-use-UAV-traffic-tool-for-intersections). A python script that performs the correct transformations exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformation are applied automatically.
+detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-use-UAV-traffic-tool-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
 
 ## How to use UAV-traffic-tool for intersections
 
