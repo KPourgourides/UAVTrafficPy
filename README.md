@@ -1,32 +1,32 @@
-# UAV-Traffic-Tool
+# UAVTraffPy
 
 The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
 resolution. This has the potential to transform the landscape of data science in transportation. 
 
-`UAV-Traffic-Tool` is an open-source, Python-based software package dedicated to scientific analysis and visulization of 
+`UAVTraffPy` is an open-source, Python-based software package dedicated to scientific analysis and visulization of 
 drone-based traffic data, specifically focusing on signalized intersections in urban networks. 
 
 It provides users with data-driven methods to extract information on lanes (number, spatial extend, distribution of vehicles in them), traffic light phases (moments traffic lights
 turn to green or red and their respective durations), queues (number of queued vehicles, queue length, queue dissipation time). Users also have the ability to extract and visualize a number of physical quantities starting with just vehicle trajectories, such as speed, acceleration and cumulative distance travelled. Apart from intersections, these tools can be of course applied to other traffic network components such as simple road links. Users also have the ability
 
-`UAV-Traffic-Tool` was tested with Python >=3.12 on Windows.
+`UAVTraffPy` was tested with Python >=3.12 on Windows.
 
 ## Installation & Usage
 
-To install `UAV-Traffic-Tool`, you can clone the repository and install all the required packages from the `requirements.txt` by running 
+To install `UAVTraffPy`, you can clone the repository and install all the required packages from the `requirements.txt` by running 
 
 `pip install -r requirements.txt` 
 
 in the terminal from the `UAV-Taffic-Tool` folder. 
 
 >[!IMPORTANT]
-> In order to use the methods provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
-A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
-detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-use-UAV-traffic-tool-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
+> In order to use the methods provided in `UAVTraffPy` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
+A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAVTraffPy/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAVTraffPy` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
+detail in this section: [How to use UAVTraffPy for intersections](#how-to-use-UAVTraffPy-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTraffPy/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
 
-## How to use UAV-traffic-tool for intersections
+## How to use UAVTraffPy for intersections
 
 ### Table of contents
 - [Introduction](#introduction)
@@ -48,7 +48,7 @@ detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-
 
 ### Introduction
 
-This section provides a detailed walkthrough on how to use `UAV-Traffic-Tool` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/usage%20example/intersection_pipeline_example.ipynb).
+This section provides a detailed walkthrough on how to use `UAVTraffPy` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAVTraffPy/blob/main/usage%20example/intersection_pipeline_example.ipynb).
 
 >[!IMPORTANT]
 > In this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection, data of which are contained in this dataset. This intersection has a certain topology, entry and exit points, possible routes, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications in the inputs of the methods described below.
@@ -69,7 +69,7 @@ such as the **IDs** (unique numbers) and the **types** (e.g., car, motorcycle, b
 
 **Note:** *The positions are 2 dimensional coordinates (y,x), and are always given with respect to a reference system; for example, the World Geodetic System 84, which uses latitude and lognitude.*
 
-`UAV-Traffic-Tool` takes the above data as input in order to perform analysis and visualization tasks. The correct way to pass the data to `UAV-Traffic-Tool` is to create a **dictionary**, where each key corresponds to a different piece of information (e.g., IDs, type, position, speed, time). For example,
+`UAVTraffPy` takes the above data as input in order to perform analysis and visualization tasks. The correct way to pass the data to `UAVTraffPy` is to create a **dictionary**, where each key corresponds to a different piece of information (e.g., IDs, type, position, speed, time). For example,
 
 ```
 data = {'id':id, 'vtype':vtype, 'x':X, 'y':Y, 'time':T, 'speed':U}
@@ -106,8 +106,8 @@ $U^i$  = $[u(t_0),...,u(t_k)]^i$
 Where $k+1$ the total number of time steps *(or measurements)* of the vehicle in the recording. The frequency of the time steps *(how many of them in 1 second)* is equal to the refresh rate of the drone's camera. 
 
 When we convert a drone-based traffic dataset in the format described above, we are ready to use
-`UAV-Traffic-Tool` to conduct our analysis and visualization tasks for an intersection of our choice. An example on
-how to do the above data transformations on the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository.
+`UAVTraffPy` to conduct our analysis and visualization tasks for an intersection of our choice. An example on
+how to do the above data transformations on the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTraffPy/blob/main/tests/dataload_example.py) in the repository.
 
 ### Setting up the analysis
 
