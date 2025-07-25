@@ -3,9 +3,13 @@
 The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
-resolution. This has the potential to transform the landscape of data science in transportation. `UAV-Traffic-Tool` is an open-source, Python-based software package dedicated to scientific analysis and visulization of 
-drone-based traffic data, specifically focusing on signalized intersections in urban networks.
+resolution. This has the potential to transform the landscape of data science in transportation. 
 
+`UAV-Traffic-Tool` is an open-source, Python-based software package dedicated to scientific analysis and visulization of 
+drone-based traffic data, specifically focusing on signalized intersections in urban networks. 
+
+It provides users with data-driven methods to extract information on lanes (number, spatial extend, distribution of vehicles in them), traffic light phases (moments traffic lights
+turn to green or red and their respective durations), queues (number of queued vehicles, queue length, queue dissipation time). Users also have the ability to extract and visualize a number of physical quantities starting with just vehicle trajectories, such as speed, acceleration and cumulative distance travelled. Apart from intersections, these tools can be of course applied to other traffic network components such as simple road links. Users also have the ability
 
 # How to use UAV-traffic-tool for intersections
 
