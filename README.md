@@ -1,4 +1,10 @@
-# UAVTraffPy
+# UAVTraffPy: Package for analysis & visualization of <mark>**UAV**</mark>-based <mark>**Traff**</mark>ic data in <mark>**Py**</mark>thon
+
+<p align="center">
+  <img src="pictures/UAVTraffPy.png" width="100%" align="center"/>
+</p>
+
+---
 
 The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
