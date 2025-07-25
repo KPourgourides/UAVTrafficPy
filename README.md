@@ -44,7 +44,7 @@ turn to green or red and their respective durations), queues (number of queued v
     - [Extracting relative dynamic gaps](#extracting-relative-dynamic-gaps)
     - [Extracting queue-wise information](#extracting-queue-wise-information)
   - [Contributing to UAVTraffPy](#contriubting-to-uavtraffpy)
-    -[Do you have a question?](#do-you-have-a-question?)
+    - [Do you have a question?](#do-you-have-a-question?)
 ---
 
 ## Installation & Usage
