@@ -1,4 +1,4 @@
-# UAVTraffPy: Package for analysis & visualization of <mark>**UAV**</mark>-based <mark>**Traff**</mark>ic data in <mark>**Py**</mark>thon
+# UAVTraffPy: *Package for analysis & visualization of <mark>**UAV**</mark>-based <mark>**Traff**</mark>ic data in <mark>**Py**</mark>thon*
 
 <p align="center">
   <img src="pictures/UAVTraffPyLogo.png" width="100%" align="center"/>
