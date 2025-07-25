@@ -478,7 +478,7 @@ light turns red again, the queue dissipation duration is then equal to the durat
 queue_info_b[6] = [{'Lane':0, 'Queued Vehicles':6, 'Queue Length':38.0, 'Queued IDs':[2192, 2166, 2139, 2067, 2029, 1784], 'Dissipation Duration':11.0}]
 ```
 
-This concludes the usage walkthrough of the tool.
+This concludes the usage walkthrough.
 
 
 
@@ -500,7 +500,7 @@ and then clearly state your question.
 
 ### Do you want to contribute?
 
-Contribution to classes or methods of `UAVTraffPy` can be done through pull requests, and are very welcome and enouraged. 
+Contribution to classes or methods of `UAVTraffPy` can be done through pull requests, and are very welcome and enouraged. All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTraffPy/blob/main/.pylintrc). Please ensure your code passes pylint checks before submitting a pull request.
 
 >[!IMPORTANT]
 > Please open pull requests to the `dev` branch
