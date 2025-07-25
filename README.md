@@ -13,6 +13,18 @@ turn to green or red and their respective durations), queues (number of queued v
 
 `UAV-Traffic-Tool` was tested with Python >=3.12 on Windows.
 
+## Installation
+
+To install `UAV-Traffic-Tool`, you can clone the repository and install all the required packages from the `requirements.txt` file using the following command
+
+`pip install -r requirements.txt`
+
+You need to run this command in the terminal from the `UAV-Taffic-Tool` folder. You are now ready to use the software!
+
+In order to use the functions provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
+A fraction of this dataset exists in [this location]() in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
+detail in this section: [How to use UAV-Traffic-Tool for intersection](#how-to-use-UAV-traffic-tool-for-intersections).
+
 ## How to use UAV-traffic-tool for intersections
 
 ### Table of contents
