@@ -22,7 +22,7 @@ To install `UAV-Traffic-Tool`, you can clone the repository and install all the 
 in the terminal from the `UAV-Taffic-Tool` folder. 
 
 >[!IMPORTANT]
-> In order to use the functions provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
+> In order to use the methods provided in `UAV-Traffic-Tool` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
 A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAV-Traffic-Tool` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
 detail in this section: [How to use UAV-Traffic-Tool for intersections](#how-to-use-UAV-traffic-tool-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
 
@@ -395,8 +395,8 @@ The vehicles that satisfy the above conditions form the queue at the correspondi
 To formally extract the queue-wise information, we run the following commands
 
 ```
-queue_info_a = analysis_a.get_queue_info(speed_threshold, gap_threshold)
-queue_info_b = analysis_b.get_queue_info(speed_threshold, gap_threshold)
+queue_info_a = analysis_a.get_queue_info(speed_threshold,gap_threshold)
+queue_info_b = analysis_b.get_queue_info(speed_threshold,gap_threshold)
 ```
 
 The output of the above methods is a list of lists, where each nested list corresponds to a traffic light phase,
