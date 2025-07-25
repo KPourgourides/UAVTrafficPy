@@ -26,15 +26,16 @@ turn to green or red and their respective durations), queues (number of queued v
 
 
 - [Installation & Usage](#installation--usage)
+- [Community contributions to UAVTraffPy](#community-contributions-to-uavtraffpy)
+  - [Do you have a question?](#do-you-have-a-question?)
+  - [Do you want to contribute?](#do-you-want-to-contribute)
+  - [Do you want to report a bug?](#do-you-want-to-report-a-bug)
+
 - [How to use UAVTraffPy for intersections](#how-to-use-uavtraffpy-for-intersections)
   - [Introduction](#introduction)
   - [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
   - [Setting up the analysis](#setting-up-the-analysis)
   - [Analysis & Visualization](#analysis--visualization)
-- [Community contributions to UAVTraffPy](#community-contributions-to-uavtraffpy)
-  - [Do you have a question?](#do-you-have-a-question?)
-  - [Do you want to contribute?](#do-you-want-to-contribute)
-  - [Do you want to report a bug?](#do-you-want-to-report-a-bug)
 
 
 ## Installation & Usage
