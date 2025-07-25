@@ -21,6 +21,32 @@ turn to green or red and their respective durations), queues (number of queued v
 
 ---
 
+## Table of contents
+
+---
+
+- [Installation & Usage](#installation--usage)
+- [How to use UAVTraffPy for intersections](#how-to-use-uavtraffpy-for-intersections)
+  - [Introduction](#introduction)
+  - [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
+  - [Setting up the analysis](#setting-up-the-analysis)
+    - [Defining the intersection under study](#defining-the-intersection-under-study)
+    - [Acquiring important spatio-temporal information on the intersection](#acquiring-important-spatio-temporal-information-on-the-intersection)
+  - [Analysis & Visualization](#analysis--visualization)
+    - [Loading the tool](#loading-the-tool)
+    - [Filtering the data](#filtering-the-data)
+    - [Categorizing the trajectories based on their routes](#categorizing-the-trajectories-based-on-their-routes)
+    - [Separating the data based on od pairs](#separating-the-data-based-on-od-pairs)
+    - [Extracting lane-wise information](#extracting-lane-wise-information)
+    - [Extracting traffic light phases & cycles](#extracting-traffic-light-phases--cycles)
+        - [Traffic light phases](#traffic-light-phases)
+        - [Traffic light cycles](#traffic-light-cycles)
+    - [Extracting relative dynamic gaps](#extracting-relative-dynamic-gaps)
+    - [Extracting queue-wise information](#extracting-queue-wise-information)
+  - [Contributing to UAVTraffPy](#contriubting-to-uavtraffpy)
+    -[Do you have a question?](#do-you-have-a-question?)
+---
+
 ## Installation & Usage
 
 ---
@@ -39,29 +65,6 @@ detail in this section: [How to use UAVTraffPy for intersections](#how-to-use-UA
 ---
 
 ## How to use UAVTraffPy for intersections
-
----
-
-### Table of contents
-
----
-
-- [Introduction](#introduction)
-- [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
-- [Setting up the analysis](#setting-up-the-analysis)
-  - [Defining the intersection under study](#defining-the-intersection-under-study)
-  - [Acquiring important spatio-temporal information on the intersection](#acquiring-important-spatio-temporal-information-on-the-intersection)
-- [Analysis & Visualization](#analysis--visualization)
-  - [Loading the tool](#loading-the-tool)
-  - [Filtering the data](#filtering-the-data)
-  - [Categorizing the trajectories based on their routes](#categorizing-the-trajectories-based-on-their-routes)
-  - [Separating the data based on od pairs](#separating-the-data-based-on-od-pairs)
-  - [Extracting lane-wise information](#extracting-lane-wise-information)
-  - [Extracting traffic light phases & cycles](#extracting-traffic-light-phases--cycles)
-      - [Traffic light phases](#traffic-light-phases)
-      - [Traffic light cycles](#traffic-light-cycles)
-  - [Extracting relative dynamic gaps](#extracting-relative-dynamic-gaps)
-  - [Extracting queue-wise information](#extracting-queue-wise-information)
 
 ---
 
@@ -486,3 +489,23 @@ queue_info_b[6] = [{'Lane':0, 'Queued Vehicles':6, 'Queue Length':38.0, 'Queued 
 ```
 
 This concludes the usage walkthrough of the tool.
+
+---
+## Contriubting to UAVTraffPy
+---
+All contributions, feedback, and questions are welcome! Please read below for specifics.
+---
+### Do you have a question?
+---
+
+If you have a question on how to install or run `UAVTraffPy`, or anything else related to the techniques used in the methods,
+please open an [issue](https://github.com/KPourgourides/UAVTraffPy/issues/new) and provide appropriate context that builds up to your question
+and then clearly state your question.
+
+>[!IMPORTANT]
+> Before submitting a question, please carefully read all the documentation, including code and written walkthroughs, as they might have the answer to your question.
+
+---
+### Do you want to contribute?
+---
+#### Bug reports
