@@ -1,5 +1,8 @@
 """
-ok
+This is a supplementary file and NOT a core part of the UAVTrafficPy project.
+
+This file acts as an example and provides a function that makes appropriate transformations to the format of
+the pNEUMA dataset, such that it is compatible with UAVTrafficPy.
 """
 
 import pandas as pd
