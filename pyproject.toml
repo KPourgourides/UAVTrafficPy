@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "uav_traffic_tool"
+name = "UAVTrafficPy"
 version = "0.1.0"
-description = "A Python library for UAV-based traffic data analysis"
+description = "Package for analysis & visualization of UAV-based Traffic data in Python"
 authors = [
     { name = "Konstantinos Pourgourides", email = "kotsiosp2001@gmail.com" }
 ]
@@ -20,11 +20,10 @@ dependencies = [
 requires-python = ">=3.12"
 
 [tool.setuptools]
-packages = ["mytool","tests","usage_example"]
+packages = ["tool","tests","usage_example"]
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["W0102"]
 
 [project.urls]
 "Homepage" = "https://github.com/KPourgourides/uav_traffic_tool"
-
