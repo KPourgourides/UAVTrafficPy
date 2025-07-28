@@ -1,4 +1,8 @@
-"""okay"""
+"""
+This file is supplementary and NOT a core file of the UAVTrafficPy project.
+
+Users can run this test file to perform some analysis and visualization tasks and check if it runs as expected.
+"""
 
 from UAVTrafficPy.tool import uavtrafficpy
 tool =  uavtrafficpy.Master()
