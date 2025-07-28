@@ -7,7 +7,7 @@ from shapely import Point,Polygon
 from scipy.ndimage import gaussian_filter
 from sklearn.cluster import KMeans
 
-class Wiz:
+class Master:
     """
     description
     -----------
@@ -100,7 +100,7 @@ class Wiz:
         this class is dedicated to tasks that invlove calculation of distances
         """
 
-        def __init__(self, mother:'Wiz', initial_coordinates:tuple, final_coordinates:tuple, wgs:bool):
+        def __init__(self, mother:'Master', initial_coordinates:tuple, final_coordinates:tuple, wgs:bool):
             """
             description
             -----------
@@ -163,7 +163,7 @@ class Wiz:
         this class is dedicated to loading and filtering data
         """
 
-        def __init__(self, mother:'Wiz', raw_data:dict, spatio_temporal_info:dict):
+        def __init__(self, mother:'Master', raw_data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -274,7 +274,7 @@ class Wiz:
         this class is dedicated to carrying out analysis tasks
         """
 
-        def __init__(self, mother:'Wiz', data:dict, spatio_temporal_info:dict):
+        def __init__(self, mother:'Master', data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -1038,7 +1038,7 @@ class Wiz:
         this class is dedicated to carrying out visualization tasks
         """
 
-        def __init__(self, mother:'Wiz', data:dict, spatio_temporal_info:dict):
+        def __init__(self, mother:'Master', data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -1322,13 +1322,13 @@ class Wiz:
             ax.set_xticks(np.arange(0,self.time_axis[-1],25))
 
             if plt_norm_flow_1:
-                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{legend_1}',linewidth=2)
+                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{legend_1}',linewidth=3)
             if plt_norm_flow_2:
                 ax.plot(self.time_axis,norm_flow_2,color='gold',alpha=1,label=f'{legend_2}',linewidth=3)
             if plt_flow_1:
-                ax.plot(self.time_axis,flow_1,color='violet',alpha=0.4)
+                ax.plot(self.time_axis,flow_1,color='violet',alpha=0.5)
             if plt_flow_2:
-                ax.plot(self.time_axis,flow_2,color='gold',alpha=0.4)
+                ax.plot(self.time_axis,flow_2,color='gold',alpha=0.5)
 
             if plt_flow_1 is False and plt_flow_2 is False:
                 ax.set_ylim(-0.1,2)

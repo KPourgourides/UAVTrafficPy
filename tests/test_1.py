@@ -1,9 +1,10 @@
 """okay"""
-import numpy as np
-from mytool import uav_traffic_tool
-from tests import dataload_example
 
-tool =  uav_traffic_tool.Wiz()
+from UAVTrafficPy.tool import uavtrafficpy
+tool =  uavtrafficpy.Master()
+import dataload_example
+import numpy as np
+
 
 raw_data = dataload_example.get_info_pneuma(file_path=r'tests/dataset_example.csv',sampling_period=0.2,time_decimals=1,position_smoothing=2)
 

@@ -37,5 +37,5 @@ def get_info_pneuma(file_path: str, sampling_period:float, time_decimals:int, po
         x.append((gaussian_filter(list(map(float,row[5::iter_num])),sigma=position_smoothing)).tolist())
         u.append(list(map(float,row[6::iter_num])))
         t.append(np.round(list(map(float,row[9::iter_num])),decimals=time_decimals).tolist())
-    raw_vd = {'id':vehicle_id,'vtype':vehicle_type,'x':x,'y':y,'time':t,'speed':u}
-    return raw_vd
+    raw_data = {'id':vehicle_id,'vtype':vehicle_type,'x':x,'y':y,'time':t,'speed':u}
+    return raw_data
