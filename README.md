@@ -1,7 +1,7 @@
 # UAVTrafficPy: Package for analysis & visualization of UAV-based Traffic data in Python
 
 <p align="center">
-  <img src="pictures/UAVTrafficPyLogo.png" width="70%" align="center"/>
+  <img src="pictures/logo.png" width="100%" align="center"/>
 </p>
 
 
