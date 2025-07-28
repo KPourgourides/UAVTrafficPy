@@ -26,4 +26,4 @@ packages = ["tool","tests","usage_example"]
 disable = ["W0102"]
 
 [project.urls]
-"Homepage" = "https://github.com/KPourgourides/uav_traffic_tool"
+"Homepage" = "https://github.com/KPourgourides/UAVTrafficPy"
