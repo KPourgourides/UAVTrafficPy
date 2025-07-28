@@ -296,7 +296,7 @@ Where `flow_direction` is one of `['up','down','left','right]`; flow towards the
 
 Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 5)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
 
-<img src="pictures/clustered_lanes.png" width="100%"/>
+
 
 Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which are 5 and `[55.0, 58.96, 61.85, 64.77, 67.61, 71.0]` respectively in our case. Also, it has an additional key called `distribution`, which is a list of lists. Each nested list corresponds to a different vehicle, and includes the lane in which the vehicle belonged to per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
 
