@@ -4,11 +4,9 @@ Copyright 2025, Konstantinos Pourgourides (kotsiosp2001@gmail.com)
 This file is the core file of the UAVTrafficPy project.
 
 UAVTrafficPy is a free/open-source software, you may redistribute it and/or
-modify it under the terms of the European Union Public Licence (EUPL) Version 1.2
-or - as soon they will be approved by the European Commission - subsequent libepanets of the
-EUPL (the "Licence"). You may not use this work except in
-compliance with the Licence. You may obtain a copy of the Licence
-at:
+modify it under the terms of the European Union Public Licence (EUPL) Version 1.2.
+You may not use this work except in compliance with the Licence. 
+You may obtain a copy of the Licence at:
 
 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 
