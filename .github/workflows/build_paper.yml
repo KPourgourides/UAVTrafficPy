@@ -19,7 +19,7 @@ jobs:
       run: |
         pandoc paper/paper.md -o paper/paper.pdf --pdf-engine=xelatex
     - name: Upload PDF as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: paper-pdf
         path: paper/paper.pdf
