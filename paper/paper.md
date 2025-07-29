@@ -1,5 +1,5 @@
 ---
-title: 'Gala: A Python package for galactic dynamics 2'
+title: 'Gala: A Python package for galactic dynamics 3'
 tags:
   - Python
   - astronomy
