@@ -12,7 +12,22 @@ from scipy.ndimage import gaussian_filter
 def get_info_pneuma(file_path: str, sampling_period:float, time_decimals:int, position_smoothing:float) -> dict:
 
     """
-    ok
+    description
+    -----------
+    this function converts any pNEUMA dataset into the correct format for UAVTrafficPy
+
+    arguments
+    ---------
+    1) the file path
+    2) sampling period; how frequently to sample data, smallest possible value
+        for pNEUMA is 0.04s
+    3) time decimals for time axis; e.g., if sampling period is 0.04, decimals should be 2
+        if sampling period is 0.2, decimals should be 1
+    4) smoothing amount on positions with gaussian filter
+
+    output
+    ------
+    data directory with the correct format
     """
 
     data_frame = pd.read_csv(file_path)
