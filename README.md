@@ -4,8 +4,6 @@
   <img src="pictures/logo.png" width="100%" align="center"/>
 </p>
 
-
-
 The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
@@ -51,7 +49,7 @@ in the terminal from the `UAVTrafficPy` folder.
 >[!IMPORTANT]
 > In order to use the methods provided in `UAVTrafficPy` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
 A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAVTrafficPy` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
-detail in this section: [How to use UAVTrafficPy for intersections](#how-to-use-UAVTrafficPy-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
+detail in this section: [How to use UAVTrafficPy for intersections"](#how-to-use-UAVTrafficPy-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
 
 ## Community contributions to UAVTrafficPy
 
@@ -71,7 +69,7 @@ and then clearly state your question.
 
 ### Do you want to contribute?
 
-Contribution to classes or methods of `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc). Please ensure your code passes pylint checks before submitting a pull request.
+Contribution to classes or methods of `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. Please make sure that your contributions are in compliance with the rest of the project and its working principles discussed in detail in the section ["How to use UAVTrafficPy for Intersections"](#how-to-use-uavtrafficpy-for-intersections). All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc). Please ensure your code passes pylint checks before submitting a pull request.
 
 >[!IMPORTANT]
 > Please open pull requests to the `dev` branch
@@ -86,7 +84,7 @@ If you want to report a bug please open an [issue](https://github.com/KPourgouri
 
 ### Introduction
 
-This section provides a detailed walkthrough on how to use `UAVTrafficPy` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAVTrafficPy/blob/main/usage%20example/intersection_pipeline_example.ipynb).
+This section provides a detailed walkthrough on how to use `UAVTrafficPy` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersection in the light of drone-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAVTrafficPy/blob/main/usage%20example/intersection_pipeline_example.ipynb). Of course, the tools showcased below, and the rest of the tools not shown here can also be used when conducting analyses regarding non-intersection parts of a traffic network, such as simple road links.
 
 >[!IMPORTANT]
 > In this walkthrough we use data from the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/), and specifically the dataset `20181024_d2_0900_0930.csv`. We proceed to use the tool for a specific intersection, data of which are contained in this dataset. This intersection has a certain topology, entry and exit points, possible routes, lanes, traffic cycles, and other characteristics. When we deploy the tool for a different intersection, we should make the appropriate modifications in the inputs of the methods described below.
