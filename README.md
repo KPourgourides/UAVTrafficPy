@@ -69,7 +69,7 @@ and then clearly state your question.
 
 ### Do you want to contribute?
 
-Contribution to classes or methods of `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. Please make sure that your contributions are in compliance with the rest of the project and its working principles discussed in detail in the section ["How to use `UAVTrafficPy` for Intersections](#how-to-use-uavtrafficpy-for-intersections). All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc). Please ensure your code passes pylint checks before submitting a pull request.
+Contribution to classes or methods of `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. Please make sure that your contributions are in compliance with the rest of the project and its working principles discussed in detail in the section ["How to use UAVTrafficPy for Intersections"](#how-to-use-uavtrafficpy-for-intersections). All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc). Please ensure your code passes pylint checks before submitting a pull request.
 
 >[!IMPORTANT]
 > Please open pull requests to the `dev` branch
