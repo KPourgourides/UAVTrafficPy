@@ -4,8 +4,6 @@
   <img src="pictures/logo.png" width="100%" align="center"/>
 </p>
 
-
-
 The recent introduction of drone-based data collection methods in Transportation research has unlocked a new realm of possibilities which was inaccessible in the past due to limitations posed by traditional
 sensor-based methods. The quick deployment of coordinated, camera-equipped drones above a large traffic
 network, gives researchers the opportunity to acquire large volumes of traffic data with high spatio-temporal
@@ -51,7 +49,7 @@ in the terminal from the `UAVTrafficPy` folder.
 >[!IMPORTANT]
 > In order to use the methods provided in `UAVTrafficPy` you will need some drone-based traffic data. I personally recommend the open-source [pNEUMA dataset](https://open-traffic.epfl.ch/index.php/downloads/) to get started.
 A fraction of this dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataset_example.csv) in the repository for example purposes. Also, before using `UAVTrafficPy` properly, you will need to transform any dataset you are willing to use into a particular format, which is explained in
-detail in this section: [How to use UAVTrafficPy for intersections](#how-to-use-UAVTrafficPy-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
+detail in this section: [How to use UAVTrafficPy for intersections"](#how-to-use-UAVTrafficPy-for-intersections). A python script that performs the correct transformations for the pNEUMA dataset exists at [this location](https://github.com/KPourgourides/UAVTrafficPy/blob/main/tests/dataload_example.py) in the repository. If you run `usage example/intersection_pipeline_example.py` these tranformations are applied automatically.
 
 ## Community contributions to UAVTrafficPy
 
