@@ -140,7 +140,7 @@ class Master:
             ------
             longitudinal distance between two points on the x axis in meters
             """
-            return (self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i))
+            return self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i)
 
         def get_dy(self) -> float:
             """
@@ -152,7 +152,7 @@ class Master:
             ------
             latitudinal distance between two points on the y axis in meters
             """
-            return (self.factor*(self.y_f - self.y_i))
+            return self.factor*(self.y_f - self.y_i)
 
         def get_distance(self) -> float:
             """
@@ -327,6 +327,7 @@ class Master:
             self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
             self.bbox,self.center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
             self.y_center,self.x_center=self.center
+            self.d_from_road_edge=None
             self.detector_positions=None
             self.flow_info=None
             self.normalized_flow=None
@@ -629,7 +630,7 @@ class Master:
                 lane_boundaries = [round(value,ndigits=2) for value in boundaries]
 
             plt.figure(figsize=(10,3))
-            counts,bin_edges,patches=plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red')
+            counts,bin_edges,_patches=plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red')
             max_idx = np.argmax(counts)
             bin_left = bin_edges[max_idx]
             bin_right = bin_edges[max_idx + 1]
@@ -1346,7 +1347,7 @@ class Master:
             plt.legend()
             plt.show()
             plt.close()
-        
+
         def draw_traffic_light_phases(self, legend_1:str, legend_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
             """
             description
