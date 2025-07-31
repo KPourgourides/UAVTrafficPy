@@ -1,0 +1,25 @@
+name: Build PDF
+
+on:
+  push:
+    paths:
+      - 'paper/paper.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install pandoc and TeX
+      run: |
+        sudo apt update
+        sudo apt install -y pandoc texlive texlive-xetex texlive-fonts-recommended
+    - name: Convert to PDF
+      run: |
+        pandoc paper/paper.md -o paper/paper.pdf --pdf-engine=xelatex
+    - name: Upload PDF as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paper-pdf
+        path: paper/paper.pdf

@@ -1,19 +1,4 @@
-"""
-Copyright 2025, Konstantinos Pourgourides (kotsiosp2001@gmail.com)
-
-This file is the core file of the UAVTrafficPy project.
-
-UAVTrafficPy is a free/open-source software, you may redistribute it and/or
-modify it under the terms of the European Union Public Licence (EUPL) Version 1.2.
-You may not use this work except in compliance with the Licence. 
-You may obtain a copy of the Licence at:
-
-https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
-
-UAVTrafficPy is distributed on an "AS IS" basis,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.
-See the Licence for more details.
-"""
+"""docstring"""
 
 from operator import itemgetter
 import numpy as np
@@ -26,7 +11,7 @@ class Master:
     """
     description
     -----------
-    this is the mother class that includes all other classes of the tool
+    this is the master class that includes all other classes of the tool
     """
 
     def __init__(self):
@@ -36,23 +21,22 @@ class Master:
         Initialization
         """
 
-    def distances(self, initial_coordinates:tuple, final_coordinates:tuple, wgs:bool):
+    def distances(self, initial_coordinates:tuple, final_coordinates:tuple):
         """
         description
         -----------
-        calls the distances class
+        class the distances class
 
         arguments
         ---------
         1) initial set of coordinates (y,x)
         2) final set of coordinates (y,x)
-        3) wgs as defined in the spatiotemporal info dictionary
 
         output
         ------
         returns the distances class 
         """
-        return self._distances(self, initial_coordinates, final_coordinates, wgs)
+        return self._distances(self, initial_coordinates, final_coordinates)
 
 
     def dataloader(self, raw_data:dict, spatio_temporal_info:dict):
@@ -115,7 +99,7 @@ class Master:
         this class is dedicated to tasks that invlove calculation of distances
         """
 
-        def __init__(self, mother:'Master', initial_coordinates:tuple, final_coordinates:tuple, wgs:bool):
+        def __init__(self, master:'Master', initial_coordinates:tuple, final_coordinates:tuple):
             """
             description
             -----------
@@ -123,14 +107,13 @@ class Master:
 
             arguments
             ---------
-            1) mother class
+            1) master class
             2) initial set of coordinates (y,x)
             3) final set of coordinates (y,x)
             """
-            self.mother = mother
+            self.master = master
             self.y_i,self.x_i = initial_coordinates
             self.y_f,self.x_f = final_coordinates
-            self.wgs = wgs
             self.factor = 2*np.pi*6371000/360
 
         def get_dx(self) -> float:
@@ -143,7 +126,7 @@ class Master:
             ------
             longitudinal distance between two points on the x axis in meters
             """
-            return (self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i))*(self.wgs) + (self.x_f - self.x_i)*(not self.wgs)
+            return (self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i))
 
         def get_dy(self) -> float:
             """
@@ -153,15 +136,15 @@ class Master:
 
             output
             ------
-            longitudinal distance between two points on the y axis in meters
+            latitudinal distance between two points on the y axis in meters
             """
-            return (self.factor*(self.y_f - self.y_i))*(self.wgs) + (self.y_f - self.y_i)*(not self.wgs)
+            return (self.factor*(self.y_f - self.y_i))
 
         def get_distance(self) -> float:
             """
             description
             -----------
-            calculation of distance between two points
+            calculation of distance between two points (Euclidean approximation for small distances)
 
             output
             ------
@@ -178,7 +161,7 @@ class Master:
         this class is dedicated to loading and filtering data
         """
 
-        def __init__(self, mother:'Master', raw_data:dict, spatio_temporal_info:dict):
+        def __init__(self, master:'Master', raw_data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -186,37 +169,52 @@ class Master:
 
             arguments
             ---------
-            1) mother class
+            1) master class
             2) initial data dictionary
             3) spatiotemporal info dictionary
 
             notes
             -----
-            Detailed info on the correct format of the input directories can be found at https://github.com/KPourgourides/UAV-Traffic-Tool/blob/main/usage%20example/intersection_pipeline_walkthrough.pdf
+            Detailed info on the correct format of the input dictionaries can be found at https://github.com/KPourgourides/UAVTrafficPy/blob/main/usage%20example/intersection_pipeline_walkthrough.pdf
             """
-            self.mother = mother
-            needed_keys_data = ['id','vtype','x','y','time','speed']
-            needed_keys_info = ['wgs','bbox','intersection center','time axis']
+            self.master = master
+            needed_keys_data = ['id','vtype','x','y','time']
+            needed_keys_info = ['bbox','intersection center','time axis']
 
-            if any(key not in raw_data.keys() for key in needed_keys_data) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
-                raise KeyError(f'data directory needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
+            if any(key not in raw_data.keys() for key in needed_keys_data):
+                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work!')
+            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
+                raise KeyError(f'spatio temporal info dictionary needs keys {needed_keys_info} to work!')
 
+            self.spatio_temporal_info = spatio_temporal_info
+            self.vehicle_id,self.vehicle_type,self.x,self.y,self.t  = itemgetter('id','vtype','x','y','time')(raw_data)
+            self.bbox,self.intersection_center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
+            raw_data['speed']=[]
+            self.u = self.master.analysis(raw_data,spatio_temporal_info).get_speed()
+            raw_data['speed']=self.u
             self.raw_data = raw_data
-            self.vehicle_id,self.vehicle_type,self.x,self.y,self.t,self.u  = itemgetter('id','vtype','x','y','time','speed')(raw_data)
-            self.wgs,self.bbox = itemgetter('wgs','bbox')(spatio_temporal_info)
 
-        def get_intersection_data(self) -> dict:
+        def get_data(self) -> dict:
+            """
+            output
+            ------
+            returns the original dataset plus speeds in case
+            the user does not want to apply a spatial filter
+            """
+            return self.raw_data
+
+        def get_bounded_data(self) -> dict:
             """
             description
             -----------
-            function that trims the initial data dictionary only to include data from the intersection of interest
+            function that trims the initial data dictionary only to include data from the area of interest
 
             output
             ------
             trimmed data dictionary
             """
             box = Polygon(self.bbox)
-            x_,y_,t_,u_,id_,vtype_=[],[],[],[],[],[]
+            id_,vtype_,x_,y_,t_,u_=[],[],[],[],[],[]
             for i,vec in enumerate(self.x):
                 flag=False
 
@@ -241,8 +239,8 @@ class Master:
                         t_.append(self.t[i][index_start:index_end])
                         u_.append(self.u[i][index_start:index_end])
 
-            intersection_data ={'id':id_,'vtype':vtype_,'x':x_,'y':y_,'time':t_,'speed':u_}
-            return intersection_data
+            bounded_data ={'id':id_,'vtype':vtype_,'x':x_,'y':y_,'time':t_,'speed':u_}
+            return bounded_data
 
         def get_filtered_data(self, cursed_ids=None) -> dict:
             """
@@ -265,12 +263,12 @@ class Master:
             if cursed_ids is None:
                 cursed_ids=[]
 
-            intersection_data  = self.get_intersection_data()
+            intersection_data  = self.get_bounded_data()
             vehicle_id,vehicle_type,x,y,t,u = itemgetter('id','vtype','x','y','time','speed')(intersection_data)
             id_,vtype_,x_,y_,t_,u_=[],[],[],[],[],[]
 
             for i,vec in enumerate(x):
-                immobility = sum(1 if self.mother.distances(initial_coordinates=(y[i][j-1],x[i][j-1]),final_coordinates=(y[i][j],x[i][j]),wgs=self.wgs).get_distance() <1e-4 else 0 for j,element in enumerate(vec[1:]))
+                immobility = sum(1 if self.master.distances(initial_coordinates=(y[i][j-1],x[i][j-1]),final_coordinates=(y[i][j],x[i][j])).get_distance() <1e-4 else 0 for j,element in enumerate(vec[1:]))
                 if vehicle_id[i] not in cursed_ids and immobility<=0.95*len(vec):
                     id_.append(vehicle_id[i])
                     vtype_.append(vehicle_type[i])
@@ -289,7 +287,7 @@ class Master:
         this class is dedicated to carrying out analysis tasks
         """
 
-        def __init__(self, mother:'Master', data:dict, spatio_temporal_info:dict):
+        def __init__(self, master:'Master', data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -297,21 +295,23 @@ class Master:
 
             arguments
             ---------
-            1) mother class
+            1) master class
             2) trimmed/filtered data dictionary
             3) spatiotemporal info dictionary
             """
-            self.mother = mother
+            self.master = master
             needed_keys_data = ['id','vtype','x','y','time','speed']
-            needed_keys_info = ['wgs','bbox','intersection center','time axis']
+            needed_keys_info = ['bbox','intersection center','time axis']
 
-            if any(key not in data.keys() for key in needed_keys_data) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
-                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
+            if any(key not in data.keys() for key in needed_keys_data):
+                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work!')
+            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
+                raise KeyError(f'spatio temporal info dictionary needs keys {needed_keys_info} to work!')
 
             self.data = data
             self.spatio_temporal_info = spatio_temporal_info
             self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
-            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.bbox,self.center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
             self.y_center,self.x_center=self.center
             self.detector_positions=None
             self.flow_info=None
@@ -344,7 +344,7 @@ class Master:
                     if j==0:
                         temp_distance_travelled.append(0)
                     else:
-                        temp_sum+= self.mother.distances(initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_distance()
+                        temp_sum+= self.master.distances(initial_coordinates=(self.y[i][j-1],self.x[i][j-1]),final_coordinates=(self.y[i][j],self.x[i][j])).get_distance()
                         temp_distance_travelled.append(temp_sum)
                 distance_travelled.append(temp_distance_travelled)
 
@@ -515,7 +515,7 @@ class Master:
             od_data = {'id':id_od,'vtype':vtype_od,'x':x_od,'y':y_od,'time':t_od,'speed':u_od,}
             return od_data
 
-        def get_d_from_bbox_edge(self, flow_direction:str) -> list:
+        def get_d_from_road_edge(self, flow_direction:str) -> list:
             """
             description
             -----------
@@ -535,25 +535,28 @@ class Master:
 
             y1,x1 = self.bbox[0]
             y2,x2 = self.bbox[1]*(flow_direction in ['right','left']) + self.bbox[3]*(flow_direction in ['up','down'])
-            b_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2),wgs=self.wgs).get_dx()
-            b_y = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2),wgs=self.wgs).get_dy()
+            b_x = self.master.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2)).get_dx()
+            b_y = self.master.distances(initial_coordinates=(y1,x1),final_coordinates=(y2,x2)).get_dy()
             b = pow((pow(b_x,2)+pow(b_y,2)),0.5)
 
-            d_from_edge=[]
+            d_from_bbox_edge=[]
 
             for i,vec in enumerate(self.y):
                 temp_dfromedge=[]
                 for j,_ in enumerate(vec):
-                    a_x = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dx()
-                    a_y = self.mother.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j]),wgs=self.wgs).get_dy()
+                    a_x = self.master.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j])).get_dx()
+                    a_y = self.master.distances(initial_coordinates=(y1,x1),final_coordinates=(self.y[i][j],self.x[i][j])).get_dy()
                     temp_dfromedge.append(abs(a_x*b_y - a_y*b_x)/b)
-                d_from_edge.append(temp_dfromedge)
+                d_from_bbox_edge.append(temp_dfromedge)
 
-            self.d_from_edge = d_from_edge
-            self.flow_direction=flow_direction
-            return d_from_edge
+            p=np.percentile([i for j in d_from_bbox_edge for i in j],1)
+            effective_min = min(min(_) for _ in d_from_bbox_edge if min(_)>p)
+            d_from_road_edge = [(np.array(_)-effective_min).tolist() for _ in d_from_bbox_edge]
 
-        def get_lane_info(self, flow_direction, nbins=200, valid_od_pairs=None, avg_d_from_bbox_edge=False, custom_boundaries=False) -> None:
+            self.d_from_road_edge = d_from_road_edge
+            return d_from_road_edge
+
+        def get_lane_info(self, flow_direction:str, valid_od_pairs:list, nbins=100, custom_boundaries=False) -> dict:
             """
             description
             -----------
@@ -573,27 +576,26 @@ class Master:
             ------
             dictionary with the information written in the description
             """
-            d_from_edge = self.get_d_from_bbox_edge(flow_direction)
-            if valid_od_pairs is None:
-                flat_d_from_edge = [element for vec in d_from_edge for element in vec]*(not avg_d_from_bbox_edge) + [float(np.mean(vec)) for vec in d_from_edge]*avg_d_from_bbox_edge
-            else:
-                od_pairs=self.get_od_pairs()
-                flat_d_from_edge = [element for i,vec in enumerate(d_from_edge) for element in vec if od_pairs[i] in valid_od_pairs]*(not avg_d_from_bbox_edge) + [float(np.mean(vec)) for i,vec in enumerate(d_from_edge) if od_pairs[i] in valid_od_pairs]*(avg_d_from_bbox_edge)
+            self.flow_direction = flow_direction
+            d_from_edge = self.get_d_from_road_edge(flow_direction)
+            od_pairs = self.get_od_pairs()
+            avg_d_from_edge  = [np.mean(_) for i,_ in enumerate(d_from_edge) if od_pairs[i] in valid_od_pairs]
 
             plt.figure(figsize=(10,3))
-            plt.hist(flat_d_from_edge, color='blue', bins=nbins, density=True)
-            plt.xlabel('Distance from bbox edge (m)')
-            plt.ylabel('Normalized Occurences')
-            plt.xticks(np.arange(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20),2))
-            plt.xlim(np.trunc(np.mean(flat_d_from_edge)-20), np.trunc(np.mean(flat_d_from_edge)+20))
-            plt.title("Lane Distribution")
+            plt.hist(avg_d_from_edge, color='blue', bins=nbins)
+            plt.xlabel('Distance from  road edge (m)')
+            plt.ylabel('Counts')
+            plt.xticks(np.arange(-1, int(max(avg_d_from_edge))+1,1))
+            plt.xlim(-1, int(max(avg_d_from_edge)+1))
+            plt.title("Distribution of vehicles in the street")
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
+            plt.close()
 
             n_clusters = int(input('How many lanes?'))
             low_lim = float(input('low limit?'))
             high_lim = float(input('high limit?'))
-            bounded_d_from_edge = [element for element in flat_d_from_edge if low_lim<element<high_lim]
+            bounded_d_from_edge = [element for element in avg_d_from_edge if low_lim<element<high_lim]
 
             if custom_boundaries:
                 boundaries=[]
@@ -613,25 +615,33 @@ class Master:
                 lane_boundaries = [round(value,ndigits=2) for value in boundaries]
 
             plt.figure(figsize=(10,3))
-            plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red',density=True)
+            counts,bin_edges,patches=plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red')
+            max_idx = np.argmax(counts)
+            bin_left = bin_edges[max_idx]
+            bin_right = bin_edges[max_idx + 1]
+            peak_of_highest_bin = (bin_left + bin_right) / 2
             for boundary in lane_boundaries:
                 plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
-            plt.title("Lane Clustering with Boundaries")
-            plt.xlabel('Distance from bbox edge (m)')
-            plt.ylabel('Probability Density')
+            plt.title("Distribution of vehicles in the street")
+            plt.xlabel('Distance from road edge (m)')
+            plt.ylabel('Vehicle Count')
+            plt.ylim(peak_of_highest_bin*2)
+            plt.xlim(-1,max(lane_boundaries)+min(bounded_d_from_edge))
+            plt.xticks(np.arange(-5,max(lane_boundaries)+5,1))
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
+            plt.close()
 
             lane_number = len(lane_boundaries)-1
             lane_distribution=[]
 
-            for i,vec in enumerate(self.d_from_edge):
+            for i,vec in enumerate(d_from_edge):
                 temp_lanes=[]
                 for j,element in enumerate(vec):
                     if element>max(lane_boundaries) or element<min(lane_boundaries):
                         temp_lanes.append(None)
                     else:
-                        temp_lanes.append(max(b for b,boundary in enumerate(lane_boundaries) if element>boundary))
+                        temp_lanes.append(max(b for b,boundary in enumerate(lane_boundaries) if element>=boundary))
                 lane_distribution.append(temp_lanes)
 
             lane_info = {
@@ -819,7 +829,7 @@ class Master:
 
             output
             ------
-            list of directories; each nested directory corresponds to a different traffic light cycle, and includes the information written in the description
+            list of directories; each nested dictionary corresponds to a different traffic light cycle, and includes the information written in the description
             """
             traffic_lights_one,traffic_lights_two=traffic_lights_phases
 
@@ -858,14 +868,12 @@ class Master:
             -----
             the user needs to have already ran the get_lane_info() function in order for this one to work properly
             """
-            lane_distriubtion = self.lane_info.get('distribution')
-            lane_number = self.lane_info.get('number')
+            lane_number,lane_distriubtion = itemgetter('number','distribution')(self.lane_info)
 
             if self.flow_direction not in ['up','down','left','right']:
                 raise ValueError(f'Invalid flow direction, must be one of {['up','down','left','right']}')
 
             qoi = self.y*(self.flow_direction in ['up','down']) + self.x*(self.flow_direction in ['left','right'])
-
             sorted_id=[]
 
             for moment in self.time_axis:
@@ -922,7 +930,7 @@ class Master:
                             nxty = [self.y[self.vehicle_id.index(sorted_id_in_this_lane[v+1])][self.t[self.vehicle_id.index(sorted_id_in_this_lane[v+1])].index(moment)] for v,value in enumerate(sorted_id_in_this_lane[:-1])]
                             vtypes = [self.vehicle_type[self.vehicle_id.index(value)] for v,value in enumerate(sorted_id_in_this_lane)]
                             vlengths = [5*(vt in ('Car','Taxi')) + 5.83*(vt=='Medium')+12.5*(vt in ('Heavy','Bus'))+2.5*(vt=='Motorcycle') for vt in vtypes]
-                            intralane_gaps = [self.mother.distances(initial_coordinates=(refy[i],refx[i]),final_coordinates=(nxty[i],_),wgs=self.wgs).get_distance() - 0.5*(vlengths[i]+vlengths[i+1]) for i,_ in enumerate(nxtx)]
+                            intralane_gaps = [self.master.distances(initial_coordinates=(refy[i],refx[i]),final_coordinates=(nxty[i],_)).get_distance() - 0.5*(vlengths[i]+vlengths[i+1]) for i,_ in enumerate(nxtx)]
                             final_gaps = [round(value,ndigits=1) if value>0 else 1 for value in intralane_gaps]
                             if len(final_gaps)>0:
                                 final_gaps.append(-1.0) #for the leader
@@ -1053,7 +1061,7 @@ class Master:
         this class is dedicated to carrying out visualization tasks
         """
 
-        def __init__(self, mother:'Master', data:dict, spatio_temporal_info:dict):
+        def __init__(self, master:'Master', data:dict, spatio_temporal_info:dict):
             """
             description
             -----------
@@ -1061,21 +1069,24 @@ class Master:
 
             arguments
             ---------
-            1) mother class
+            1) master class
             2) trimmed/filtered data dictionary
             3) spatiotemporal info dictionary
             """
 
-            self.mother = mother
+            self.master = master
             needed_keys_data = ['id','vtype','x','y','time','speed']
-            needed_keys_info = ['wgs','bbox','intersection center','time axis']
-            if any(key not in data.keys() for key in needed_keys_data ) or any(key not in spatio_temporal_info.keys() for key in needed_keys_info ):
-                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work! \nspatiotemporal info directory needs {needed_keys_info} keys to work!')
+            needed_keys_info = ['bbox','intersection center','time axis']
+
+            if any(key not in data.keys() for key in needed_keys_data):
+                raise KeyError(f'data dictionary needs keys {needed_keys_data} to work!')
+            if any(key not in spatio_temporal_info.keys() for key in needed_keys_info):
+                raise KeyError(f'spatio temporal info dictionary needs keys {needed_keys_info} to work!')
 
             self.data = data
             self.spatio_temporal_info = spatio_temporal_info
             self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
-            self.wgs, self.bbox,self.center,self.time_axis = itemgetter('wgs','bbox','intersection center','time axis')(spatio_temporal_info)
+            self.bbox,self.center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
             self.y_center,self.x_center = self.center
 
         def draw_trajectories(self) -> None:
@@ -1095,103 +1106,117 @@ class Master:
             x_flat = [value for i,vec in enumerate(self.x) for value in vec if self.vehicle_type[i]!='Motorcycle']
             y_flat = [value for i,vec in enumerate(self.y) for value in vec if self.vehicle_type[i]!='Motorcycle']
 
-            u = self.mother.analysis(self.data, self.spatio_temporal_info).get_speed()
+            u = self.master.analysis(self.data, self.spatio_temporal_info).get_speed()
             u_flat = [value for i,vec in enumerate(u) for value in vec if self.vehicle_type[i]!='Motorcycle']
 
             xlim_left,xlim_right=min(x_flat),max(x_flat)
             ylim_bottom,ylim_top = min(y_flat),max(y_flat)
 
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,6),dpi=400)
+            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,6))
             ax.set_facecolor('black')
             scatter = ax.scatter(x_flat,y_flat,c=u_flat,cmap='gist_rainbow_r',vmin=vmin,vmax=vmax,s=0.05)
             cbar = plt.colorbar(scatter,ax=ax)
             cbar.set_label('Speed (km/h)')
             plt.title('Trajectories')
-            plt.xlabel('x coordinate')
-            plt.ylabel('y coordinate')
+            plt.xlabel('latitude')
+            plt.ylabel('logntitude')
             plt.xlim(xlim_left,xlim_right)
             plt.ylim(ylim_bottom,ylim_top)
             plt.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False, labelbottom=False, labelleft=False)
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
+            plt.close()
 
-        def draw_trajectories_od(self, valid_od_pairs:list, only_colored_trajectories=False) -> None:
+        def draw_trajectories_od(self) -> None:
             """
             description
             -----------
-            this function draws the trajectories of all vehicles in the data
-            dictionary color-coded according to their entry (origin) and
-            exit (destination) point in the intersection
-
+            this function makes a visual separation of the components
+            of the intersection according to the different entry (o) and exit (d) points.
+            The point is for the user to see if the intersection is separated properly or if
+            they need to adjust the bbox or/and the intersection center.
+            
             arguments
             ---------
             1) list of tuples where each tuple is one of the valid od pairs
-            2) (optional) boolean variable to determine if the user wants to
-                visualize the triangles used to differentiate od pairs
 
             output
             ------
             plot of the information written in the description 
             """
-            od_pairs = self.mother.analysis(self.data, self.spatio_temporal_info).get_od_pairs()
             ll_y,ll_x=self.bbox[0]
             lr_y,lr_x=self.bbox[1]
             ur_y,ur_x=self.bbox[2]
             ul_y,ul_x=self.bbox[3]
-            colors_and_alphas = [('blue',0.05),('orange',1),('red',1),('green',1),('violet',0.7),('cyan',1)]
+            alpha=(1/len(self.data.get('id')))**0.33
 
-            if only_colored_trajectories is False:
-                _fig,ax=plt.subplots(nrows=1,ncols=2,figsize=(12,5))
+            _fig,ax=plt.subplots(figsize=(8,6))
+            for l,_ in enumerate(self.x):
 
-                for l,_ in enumerate(self.x):
+                if self.vehicle_type[l]!='Motorcycle':
 
-                    if od_pairs[l] in valid_od_pairs and self.vehicle_type[l]!='Motorcycle':
+                    ax.plot(self.x[l],self.y[l],color='k',linewidth=0.5,alpha=alpha)
 
-                        ax[0].plot(self.x[l],self.y[l],color='k',linewidth=0.5,alpha=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][-1])
+            ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox] + [self.bbox[0][0]],color='blue',linewidth=0.5)
+            ax.plot([ul_x,self.x_center,lr_x],[ul_y,self.y_center,lr_y],color='blue',linewidth=0.5)
+            ax.plot([ll_x,self.x_center,ur_x],[ll_y,self.y_center,ur_y],color='blue',linewidth=0.5)
+            ax.text(0.5*(ll_x+lr_x),0.5*(ll_y+lr_y),'1',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(ll_x+ul_x),0.5*(ll_y+ul_y),'2',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(ul_x+ur_x),0.5*(ul_y+ur_y),'3',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(ur_x+lr_x),0.5*(ur_y+lr_y),'4',fontsize=14,fontweight='bold',color='red')
+            ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
+            ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_xlabel('longitude')
+            ax.set_ylabel('latitude')
+            plt.tight_layout()
+            plt.show()
+            plt.close()
 
-                ax[0].plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox] + [self.bbox[0][0]],color='blue',linewidth=0.5)
-                ax[0].plot([ul_x,self.x_center,lr_x],[ul_y,self.y_center,lr_y],color='blue',linewidth=0.5)
-                ax[0].plot([ll_x,self.x_center,ur_x],[ll_y,self.y_center,ur_y],color='blue',linewidth=0.5)
-                ax[0].text(0.5*(ll_x+lr_x),0.5*(ll_y+lr_y),'1',fontsize=14,fontweight='bold',color='red')
-                ax[0].text(0.5*(ll_x+ul_x),0.5*(ll_y+ul_y),'2',fontsize=14,fontweight='bold',color='red')
-                ax[0].text(0.5*(ul_x+ur_x),0.5*(ul_y+ur_y),'3',fontsize=14,fontweight='bold',color='red')
-                ax[0].text(0.5*(ur_x+lr_x),0.5*(ur_y+lr_y),'4',fontsize=14,fontweight='bold',color='red')
-                ax[1].set_facecolor('black')
+        def draw_trajectories_cc(self, valid_od_pairs:list):
+            """
+            description
+            -----------
+            this function draws the trajectories of all vehicles in the data
+            dictionary color-coded according to their entry (o) and
+            exit (o) point in the intersection.
 
-                for l,_ in enumerate(self.x):
+            arguments
+            ---------
+            1) list of tuples with the correct od pairs based on the intersection
 
-                    if od_pairs[l] in valid_od_pairs:
+            output
+            ------
+            plot of the information written in the description 
+            """
+            od_pairs = self.master.analysis(self.data, self.spatio_temporal_info).get_od_pairs()
+            ll_y,ll_x=self.bbox[0]
+            lr_y,lr_x=self.bbox[1]
+            ur_y,ur_x=self.bbox[2]
+            ul_y,ul_x=self.bbox[3]
+            colors= ['blue','orange','red','green','cyan','violet','gray','brown']
+            alphas = [(1 - (sum(1 for _ in od_pairs if _==pair))/(len(od_pairs))) for pair in valid_od_pairs]
 
-                        ax[1].plot(self.x[l],self.y[l],color=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][0],linewidth=1,alpha=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][-1])
+            _fig,ax = plt.subplots(figsize=(8,6))
+            ax.set_title('Vehicle Trajectories')
+            ax.set_facecolor('k')
+            for l,_ in enumerate(self.x):
 
-                ax[1].plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='white')
-                for axis in ax:
+                if od_pairs[l] in valid_od_pairs and self.vehicle_type[l]!='Motorcycle':
 
-                    axis.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
-                    axis.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
-                    axis.set_xticks([])
-                    axis.set_yticks([])
-                    axis.set_xlabel('x coordinate')
-                    axis.set_ylabel('y coordinate')
-            else:
-                _fig,ax = plt.subplots(figsize=(10,8))
-                ax.set_title('Vehicle Trajectories')
-                ax.set_facecolor('white')
-                for l,_lista in enumerate(self.x):
+                    ax.plot(self.x[l],self.y[l],color=colors[valid_od_pairs.index(od_pairs[l])],linewidth=1,alpha=alphas[valid_od_pairs.index(od_pairs[l])])
 
-                    if od_pairs[l] in valid_od_pairs and self.vehicle_type[l]!='Motorcycle':
-
-                        ax.plot(self.x[l],self.y[l],color=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][0],linewidth=1,alpha=colors_and_alphas[valid_od_pairs.index(od_pairs[l])][-1])
-
-                ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='k')
-                ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
-                ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
-                ax.set_xticks([])
-                ax.set_yticks([])
-                ax.set_xlabel('x coordinate')
-                ax.set_ylabel('y coordinate')
-
-            plt.show(close=True)
+            ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='white')
+            ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
+            ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_xlabel('longitude')
+            ax.set_ylabel('latitude')
+            plt.tight_layout()
+            plt.show()
+            plt.close()
 
         def draw_spacetime_diagram(self) -> None:
             """
@@ -1207,10 +1232,10 @@ class Master:
             vmax = int(max(np.mean(set) for set in self.u))
 
             x = [value for set in self.t for value in set]
-            y = [value for set in self.mother.analysis(self.data,self.spatio_temporal_info).get_distance_travelled() for value in set]
+            y = [value for set in self.master.analysis(self.data,self.spatio_temporal_info).get_distance_travelled() for value in set]
             z = [value for set in self.u for value in set]
 
-            _fig,ax= plt.subplots(nrows=1,ncols=1,figsize=(18,5))
+            _fig,ax= plt.subplots(figsize=(18,5))
 
             scatter = ax.scatter(x,y,c=z,cmap='jet_r',vmin=vmin,vmax=vmax,s=0.5)
             cbar = plt.colorbar(scatter, ax=ax)
@@ -1220,7 +1245,8 @@ class Master:
             plt.xlabel('t (s)')
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
+            plt.close()
 
         def draw_distance_travelled(self, vehicle_id:int):
             """
@@ -1237,16 +1263,18 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(8,4))
 
-            ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.mother.analysis(self.data, self.spatio_temporal_info).get_distance_travelled()[self.vehicle_id.index(vehicle_id)],color='k',label=f'Vehicle ID: {vehicle_id}')
+            ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.master.analysis(self.data, self.spatio_temporal_info).get_distance_travelled()[self.vehicle_id.index(vehicle_id)],color='k',label=f'Vehicle ID: {vehicle_id}')
 
             plt.title('Distance Travalled vs Time')
             plt.xlabel('t (s)')
             plt.ylabel('Distance Travelled (m)')
             plt.tight_layout()
             plt.grid(True)
-            plt.show(close=True)
+            plt.legend()
+            plt.show()
+            plt.close()
 
         def draw_speed(self, vehicle_id:int):
             """
@@ -1262,7 +1290,7 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(8,4))
 
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.u[self.vehicle_id.index(vehicle_id)],color='blue',label=f'Vehicle ID: {vehicle_id}')
 
@@ -1271,7 +1299,9 @@ class Master:
             plt.ylabel('Speed (km/h)')
             plt.tight_layout()
             plt.grid(True)
-            plt.show(close=True)
+            plt.legend()
+            plt.show()
+            plt.close()
 
         def draw_acceleration(self, vehicle_id:int):
             """
@@ -1288,9 +1318,9 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            a = self.mother.analysis(self.data, self.spatio_temporal_info).get_acceleration()
+            a = self.master.analysis(self.data, self.spatio_temporal_info).get_acceleration()
 
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(8,4))
 
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],a[self.vehicle_id.index(vehicle_id)],color='red',label=f'Vehicle ID: {vehicle_id}')
 
@@ -1299,7 +1329,9 @@ class Master:
             plt.ylabel(r'Acceleration $(m/s^2)$')
             plt.tight_layout()
             plt.grid(True)
-            plt.show(close=True)
+            plt.legend()
+            plt.show()
+            plt.close()
         
         def draw_traffic_light_phases(self, legend_1:str, legend_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
             """
@@ -1329,7 +1361,7 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            _fig,ax=plt.subplots(nrows=1,ncols=1,figsize=(18,5),dpi=300)
+            _fig,ax=plt.subplots(figsize=(18,5))
 
             ax.set_facecolor('black')
             ax.set_title('Flow vs Time')
@@ -1358,4 +1390,5 @@ class Master:
             ax.axhline(y=0,color='k',linewidth=3)
             plt.legend()
             plt.tight_layout()
-            plt.show(close=True)
+            plt.show()
+            plt.close()
