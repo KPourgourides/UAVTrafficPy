@@ -29,7 +29,6 @@ def get_info_pneuma(file_path: str, sampling_period:float, time_decimals:int, po
     ------
     data directory with the correct format
     """
-
     data_frame = pd.read_csv(file_path)
     file_rows,inner_rows=[],[]
     for _index,row in data_frame.iterrows():
