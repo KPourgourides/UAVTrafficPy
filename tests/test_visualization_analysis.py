@@ -4,12 +4,12 @@ This file is supplementary and NOT a core file of the UAVTrafficPy project.
 Users can run this test file to perform some analysis and visualization tasks and check if it runs as expected.
 The dataset used is in tests/dataset_example and is a small fraction from a pNEUMA dataset just to run the tests.
 """
-from tool import uavtrafficpy
-import dataload_example
-tool =  uavtrafficpy.Master()
-
 import random
 import numpy as np
+
+from tool import uavtrafficpy
+from tests import dataload_example
+tool =  uavtrafficpy.Master()
 
 raw_data = dataload_example.get_info_pneuma(file_path=r'tests/dataset_example.csv',sampling_period=0.2,time_decimals=1,position_smoothing=2)
 
