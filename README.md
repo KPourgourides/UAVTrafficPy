@@ -5,7 +5,7 @@
   &nbsp;&nbsp;&nbsp;
   <img src="pictures/uranus.png" width="42%"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="pictures/European_Research_Council_logo.svg.png" width="15%"/>
+  <img src="pictures/erc.png" width="15%"/>
 </p>
 
 The recent introduction of UAV-based data collection methods in transportation research has unlocked a new realm of possibilities, which was inaccessible in the past due to limitations posed by traditional
