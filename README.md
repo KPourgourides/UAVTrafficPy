@@ -218,7 +218,7 @@ Omirou Str. and then turning rightwards into Panepistimiou Ave.)*, and finally `
 Where blue, orange, green and red respectively correspond to od pairs `(1,3)`, `(1,2)`, `(4,2)`, and `(4,3)`. The argument `valid_od_pairs` is a list that contains the correct od pairs, `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`. This trajectory categorization is also helpful for the calculation of the turn ratios for each street. For our case, they are depicted below
 
 <p align="center">
-  <img src="pictures/turn ratios.png" width="75%"/>
+  <img src="pictures/turn ratios.png" width="100%"/>
 </p>
 
 The next step is to separate the `data` dictionary into smaller sub-dictionaries based on the different origins / entry points. This step will be helpful later on when we will conduct origin-specific analyses. In our case, we must make two data sub-dictionaries, `data_a` and `data_b`, for od pairs `(1,3),(1,2)` and `(4,3),(4,2)` respectively. To do this, we run the following commands
@@ -256,13 +256,13 @@ thus the total number of peaks is equal to the number of lanes in the road. For 
 Where `flow_direction` is one of `['up','down','left','right]`; flow towards the north corresponds to `'up'`, towards the south corresponds to `down`, etc.. Initially, we will see this histogram
 
 <p align="center">
-  <img src="pictures/rawlanes.png" width="75%"/>
+  <img src="pictures/rawlanes.png" width="100%"/>
 </p>
 
 Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 4)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
 
 <p align="center">
-  <img src="pictures/lanes.png" width="75%"/>
+  <img src="pictures/lanes.png" width="100%"/>
 </p>
 
 Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which respectively correspond to the number of lanes and the float values that are the lane boundaries along the width of the road. Also, it has an additional key called `distribution`, which is a list of nested lists, one per vehicle, and includes the lane in which the vehicle belonged to, per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
@@ -335,8 +335,8 @@ calculated, and the same holds for key `Phase Duration`. Below we have a visuali
 for Panepistimiou Ave and Omirou Str.
 
 <p align="center">
-  <img src="pictures/trafficlightspanepistimiou.png" width="75%"/>
-  <img src="pictures/trafficlightsomirou.png" width="75%"/>
+  <img src="pictures/trafficlightspanepistimiou.png" width="100%"/>
+  <img src="pictures/trafficlightsomirou.png" width="100%"/>
 </p>
 
 For Panepistimiou Ave, the average duration of the green light, red light and entire phase are 30 $\pm$ 4 secons, 60 $\pm$ 2 seconds and 90 $\pm$ 4 seconds. The corresponding values for Omirou Str are 16 $\pm$ 4 seconds, 74 $\pm$ 3 seconds and 90 $\pm$ 2 seconds.
@@ -359,7 +359,7 @@ cycles[0] = {'Start': 9.0, 'Break': 70.0, 'Continue': 76.0, 'Stop': 96.0, 'End':
 Below we have the visualization of the first cycle in the dataset
 
 <p align="center">
-  <img src="pictures/trafficcycles.png" width="75%"/>
+  <img src="pictures/trafficcycles.png" width="100%"/>
 </p>
 
 The shaded areas correspond to time windows where both traffic lights where red, possibly a time when pedestrian crossings were active.
@@ -413,7 +413,7 @@ We proceed with the calculation of the queue-wise information when the queue has
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
 <p align="center">
-  <img src="pictures/queue.png" width="75%"/>
+  <img src="pictures/queue.png" width="100%"/>
 </p>
 
 To formally extract the queue-wise information, we run the following commands
