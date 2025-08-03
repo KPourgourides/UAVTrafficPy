@@ -20,7 +20,9 @@ UAV-based traffic data in urban networks. It provides users with the ability to 
 
 ## Acknowledgments
 
-I would like to thank [KIOS Research & Innovation Center of Excellence](https://www.kios.ucy.ac.cy/) for funding my work through the [URANUS](https://uranus.ucy.ac.cy/) project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124). “URANUS” (Real-Time Urban Mobility Management via Intelligent UAV-based Sensing) focuses on real-time, dynamic, and intelligent sensing of vehicular and pedestrian traffic via Unmanned Aerial Vehicles (UAVs), and the use of the collected information for urban mobility management.
+I would like to thank [KIOS Research & Innovation Center of Excellence](https://www.kios.ucy.ac.cy/) for funding my work through the [URANUS](https://uranus.ucy.ac.cy/) project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124). 
+
+“URANUS” (Real-Time Urban Mobility Management via Intelligent UAV-based Sensing) focuses on real-time, dynamic, and intelligent sensing of vehicular and pedestrian traffic via Unmanned Aerial Vehicles (UAVs), and the use of the collected information for urban mobility management.
 
 ## Table of contents
 
