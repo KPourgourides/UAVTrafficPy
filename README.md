@@ -21,7 +21,7 @@ UAV-based traffic data in urban networks. It provides users with the ability to 
   - [Do you have a question?](#do-you-have-a-question?)
   - [Do you want to contribute?](#do-you-want-to-contribute)
   - [Do you want to report a bug?](#do-you-want-to-report-a-bug)
-- [How to use UAVTrafficPy for signalized intersections](#how-to-use-UAVTrafficPy-for-intersections)
+- [How to use UAVTrafficPy for signalized intersections](#how-to-use-UAVTrafficPy-for-signalized-intersections)
   - [Acquiring the data in the correct format](#acquiring-the-data-in-the-correct-format)
   - [Setting up the analysis](#setting-up-the-analysis)
   - [Analysis & Visualization](#analysis--visualization)
@@ -45,16 +45,13 @@ and then clearly state your question. Before submitting a question, please caref
 
 ### Do you want to contribute?
 
-Contribution to `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. Please make sure that your contributions are in compliance with the rest of the project and its working principles, which arw discussed in detail in the section ["How to use UAVTrafficPy for Intersections"](#how-to-use-uavtrafficpy-for-intersections). All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc) to ensure code uniformity. Please make sure that your code passes pylint checks before submitting a pull request.
-
->[!IMPORTANT]
-> Please open pull requests to the `dev` branch
+Contribution to `UAVTrafficPy` can be done through pull requests, and are very welcome and enouraged. Please make sure that your contributions are in compliance with the rest of the project and its working principles, which arw discussed in detail in the section ["How to use UAVTrafficPy for Intersections"](#how-to-use-uavtrafficpy-for-intersections). All contributed code must follow the coding standards defined in the project's [pylintrc configuration](https://github.com/KPourgourides/UAVTrafficPy/blob/main/.pylintrc) to ensure code uniformity. Please make sure that your code passes pylint checks before submitting a pull request. Please open pull requests to the `dev` branch.
 
 ### Do you want to report a bug?
 
 If you want to report a bug please open an [issue](https://github.com/KPourgourides/UAVTrafficPy/issues/new) and clearly state the bug, the related files in the repository, and what went wrong with respect to the behaviour you expected.
 
-## How to use UAVTrafficPy for intersections
+## How to use UAVTrafficPy for signalized intersections
 
 This section provides a detailed walkthrough on how to use `UAVTrafficPy` properly in order to extract valuable information and make insightful visualizations regarding urban signalized intersections in the light of UAV-based traffic data. Here, we follow closely the code provided in [this usage example](https://github.com/KPourgourides/UAVTrafficPy/blob/main/usage%20example/intersection_pipeline_example.ipynb). Of course, the tools showcased below and the rest of the tools not shown here can also be used when conducting analyses for non-intersection parts of a traffic network, such as simple road links.
 
@@ -87,7 +84,7 @@ data.get('id') = [0,1,...,N]
 data.get('vtype') = ['Car','Motorcycle',...,'Bus']
 ```
 
-Where the total number of vehicles is N+1. The rest of the dictionary keys correspond to lists that nest more lists inside, one per vehicle in the dataset. The elements of each nested list correspond to different time stamps, and their length varies based on how much time the corresponding vehicle spent in the recording. For example,
+Where the total number of vehicles is N+1. The rest of the dictionary keys correspond to lists with nested lists, one per vehicle in the dataset. The elements of each nested list correspond to different time stamps, and their length varies based on how much time the corresponding vehicle spent in the recording. For example,
 
 `data.get('time')` = $[T^0,T^1,...,T^N]$
 
@@ -116,7 +113,7 @@ how to do the above data transformations on the pNEUMA dataset exists at [this l
 Initially, we must identify the intersection we want to work with through satellite imagery software, for example GoogleMaps, and spot important information such as the different possible routes. In this walkthrough, we study the signalized intersection between Panepistimiou Ave and Omirou Str in Athens, Greece, for a 15 minute recording in the morning hours of the 24th of October, 2018.
 
 <p align="center">
-  <img src="pictures/intersection.png" width="50%"/>
+  <img src="pictures/intersection_athens.png" width="100%"/>
 </p>
 
 For Panepistimiou Ave., there are 4 lanes in total *(3 + 1 bus lane)*, and drivers can either
@@ -182,7 +179,7 @@ which both bounds and filters the data. We can also optionally pass the argument
 desire to have explicitly removed from the dataset, even if they do not satisfy the parking condition. 
 
 >[!NOTE]
-> In both cases, instead of just bounding and/or filtering the data, the two functions also add a new key called `speed` to the data dictionary, which corresponds to a list that nests more lists inside, one per vehicle, with their time-dependent speeds in kilometers per hour.
+> In both cases, instead of just bounding and/or filtering the data, the two functions also add a new key called `speed` to the `data` dictionary, which corresponds to a list of nested lists, one per vehicle, with their time-dependent speeds in kilometers per hour.
 
 #### Categorizing the trajectories based on their routes
 
@@ -197,7 +194,7 @@ Panepistimiou Ave.)*, then the assigned od pair will be `(1,3)`. We can visualiz
 `visualization.draw_trajectories_od()`
 
 <p align="center">
-  <img src="pictures/odtrajectories.png" width="50%"/>
+  <img src="pictures/odtrajectories.png" width="65%"/>
 </p>
 
 We can use the above plot to identify the correct od pairs for our intersection. Those are `(1,3)` *(Driving forward on Panepistimiou Ave.)*,
@@ -207,19 +204,16 @@ Omirou Str. and then turning rightwards into Panepistimiou Ave.)*, and finally `
 `visualization.draw_trajectories_cc(valid_od_pairs)`
 
 <p align="center">
-  <img src="pictures/cctrajectories.png" width="50%"/>
+  <img src="pictures/cctrajectories.png" width="65%"/>
 </p>
 
-Where blue, orange, green and red respectively correspond to od pairs `(1,3)`, `(1,2)`, `(4,2)`, and `(4,3)`. The argument `valid_od_pairs` is a list that contains the correct od pairs, `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`. This trajectory categorization is also helpful for the calculation of the turn ratios for each street.  The turn ratio for a specific turn is calculated by taking the ratio between the number of vehicles that turned, and the number of all vehicles on the street, which is those who turn plus those who didnt turn. For our case, they are depicted below
+Where blue, orange, green and red respectively correspond to od pairs `(1,3)`, `(1,2)`, `(4,2)`, and `(4,3)`. The argument `valid_od_pairs` is a list that contains the correct od pairs, `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`. This trajectory categorization is also helpful for the calculation of the turn ratios for each street. For our case, they are depicted below
 
 <p align="center">
-  <img src="pictures/turn ratios.png" width="50%"/>
+  <img src="pictures/turn ratios.png" width="65%"/>
 </p>
 
-The next step is to separate the data dictionary into smaller sub-dictionaries based on the different trajectory origins. Essentially,
-the objective is to isolate data which belong to the same traffic light phase, i.e. have the same origin within the
-intersection. **Their destination need not be the same**. In our case, we must make two data sub-dictionaries, `data_a` and `data_b`
-for od pairs `[(1,3),(1,2)]` and `[(4,3),(4,2)]` respectively. To do this, we run these commands
+The next step is to separate the `data` dictionary into smaller sub-dictionaries based on the different origins / entry points. This step will be helpful later on when we will conduct origin-specific analyses. In our case, we must make two data sub-dictionaries, `data_a` and `data_b`, for od pairs `(1,3),(1,2)` and `(4,3),(4,2)` respectively. To do this, we run the following commands
 
 ```
 data_a = analysis.get_od_data(desirable_pairs=[(1,3),(1,2)])
@@ -227,7 +221,7 @@ data_b = analysis.get_od_data(desirable_pairs=[(4,3),(4,2)])
 ```
 
 In the following steps of the analysis and visualization process, the methods we will discuss are applied separately on the
-two data sub-dictionaries, and their variable names will end in either `_a` or `_b` depending on which sub-dictionary we want to use. To do this, we set up separate analysis and visualization classes with the following
+two data sub-dictionaries, and their variable names will end in either `_a` or `_b` depending on which sub-dictionary we use. To do this, we set up separate analysis and visualization classes with the following
 commands
 
 ```
@@ -242,28 +236,38 @@ visualization_b = tool.visualization(data_b,spatio_temporal_info)
 
 The next task is to extract lane-wise information for the components of the intersection. By lane-wise information, we mean the number of lanes, their spatial boundaries, and the distribution of vehicles in them for each of their time steps.
 
-We can extract the number of lanes in a street throughthe calculation of the perpendicular distance between
-its constituent vehicles and an imaginary line running parallel to itself *(e.g., an appropriate edge of the `bbox`, according to the direction of traffic flow in the street)*. Once this distance is calculated for per time step, per vehicle in the street, it can be plotted in a histogram. It is expected that this quantity will
-be normally distributed around the center of each existent lane. For example, to visualize this distribution for Panepistimiou Ave., we simply run the following command
+The number of lanes in a road and their corresponding spatial boundaries can be extracted by forming the
+lateral distribution of vehicles along that road. It is expected that vehicles which move along the same lane
+will have approximately the same lateral distance from the edge of the road, and thus, the time-average of this
+quantity is calculated for every vehicle in the road. The distribution of this quantity is expected to form distinct
+peaks centered about the lateral center of each corresponding lane. Each peak represents one existent lane, and
+thus the total number of peaks is equal to the number of lanes in the road. For example, to visualize this distribution for Panepistimiou Ave, we simply run the following command
 
 `lane_info_a = analysis_a.get_lane_info(flow_direction='up')`
 
 Where `flow_direction` is one of `['up','down','left','right]`; flow towards the north corresponds to `'up'`, towards the south corresponds to `down`, etc.. Initially, we will see this histogram
 
-<img src="pictures/raw_lanes.png" width="100%"/>
+<p align="center">
+  <img src="pictures/rawlanes.png" width="65%"/>
+</p>
 
-Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 5)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
+Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 4)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
 
-<img src="pictures/clustered_lanes.png" width="100%"/>
+<p align="center">
+  <img src="pictures/lanes.png" width="65%"/>
+</p>
 
-Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which are 5 and `[55.0, 58.96, 61.85, 64.77, 67.61, 71.0]` respectively in our case. Also, it has an additional key called `distribution`, which is a list of lists. Each nested list corresponds to a different vehicle, and includes the lane in which the vehicle belonged to per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
+Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which respectively correspond to the number of lanes and the float values that are the lane boundaries along the width of the road. Also, it has an additional key called `distribution`, which is a list of nested lists, one per vehicle, and includes the lane in which the vehicle belonged to, per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
 
 #### Extracting traffic light phases & cycles
 
-##### Traffic light phases
-
-Another useful task when it comes to signalized intersections is the calculation of the different traffic light phases; For example, when the light becomes green, for how long it stays green, when it turns red, and when it goes to green again. In order to achieve this for a certain traffic light, a virtual detector is placed at the position of the real traffic light pole. The
-detector measures flow counts per step of the time axis. Initially, we type these commands
+Traffic light phases can be extracted through the placement of virtual detectors at the real positions of traffic
+light poles, and the subsequent measurement of flow counts at those points. Since the data are discrete in time,
+flow measurements take place in distinct time steps of the `time_axis`. The registered counts at a certain time step correspond
+to the number of vehicles that crossed the virtual traffic light pole between the previous and the current time step.
+We expected that, for each street, counts that belong to the same phase are registered within a certain time
+window, and that there are no registered counts after the window is over for multiple time steps, until the next
+cycle repetition. To execute the above task, we run the following commands
 
 ```
 flow_info_a = analysis_a.get_flow_info(detector_position_a)
@@ -281,14 +285,15 @@ registered in the corresponding time interval. For example,
 flow_info_a[time_axis.index(24)] = {'time stamp': 24.0, 'flow': 4, 'id': [71,128,142,145]}
 ```
 
-Here, 4 vehicles in Panepistimiou Ave. drove past the traffic light between the 23rd and 24th second of the recording. This information is utilized to alter the flow detectors outputs into binary *(1 if there were registered count hits, 0 if there were not)*, and group them together to form the different traffic light phases. In order to do that, we run the following commands
+Here, 4 vehicles in Panepistimiou Ave drove past the traffic light between the 23rd and 24th second of the recording. This information is utilized to alter the flow detectors outputs into binary *(1 if there were registered count hits, 0 if there were not)*, and group them together. The different groups of registered counts represent the different traffic light phases, and the duration of each
+phase is equal to that of the corresponding time window. In order to do that, we run the following commands
 
 ```
-flow_a,norm_flow_a = analysis_a.get_normalized_flow(threshold)
-flow_b,norm_flow_b = analysis_b.get_normalized_flow(threshold)
+flow_a,norm_flow_a = analysis_a.get_normalized_flow(threshold=15)
+flow_b,norm_flow_b = analysis_b.get_normalized_flow(threshold=15)
 ```
 
-The `threshold` arguments here refer to the maximum accepted distance *(in time)* in order to consider count hits in
+The `threshold` argument here refers to the maximum accepted distance *(in time)* between two consecutive registered hits in order to consider them in
 the same group. The output of both `flow_a`,`flow_b` is a list with the unnormalized hits per step of the `time_axis`, and the output of both `norm_flow_a`,`norm_flow_b`
 is also a list, but this time with the normalized and grouped hits per step of the `time_axis`. To visualize the above, we run the commands
 
@@ -296,16 +301,11 @@ is also a list, but this time with the normalized and grouped hits per step of t
 visualization.draw_traffic_light_phases(legend_a,legend_b,norm_flow_a,norm_flow_b,flow_a,flow_b)
 ```
 
-<img src="pictures/traffic_phases.png" width="100%"/>
+<img src="pictures/tlp.png" width="100%"/>
 
-Here, `legend_a`,`legend_b` are strings that will serve as legends in the plot to name the different flows *(e.g., `legend_a`='Panepistimiou Ave.')*. If there are any count hits that visibly violate the red traffic light *(e.g., a violet count hit while a golden phase in on)*, we can find the respective id in order to remove it from the dataset. To do this, we run one of the two commands, depending on which data sub-dictionary the violating vehicle belongs to
+Here, `legend_a`,`legend_b` are strings that will serve as legends in the plot to name the different flows *(e.g., `legend_a`=1 $\to$ 2)*. The black and red counts respectively correspond to Panepistimiou Ave and Omirou Str.
 
-```
-analysis_a.get_cursed_id(low_lim,high_lim)
-analysis_b.get_cursed_id(low_lim,high_lim)
-```
-
-These functions print the ids of the vehicles that registered hits at each step of the `time_axis` between the values `low_lim` and `high_lim`, in order for us to be able to know which one to remove. To zoom in on the previous plot and see the time-area of interest in more detail, we can pass the optional arguments `activate_zoom`,`high_lim` and `low_lim` to `draw_traffic_light_phases()`. To translate the above figure into formal traffic light phase data, we run the following commands
+To translate the above figure into formal traffic light phase data, we run the following commands
 
 ```
 tlp_a = analysis_a.get_traffic_light_phases()
@@ -324,12 +324,14 @@ tlp_a[0] = {'Green':9.0, 'Duration ON':61.0, 'Red':70.0, 'Duration OFF':32.0, 'P
 If the recording had stopped before the completion of a phase, the appropriate keys will have the value
 `None`. For example, if the recording stopped while a traffic light was red, the key `Duration OFF` cannot be
 calculated, and the same holds for key `Phase Duration`. Below we have a visualization for the average duration of the green light, red light, and the entire phase
-for Panepistimiou Ave. and Omirou Str.
+for Panepistimiou Ave and Omirou Str.
 
-<img src="pictures/trafficlightspanepistimiou.png" width="100%"/>
-<img src="pictures/trafficlightsomirou.png" width="100%"/>
+<p align="center">
+  <img src="pictures/trafficlightspanepistimiou.png" width="75%"/>
+  <img src="pictures/trafficlightsomirou.png" width="75%"/>
+</p>
 
-##### Traffic light cycles
+For Panepistimiou Ave, the average duration of the green light, red light and entire phase are 30 $\pm$ 4 secons, 60 $\pm$ 2 seconds and 90 $\pm$ 4 seconds. The corresponding values for Omirou Str are 16 $\pm$ 4 seconds, 74 $\pm$ 3 seconds and 90 $\pm$ 2 seconds.
 
 Next, we combine `tlp_a`, `tlp_b`  in order to get the information on the full cycles, i.e. the
 subsequent completion of the 2 individual phases. To do so, we run the following command
@@ -348,11 +350,29 @@ cycles[0] = {'Start': 9.0, 'Break': 70.0, 'Continue': 76.0, 'Stop': 96.0, 'End':
 
 Below we have the visualization of the first cycle in the dataset
 
-<img src="pictures/trafficcycles.png" width="100%"/>
+<p align="center">
+  <img src="pictures/trafficcycles.png" width="75%"/>
+</p>
 
-#### Extracting relative dynamic gaps 
+The shaded areas correspond to time windows where both traffic lights where red, possibly a time when pedestrian crossings were active.
 
-In order to extract the vehicle IDs sorted from last to first according to their direction of motion, and consequently the corresponding gaps *(front to rear bumper)* between them per step of the `time_axis`, we run the following commands
+#### Extracting car-following information
+
+Car-following parameters are used in traffic flow theory to describe how a driver or automated vehicle react to a
+vehicle ahead in the same lane. Some of the parameters include the acceleration, deceleration, speed difference,
+and gaps (front to rear bumper) between vehicles. Such information is crucial for microscopic traffic simulation
+models.
+
+Information on speed and acceleration (or deceleration) for each vehicle can be simply extracted through
+discrete time differentiation of the position coordinates. The accuracy of such calculations depends on the
+temporal resolution of the traffic data, which is usually high regarding UAV-based data.
+
+Information which depends on the relative movement between a vehicle and its leader, such as gaps and
+speed differences, are extracted as follows. Vehicles IDs in each lane are sorted from last to first vehicle according
+to the direction of movement in the lane; e.g., if the vehicles in a lane are moving towards the north, their IDs
+are sorted with respect to increasing latitude. Then, once the vehicles are sorted, the calculation of the gaps
+or speed differences is trivial due to full knowledge of position coordinates and speeds. The above tasks can be
+executed for any time step in the recording. To do the above, we run the following commands
 
 ```
 sorted_id_a = analysis_a.get_sorted_id()
@@ -362,7 +382,7 @@ sorted_id_b = analysis_b.get_sorted_id()
 gaps_b = analysis_b.get_gaps()
 ```
 
-This information is important as it will later help us extract queue-wise information. The output of both methods is a list of dictionaries, where each dictionary
+We are not going to calibrate any car-following models, but to us this information is important as it will later help us extract queue-wise information. The output of both methods is a list of dictionaries, where each dictionary
 has the keys `time stamp`, and `lane 0` through `lane L`, where L+1 the total number of lanes. The `time
 stamp` corresponds to the current step of the `time_axis`, and each lane-specific key is a list with the sorted IDs or gaps, in meters. For example,
 
@@ -378,13 +398,15 @@ that have no vehicles in front of them.
 
 We proceed with the calculation of the queue-wise information when the queue has its maximum potential, i.e. the moments when the traffic light turns green for the different phases. For each street, and for each of its lanes, a vehicle is considered to be part of the queue at the time of the corresponding green light if it satisfies the following conditions:
 
-- It is physically behind the virtual detector that represents the traffic light pole
-- Its instantaneous speed is lower than a given threshold 
-- Its gap from the next vehicle is lower than a given threshold *(except the queue leader)*
+1. It is physically behind the virtual detector that represents the traffic light pole
+2. Its instantaneous speed is lower than a given threshold $u_{threshold}$
+3. Its gap from the next vehicle is lower than a given threshold  $g_{threshold}$ *(except the queue leader)*
 
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
-<img src="pictures/queue.png" width="100%"/>
+<p align="center">
+  <img src="pictures/queue.png" width="100%"/>
+</p>
 
 To formally extract the queue-wise information, we run the following commands
 
