@@ -1,7 +1,11 @@
 # UAVTrafficPy: Package for analysis & visualization of UAV-based Traffic data in Python
 
-<p align="center">
-  <img src="pictures/logo.png" width="100%" align="center"/>
+<p align="left">
+  <img src="pictures/KIOS.png" width="25%" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="pictures/uranus.png" width="42%"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="pictures/European_Research_Council_logo.svg.png" width="15%"/>
 </p>
 
 The recent introduction of UAV-based data collection methods in transportation research has unlocked a new realm of possibilities, which was inaccessible in the past due to limitations posed by traditional
@@ -13,6 +17,10 @@ resolution. This has the potential to transform the landscape of data science in
 UAV-based traffic data in urban networks. It provides users with the ability to extract and visualize vehicle trajectories in various useful forms, calculate position-derivative quantities such as speeds and accelerations, calculate the cumulative distance travelled by vehicles as a function of time, identify network characteristics such as the number and spatial boundaries of lanes, calculate quantities that are useful for the calibration of car-following models, such as relative gaps and speed differences, and finally extract useful information regarding intersections, such as the duration of traffic light phases, and the length and dissipation time of queues.    
 
 `UAVTrafficPy` was tested with Python >=3.12 on Windows.
+
+## Acknowledgments
+
+I would like to thank [KIOS Research & Innovation Center of Excellence](https://www.kios.ucy.ac.cy/) for funding my work through the [URANUS](https://uranus.ucy.ac.cy/) project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124). “URANUS” (Real-Time Urban Mobility Management via Intelligent UAV-based Sensing) focuses on real-time, dynamic, and intelligent sensing of vehicular and pedestrian traffic via Unmanned Aerial Vehicles (UAVs), and the use of the collected information for urban mobility management.
 
 ## Table of contents
 
@@ -210,7 +218,7 @@ Omirou Str. and then turning rightwards into Panepistimiou Ave.)*, and finally `
 Where blue, orange, green and red respectively correspond to od pairs `(1,3)`, `(1,2)`, `(4,2)`, and `(4,3)`. The argument `valid_od_pairs` is a list that contains the correct od pairs, `valid_od_pairs = [(1,3),(1,2),(4,3),(4,2)]`. This trajectory categorization is also helpful for the calculation of the turn ratios for each street. For our case, they are depicted below
 
 <p align="center">
-  <img src="pictures/turn ratios.png" width="65%"/>
+  <img src="pictures/turn ratios.png" width="75%"/>
 </p>
 
 The next step is to separate the `data` dictionary into smaller sub-dictionaries based on the different origins / entry points. This step will be helpful later on when we will conduct origin-specific analyses. In our case, we must make two data sub-dictionaries, `data_a` and `data_b`, for od pairs `(1,3),(1,2)` and `(4,3),(4,2)` respectively. To do this, we run the following commands
@@ -248,13 +256,13 @@ thus the total number of peaks is equal to the number of lanes in the road. For 
 Where `flow_direction` is one of `['up','down','left','right]`; flow towards the north corresponds to `'up'`, towards the south corresponds to `down`, etc.. Initially, we will see this histogram
 
 <p align="center">
-  <img src="pictures/rawlanes.png" width="65%"/>
+  <img src="pictures/rawlanes.png" width="75%"/>
 </p>
 
 Now, We will be asked to input the number of lanes we see *(i.e. the number of peaks in the distribution - in this case 4)*, and subsequently to provide the lower and upper limits of the distribution. After we input this information, a clustering algorithm will calculate the spatial boundaries of each lane, and we will see the resulting figure
 
 <p align="center">
-  <img src="pictures/lanes.png" width="65%"/>
+  <img src="pictures/lanes.png" width="75%"/>
 </p>
 
 Here, `lane_info_a` is a dictionary that includes all the information we need. Its keys are `number` *(integer)* and `boundaries` *(list)*, which respectively correspond to the number of lanes and the float values that are the lane boundaries along the width of the road. Also, it has an additional key called `distribution`, which is a list of nested lists, one per vehicle, and includes the lane in which the vehicle belonged to, per time step. If at some point a vehicle had left the road, the corresponding values from that point onwards will be `None`. 
@@ -405,7 +413,7 @@ We proceed with the calculation of the queue-wise information when the queue has
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
 <p align="center">
-  <img src="pictures/queue.png" width="100%"/>
+  <img src="pictures/queue.png" width="75%"/>
 </p>
 
 To formally extract the queue-wise information, we run the following commands
