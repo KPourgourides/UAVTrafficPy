@@ -1,4 +1,4 @@
-name: Build JOSS Paper Draft
+name: Build JOSS Paper
 
 on:
   push:
@@ -9,19 +9,16 @@ on:
 jobs:
   build-paper:
     runs-on: ubuntu-latest
-    name: Paper Draft
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v4
 
-      - name: Build draft PDF
-        uses: openjournals/openjournals-draft-action@v4 
-        with:
-          journal: joss
-          paper-path: paper/paper.md
+      - name: Build paper with Whedon
+        uses: openjournals/whedon-action@v1
 
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4 
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
         with:
           name: paper
           path: paper/paper.pdf
