@@ -418,6 +418,8 @@ The vehicles that satisfy the above conditions form the queue at the correspondi
   <img src="pictures/queue_example.png" width="100%"/>
 </p>
 
+The rightmost motorcycle is not considered to be in the queue because it violates condition 1, as it has already crossed the virtual traffic light pole, even though conditions 2 and 3 might be satisfied. The leftmost car is also not considered to be in the queue, because despite the fact that it satisfies condition 1, it has yet to slow down and reach the tail of the queue, and thus violates conditions 2 and 3. The truck and the car in the middle are considered to be part of the queue, as they satisfy all 3 conditions.
+
 To formally extract the queue-wise information, we run the following commands
 
 ```
@@ -429,7 +431,9 @@ The output of the above methods is a list of lists, where each nested list corre
 and has L+1 dictionaries inside, corresponding to the total number of lanes. Each nested dictionary has the 
 keys `Lane`,`Queued Vehicles`,`Queue Length`,`Queued IDs`,`Dissipation Duration`, which respectively correspond
 to the lane in question, the number of queued vehicles at the time of green light, the queue length in meters, the
-ids of the queued vehicles, and the queue dissipation duration in seconds. The `Queue Length` is calculated as the sum of the vehicles lengths and the gap
+ids of the queued vehicles, and the queue dissipation duration in seconds. 
+
+The `Queue Length` is calculated as the sum of the vehicles lengths and the gap
 we derived earlier, whereas the `Dissipation Duration` is the time it
 takes for all the queued vehicles to move past the green light pole. If only a part of the queue dissipates before the
 light turns red again, the queue dissipation duration is then equal to the duration of the green light. For example,
