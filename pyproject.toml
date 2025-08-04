@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "UAVTrafficPy"
-version = "0.1.0"
+version = "1.0.0"
 description = "Package for analysis & visualization of UAV-based Traffic data in Python"
 authors = [
     { name = "Konstantinos Pourgourides", email = "kotsiosp2001@gmail.com" }
@@ -27,3 +27,4 @@ disable = ["W0102"]
 
 [project.urls]
 "Homepage" = "https://github.com/KPourgourides/UAVTrafficPy"
+
