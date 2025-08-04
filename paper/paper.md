@@ -32,12 +32,20 @@ UAV-based data collection solves all of these problems. The quick deployment of 
 
 # Software Functionality
 
-UAVTrafficPy was developed in Python3, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of an already existing software. Different UAV-based traffic datasets use different compact formats, which are oftentimes not intuitive, and thus UAVTrafficPy was designed to take the input data in one universal form, based on dictionaries. It only needs minimal information to work, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2d position coordinates (based on the WGS84 system, i.e. longitiudinal and latitudinal coordinates) labeled by time for every vehicle. Once a user provides this information with the correct format, UAVTrafficPy can execute a large number of tasks, which are mentioned in the [statement of need](#statement-of-need) section. Some visual tasks are depicted in 
+UAVTrafficPy was developed in Python3, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of an already existing software. Different UAV-based traffic datasets use different compact formats, which are oftentimes not intuitive, and thus UAVTrafficPy was designed to take the input data in one universal form, based on dictionaries. It only needs minimal information to work, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2d position coordinates (based on the WGS84 system, i.e. longitiudinal and latitudinal coordinates) labeled by time for every vehicle. Once a user provides this information with the correct format, UAVTrafficPy can execute a large number of tasks, which are mentioned in the [statement of need](#statement-of-need) section. Some tasks such as the illustration of speed and acceleration for a vehicle as a function of time, and trajectory extraction based on vehicle routes in a signalized intersection, are depicted respectively in \autoref{fig:1} and \autoref{fig:2} 
+
+![UAV-based vehicle trajectories separated based on their routes in a signalized intersection. \label{fig:1}](images/trajectories.png)
+
+![Speed and acceleration of a random vehicle as a function of time using its UAV-based trajectory. \label{fig:2}](images/speed_acceleration.png)
+
+These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset.
 
 # Acknowledgements
 
+I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
