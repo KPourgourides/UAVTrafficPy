@@ -415,7 +415,7 @@ We proceed with the calculation of the queue-wise information when the queue has
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
 <p align="center">
-  <img src="pictures/queue_example.png" width="100%"/>
+  <img src="pictures/queue_sketch.png" width="100%"/>
 </p>
 
 The rightmost motorcycle is not considered to be in the queue because it violates condition 1, as it has already crossed the virtual traffic light pole, even though conditions 2 and 3 might be satisfied. The leftmost car is also not considered to be in the queue, because despite the fact that it satisfies condition 1, it has yet to slow down and reach the tail of the queue, and thus violates conditions 2 and 3. The truck and the car in the middle are considered to be part of the queue, as they satisfy all 3 conditions.
