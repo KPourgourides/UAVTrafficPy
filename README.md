@@ -18,7 +18,7 @@ UAV-based traffic data in urban networks. It provides users with the ability to 
 
 `UAVTrafficPy` was tested with Python >=3.12 on Windows.
 
-## Acknowledgments
+## Acknowledgements
 
 I would like to thank [KIOS Research & Innovation Center of Excellence](https://www.kios.ucy.ac.cy/) for funding my work through the [URANUS](https://uranus.ucy.ac.cy/) project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124). 
 
