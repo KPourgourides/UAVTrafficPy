@@ -308,12 +308,12 @@ the same group. The output of both `flow_a`,`flow_b` is a list with the unnormal
 is also a list, but this time with the normalized and grouped hits per step of the `time_axis`. To visualize the above, we run the commands
 
 ```
-visualization.draw_traffic_light_phases(legend_a,legend_b,norm_flow_a,norm_flow_b,flow_a,flow_b)
+visualization.draw_traffic_light_phases(norm_flow_a,norm_flow_b,flow_a,flow_b)
 ```
 
 <img src="pictures/tlp.png" width="100%"/>
 
-Here, `legend_a`,`legend_b` are strings that will serve as legends in the plot to name the different flows *(e.g., `legend_a`=1 $\to$ 2)*. The black and red counts respectively correspond to Panepistimiou Ave and Omirou Str.
+The black and red counts respectively correspond to Panepistimiou Ave and Omirou Str.
 
 To translate the above figure into formal traffic light phase data, we run the following commands
 
@@ -415,7 +415,7 @@ We proceed with the calculation of the queue-wise information when the queue has
 The vehicles that satisfy the above conditions form the queue at the corresponding traffic light phase. A depiction of these conditions is given below
 
 <p align="center">
-  <img src="pictures/queue.png" width="100%"/>
+  <img src="pictures/queue_example.png" width="100%"/>
 </p>
 
 To formally extract the queue-wise information, we run the following commands
