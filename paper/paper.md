@@ -1,120 +1,57 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'UAVTrafficPy: Package for analysis & visualization of UAV-based traffic data in Python'
 tags:
   - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - data science
+  - traffic analysis
+  - visualization
 authors:
-  - name: Adrian M. Price-Whelan
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
-    affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Ludwig
-    dropping-particle: van
-    surname: Beethoven
-    affiliation: 3
+  - name: Konstantinos Pourgourides
+    orcid: 0009-0009-7526-8195
+    affiliation: 1
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University, United States
+ - name: KIOS Research and Innovation Center of Excellence, University of Cyprus, Nicosia, Cyprus
    index: 1
-   ror: 00hx57361
- - name: Institution Name, Country
-   index: 2
- - name: Independent Researcher, Country
-   index: 3
-date: 13 August 2017
+   ror: 037ez2r19
+date: 4 August 2025
 bibliography: paper.bib
-
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
+This paper introduces UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool provides users with the ability to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a significant focus on signalized intersections in urban networks. UAVTrafficPy was developed within the ERC project "URANUS" to help researchers or students working in UAV-related transportation research with their tasks by providing ready-to-use tools for analysis and visualization.
 
 # Statement of need
 
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+The recent introduction of UAV-based data collection methods in transportation research has unlocked a new realm of possibilities, which was inaccessible in the past due to limitations posed by traditional sensor-based methods. These methods refer to data collection through static loop detectors beneath the road network or static cameras, as well as data collected from GPS or bluetooth signals from mobile phones of drivers. The limitations with some, or all of these methods, amongst others, include the inability to store high quality spatio-temporal information for individual vehicles, the inability to cover large parts of a traffic network, and data sparsity. 
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike.
+On the other hand, with the quick deployment of coordinated, camera-equipped drones above a traffic network, researchers have the ability to acquire large volumes of traffic data for all individual vehicles in the network, with high spatio-temporal resolution. This has the potential to transform the landscape of data science in transportation research, as long as new and appropriate tools are developed. 
 
-# Mathematics
+[UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) is an initial attempt to bridge the gap between UAV-based data collection and meaningful data analysis, as it provides users with tools to extract and visualize vehicle trajectories in various useful forms, calculate position-derivative quantities such as speeds and accelerations, calculate the cumulative distance travelled by vehicles as a function of time, identify network characteristics such as the number and spatial boundaries of lanes, calculate quantities that are useful for the calibration of car-following models, such as relative dynamic gaps and speed differences, and finally extract useful information regarding intersections, such as the duration of traffic light phases, and the length and dissipation time of queues.
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
+# Software Functionality
 
-Double dollars make self-standing equations:
+UAVTrafficPy was developed in Python3, and acts as a standalone package for analysis and visualization of UAV-based traffic data; it is not an extension of any already existing software. Different UAV-based traffic datasets use different formats, that are oftentimes very compact and thuis not intuitive, so UAVTrafficPy was designed to take the input data in one universal format, based on Python dictionaries. The tool only needs minimal information to work, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2d position coordinates (based on the WGS84 system, i.e. longitiudinal and latitudinal coordinates) labeled by time for every vehicle. Once a user provides this information in the appropriate format (which is thoroughly discussed in the walkthrough in the main page of the repository), UAVTrafficPy can execute a large number of tasks, which are mentioned in the [statement of need](#statement-of-need) section. Some of these tasks, such as speed and acceleration extraction for a vehicle as a function of time, and trajectory extraction based on vehicle routes in a signalized intersection, are depicted in \autoref{fig:1} and \autoref{fig:2} respectively.
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
+![UAV-based vehicle trajectories separated based on their routes in a signalized intersection. \label{fig:1}](images/trajectories.png)
 
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
+![Speed and acceleration of a random vehicle as a function of time using its UAV-based trajectory. \label{fig:2}](images/speed_acceleration.png)
 
-# Citations
-
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
-
-# Figures
-
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
-and referenced from text using \autoref{fig:example}.
-
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
+These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset.
 
 # Acknowledgements
 
-We acknowledge contributions from Brigitta Sipocz, Syrtis Major, and Semyeong
-Oh, and support from Kathryn Johnston during the genesis of this project.
+I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
+
+
+
+
+
+
+
+
+
+
