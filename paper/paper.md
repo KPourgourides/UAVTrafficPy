@@ -20,7 +20,7 @@ bibliography: paper.bib
 
 # Summary
 
-
+This paper introduces UAVTrafficPy, a Python-based open-source software package for scientific analysis and visualization of UAV-based traffic data. This tool provides users with the ability to extract important information and make insightful visualizations regarding any UAV-based traffic dataset, with a significant focus on signalized intersections in urban networks.
 
 # Statement of need
 
@@ -33,4 +33,5 @@ bibliography: paper.bib
 
 
 # References
+
 
