@@ -14,6 +14,7 @@ UAVTrafficPy is distributed under the Licence on an "AS IS" basis,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND. See the Licence for the
 specific language governing permissions and limitations under the Licence.
 """
+
 from operator import itemgetter
 import numpy as np
 import matplotlib.pyplot as plt
@@ -140,7 +141,7 @@ class Master:
             ------
             longitudinal distance between two points on the x axis in meters
             """
-            return self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i)
+            return (self.factor*float(np.cos(np.deg2rad(self.y_i)))*(self.x_f - self.x_i))
 
         def get_dy(self) -> float:
             """
@@ -152,7 +153,7 @@ class Master:
             ------
             latitudinal distance between two points on the y axis in meters
             """
-            return self.factor*(self.y_f - self.y_i)
+            return (self.factor*(self.y_f - self.y_i))
 
         def get_distance(self) -> float:
             """
@@ -327,7 +328,6 @@ class Master:
             self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
             self.bbox,self.center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
             self.y_center,self.x_center=self.center
-            self.d_from_road_edge=None
             self.detector_positions=None
             self.flow_info=None
             self.normalized_flow=None
@@ -599,7 +599,7 @@ class Master:
             plt.figure(figsize=(10,3))
             plt.hist(avg_d_from_edge, color='blue', bins=nbins)
             plt.xlabel('Distance from  road edge (m)')
-            plt.ylabel('Counts')
+            plt.ylabel('Vehicle Count')
             plt.xticks(np.arange(-1, int(max(avg_d_from_edge))+1,1))
             plt.xlim(-1, int(max(avg_d_from_edge)+1))
             plt.title("Distribution of vehicles in the street")
@@ -632,9 +632,7 @@ class Master:
             plt.figure(figsize=(10,3))
             counts,bin_edges,_patches=plt.hist(bounded_d_from_edge,bins=int(nbins/2),color='red')
             max_idx = np.argmax(counts)
-            bin_left = bin_edges[max_idx]
-            bin_right = bin_edges[max_idx + 1]
-            peak_of_highest_bin = (bin_left + bin_right) / 2
+            peak_of_highest_bin = bin_edges[max_idx]
             for boundary in lane_boundaries:
                 plt.axvline(boundary, color='black', linestyle='--',linewidth=2)
             plt.title("Distribution of vehicles in the street")
@@ -1088,7 +1086,6 @@ class Master:
             2) trimmed/filtered data dictionary
             3) spatiotemporal info dictionary
             """
-
             self.master = master
             needed_keys_data = ['id','vtype','x','y','time','speed']
             needed_keys_info = ['bbox','intersection center','time axis']
@@ -1103,13 +1100,24 @@ class Master:
             self.vehicle_id,self.vehicle_type,self.x, self.y, self.t, self.u = itemgetter('id','vtype','x','y','time','speed')(data)
             self.bbox,self.center,self.time_axis = itemgetter('bbox','intersection center','time axis')(spatio_temporal_info)
             self.y_center,self.x_center = self.center
+            self.ll_y,self.ll_x=self.bbox[0]
+            self.lr_y,self.lr_x=self.bbox[1]
+            self.ur_y,self.ur_x=self.bbox[2]
+            self.ul_y,self.ul_x=self.bbox[3]
+            self.aspect_ratio = self.master.distances((self.lr_y,self.lr_x),(self.ur_y,self.ur_x)).get_dy() / self.master.distances((self.ll_y,self.ll_x),(self.lr_y,self.lr_x)).get_dx()
 
-        def draw_trajectories(self) -> None:
+        def draw_trajectories(self,title=True,scale=8,dpi=100) -> None:
             """
             description
             -----------
             this function draws the trajectories of all vehicles in the data
             dictionary with a speed heatmap
+
+            arguments
+            ---------
+            1) (optional) display the title of the plot or not
+            2) (optional) the scale of the plot
+            3) (optional) dpi (higher dpi -> higher quality)
 
             output
             ------
@@ -1127,12 +1135,13 @@ class Master:
             xlim_left,xlim_right=min(x_flat),max(x_flat)
             ylim_bottom,ylim_top = min(y_flat),max(y_flat)
 
-            _fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,6))
+            _fig,ax = plt.subplots(figsize=(scale,self.aspect_ratio*scale),dpi=dpi)
+            if title:
+                ax.set_title('Trajectories')
             ax.set_facecolor('black')
             scatter = ax.scatter(x_flat,y_flat,c=u_flat,cmap='gist_rainbow_r',vmin=vmin,vmax=vmax,s=0.05)
             cbar = plt.colorbar(scatter,ax=ax)
             cbar.set_label('Speed (km/h)')
-            plt.title('Trajectories')
             plt.xlabel('latitude')
             plt.ylabel('logntitude')
             plt.xlim(xlim_left,xlim_right)
@@ -1142,7 +1151,7 @@ class Master:
             plt.show()
             plt.close()
 
-        def draw_trajectories_od(self) -> None:
+        def draw_trajectories_od(self,title=True,scale=6,dpi=100) -> None:
             """
             description
             -----------
@@ -1153,19 +1162,23 @@ class Master:
             
             arguments
             ---------
-            1) list of tuples where each tuple is one of the valid od pairs
+            1) (optional) display the title of the plot or not
+            2) (optional) the scale of the plot
+            3) (optional) dpi (higher dpi -> higher quality)
 
             output
             ------
             plot of the information written in the description 
             """
-            ll_y,ll_x=self.bbox[0]
-            lr_y,lr_x=self.bbox[1]
-            ur_y,ur_x=self.bbox[2]
-            ul_y,ul_x=self.bbox[3]
-            alpha=(1/len(self.data.get('id')))**0.33
+            alpha=(1/len(self.data.get('id')))**(1/3)
+            horizontal = self.master.distances((self.ll_y,self.ll_x),(self.ur_y,self.ur_x)).get_dy()
+            vertical = self.master.distances((self.ul_y,self.ul_x),(self.lr_y,self.lr_x)).get_dx()
+            aspect_ratio = horizontal/vertical
 
-            _fig,ax=plt.subplots(figsize=(8,6))
+            _fig,ax=plt.subplots(figsize=(scale,scale*aspect_ratio),dpi=dpi)
+            if title:
+                ax.set_title('Route map')
+
             for l,_ in enumerate(self.x):
 
                 if self.vehicle_type[l]!='Motorcycle':
@@ -1173,14 +1186,14 @@ class Master:
                     ax.plot(self.x[l],self.y[l],color='k',linewidth=0.5,alpha=alpha)
 
             ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox] + [self.bbox[0][0]],color='blue',linewidth=0.5)
-            ax.plot([ul_x,self.x_center,lr_x],[ul_y,self.y_center,lr_y],color='blue',linewidth=0.5)
-            ax.plot([ll_x,self.x_center,ur_x],[ll_y,self.y_center,ur_y],color='blue',linewidth=0.5)
-            ax.text(0.5*(ll_x+lr_x),0.5*(ll_y+lr_y),'1',fontsize=14,fontweight='bold',color='red')
-            ax.text(0.5*(ll_x+ul_x),0.5*(ll_y+ul_y),'2',fontsize=14,fontweight='bold',color='red')
-            ax.text(0.5*(ul_x+ur_x),0.5*(ul_y+ur_y),'3',fontsize=14,fontweight='bold',color='red')
-            ax.text(0.5*(ur_x+lr_x),0.5*(ur_y+lr_y),'4',fontsize=14,fontweight='bold',color='red')
-            ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
-            ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
+            ax.plot([self.ul_x,self.x_center,self.lr_x],[self.ul_y,self.y_center,self.lr_y],color='blue',linewidth=0.5)
+            ax.plot([self.ll_x,self.x_center,self.ur_x],[self.ll_y,self.y_center,self.ur_y],color='blue',linewidth=0.5)
+            ax.text(0.5*(self.ll_x+self.lr_x),0.5*(self.ll_y+self.lr_y),'1',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(self.ll_x+self.ul_x),0.5*(self.ll_y+self.ul_y),'2',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(self.ul_x+self.ur_x),0.5*(self.ul_y+self.ur_y),'3',fontsize=14,fontweight='bold',color='red')
+            ax.text(0.5*(self.ur_x+self.lr_x),0.5*(self.ur_y+self.lr_y),'4',fontsize=14,fontweight='bold',color='red')
+            ax.set_xlim(min(self.ll_x,self.ul_x),max(self.ur_x,self.lr_x))
+            ax.set_ylim(min(self.ll_y,self.lr_y),max(self.ul_y,self.ur_y))
             ax.set_xticks([])
             ax.set_yticks([])
             ax.set_xlabel('longitude')
@@ -1189,7 +1202,7 @@ class Master:
             plt.show()
             plt.close()
 
-        def draw_trajectories_cc(self, valid_od_pairs:list):
+        def draw_trajectories_cc(self, valid_od_pairs:list, title=True,scale=6,dpi=100):
             """
             description
             -----------
@@ -1200,31 +1213,35 @@ class Master:
             arguments
             ---------
             1) list of tuples with the correct od pairs based on the intersection
+            2) (optional) display the title of the plot or not
+            3) (optional) the scale of the plot
+            4) (optional) dpi (higher dpi -> higher quality)
 
             output
             ------
             plot of the information written in the description 
             """
             od_pairs = self.master.analysis(self.data, self.spatio_temporal_info).get_od_pairs()
-            ll_y,ll_x=self.bbox[0]
-            lr_y,lr_x=self.bbox[1]
-            ur_y,ur_x=self.bbox[2]
-            ul_y,ul_x=self.bbox[3]
             colors= ['blue','orange','red','green','cyan','violet','gray','brown']
             alphas = [(1 - (sum(1 for _ in od_pairs if _==pair))/(len(od_pairs))) for pair in valid_od_pairs]
 
-            _fig,ax = plt.subplots(figsize=(8,6))
-            ax.set_title('Vehicle Trajectories')
+            horizontal = self.master.distances((self.ll_y,self.ll_x),(self.ur_y,self.ur_x)).get_dy()
+            vertical = self.master.distances((self.ul_y,self.ul_x),(self.lr_y,self.lr_x)).get_dx()
+            aspect_ratio = horizontal/vertical
+
+            _fig,ax = plt.subplots(figsize=(scale,scale*aspect_ratio),dpi=dpi)
+            if title:
+                ax.set_title('Color-Coded Trajectories')
             ax.set_facecolor('k')
             for l,_ in enumerate(self.x):
 
                 if od_pairs[l] in valid_od_pairs and self.vehicle_type[l]!='Motorcycle':
 
                     ax.plot(self.x[l],self.y[l],color=colors[valid_od_pairs.index(od_pairs[l])],linewidth=1,alpha=alphas[valid_od_pairs.index(od_pairs[l])])
+            ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox] + [self.bbox[0][0]],color='white')
 
-            ax.plot([element[-1] for element in self.bbox]+[self.bbox[0][-1]],[element[0] for element in self.bbox]+[self.bbox[0][0]],color='white')
-            ax.set_xlim(min(ll_x,ul_x),max(ur_x,lr_x))
-            ax.set_ylim(min(ll_y,lr_y),max(ul_y,ur_y))
+            ax.set_xlim(min(self.ll_x,self.ul_x),max(self.ur_x,self.lr_x))
+            ax.set_ylim(min(self.ll_y,self.lr_y),max(self.ul_y,self.ur_y))
             ax.set_xticks([])
             ax.set_yticks([])
             ax.set_xlabel('longitude')
@@ -1278,7 +1295,7 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            _fig,ax = plt.subplots(figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(6,3))
 
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.master.analysis(self.data, self.spatio_temporal_info).get_distance_travelled()[self.vehicle_id.index(vehicle_id)],color='k',label=f'Vehicle ID: {vehicle_id}')
 
@@ -1305,7 +1322,7 @@ class Master:
             ------
             plot of the information written in the description 
             """
-            _fig,ax = plt.subplots(figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(6,3))
 
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],self.u[self.vehicle_id.index(vehicle_id)],color='blue',label=f'Vehicle ID: {vehicle_id}')
 
@@ -1335,7 +1352,7 @@ class Master:
             """
             a = self.master.analysis(self.data, self.spatio_temporal_info).get_acceleration()
 
-            _fig,ax = plt.subplots(figsize=(8,4))
+            _fig,ax = plt.subplots(figsize=(6,3))
 
             ax.plot(self.t[self.vehicle_id.index(vehicle_id)],a[self.vehicle_id.index(vehicle_id)],color='red',label=f'Vehicle ID: {vehicle_id}')
 
@@ -1347,8 +1364,8 @@ class Master:
             plt.legend()
             plt.show()
             plt.close()
-
-        def draw_traffic_light_phases(self, legend_1:str, legend_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2):
+        
+        def draw_traffic_light_phases(self, legend_1:str, legend_2:str, norm_flow_1:list, norm_flow_2:list, flow_1:list, flow_2:list, plt_norm_flow_1=True, plt_norm_flow_2=True, plt_flow_1=True, plt_flow_2=True, activate_zoom=False, low_lim=0,high_lim=1e2, title=True, dpi=100):
             """
             description
             -----------
@@ -1371,26 +1388,28 @@ class Master:
                 if above is True:
                     12) lower limit of zoom
                     13) higher limit of zoom
+            14) (optional) dpi (higher dpi -> higher quality)
+            15) (optional) display the title of the plot or not
 
             output
             ------
             plot of the information written in the description 
             """
-            _fig,ax=plt.subplots(figsize=(18,5))
+            _fig,ax=plt.subplots(figsize=(18,5),dpi=dpi)
+            if title:
+                ax.set_title('Traffic Light Phases')
 
-            ax.set_facecolor('black')
-            ax.set_title('Flow vs Time')
             ax.set_xlabel('Time (s)')
             ax.set_xticks(np.arange(0,self.time_axis[-1],25))
 
             if plt_norm_flow_1:
-                ax.plot(self.time_axis,norm_flow_1,color='violet',alpha=1, label=f'{legend_1}',linewidth=3)
+                ax.plot(self.time_axis,norm_flow_1,color='k',alpha=1, label=f'{legend_1}',linewidth=3)
             if plt_norm_flow_2:
-                ax.plot(self.time_axis,norm_flow_2,color='gold',alpha=1,label=f'{legend_2}',linewidth=3)
+                ax.plot(self.time_axis,norm_flow_2,color='r',alpha=1,label=f'{legend_2}',linewidth=3)
             if plt_flow_1:
-                ax.plot(self.time_axis,flow_1,color='violet',alpha=0.5)
+                ax.plot(self.time_axis,flow_1,color='k',alpha=0.3)
             if plt_flow_2:
-                ax.plot(self.time_axis,flow_2,color='gold',alpha=0.5)
+                ax.plot(self.time_axis,flow_2,color='r',alpha=0.3)
 
             if plt_flow_1 is False and plt_flow_2 is False:
                 ax.set_ylim(-0.1,2)
@@ -1402,7 +1421,7 @@ class Master:
                 ax.set_xlim(low_lim,high_lim)
                 ax.set_xticks(np.arange(low_lim,high_lim+1,1))
 
-            ax.axhline(y=0,color='k',linewidth=3)
+            ax.axhline(y=0,color='white',linewidth=3)
             plt.legend()
             plt.tight_layout()
             plt.show()
