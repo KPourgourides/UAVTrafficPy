@@ -23,7 +23,7 @@ This paper introduces UAVTrafficPy, an open-source Python package for scientific
 
 # Statement of need
 
-The recent introduction of UAV-based data collection methods in transportation research has unlocked a new realm of possibilities, which was inaccessible in the past due to limitations posed by traditional sensor-based methods. These methods refer to data collection through static loop detectors beneath the road network or static cameras, as well as data collected from GPS or bluetooth signals from mobile phones of drivers. The limitations with some, or all of these methods, amongst others, include the inability to store high quality spatio-temporal information for individual vehicles, the inability to cover large parts of a traffic network, and data sparsity. 
+The recent introduction of UAV-based data collection methods in transportation research has unlocked new of possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods. These conventional methods include static loop detectors beneath the road network, static cameras, as well as floating car data collected from GPS or bluetooth signals from drivers' mobile devices, often suffer from drawbacks, such as sparse data, limited coverage of the traffic network, and the inability to capture and store high quality spatio-temporal information for individual vehicles. 
 
 On the other hand, with the quick deployment of coordinated, camera-equipped drones above a traffic network, researchers have the ability to acquire large volumes of traffic data for all individual vehicles in the network, with high spatio-temporal resolution. This has the potential to transform the landscape of data science in transportation research, as long as new and appropriate tools are developed. 
 
@@ -44,6 +44,7 @@ These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
