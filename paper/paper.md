@@ -19,7 +19,7 @@ bibliography: paper.bib
 
 # Summary
 
-This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments, such as arterials and intersections. UAVTrafficPy was developed within the ERC project "URANUS" to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
+This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments, such as arterial roads and signalized intersections. UAVTrafficPy was developed within the ERC project "URANUS" to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
 
 # Statement of need
 
@@ -44,6 +44,7 @@ Once a user provides this information in the appropriate format, which is thorou
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
