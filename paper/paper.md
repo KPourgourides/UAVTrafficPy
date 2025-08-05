@@ -23,9 +23,9 @@ This paper presents UAVTrafficPy, an open-source Python package for scientific a
 
 # Statement of need
 
-The recent introduction of UAV-based data collection methods in transportation research [@BARMPOUNAKIS202050],[@highDdataset] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods. These conventional data collection methods include loop detectors beneath the road network, static cameras, as well as GPS or bluetooth signals from drivers' mobile devices. Despite their advantages, all of them suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, and the inability to capture and store high quality spatio-temporal information for individual vehicles, amongst others.
+The introduction of UAV-based data collection methods in transportation research [@BARMPOUNAKIS202050],[@highDdataset] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors beneath the road network, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles, amongst others. Usually, they have to be combined together to compensate for their inadequencies in order to deliver reliable results [@7676331].
 
-On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks allows researchers to overcome these limitations, as they have the ability to acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that new and appropriate tools are developed. 
+On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks, enables researchers to overcome these limitations, as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that new and appropriate tools are developed. 
 
 [UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) is an initial attempt to bridge the gap between UAV-based data collection and meaningful traffic analysis. It provides users with tools for reconstructing and visualizing vehicle trajectories in various forms, calculating position-derivative quantities such as speeds and accelerations, and computing the cumulative distance travelled by vehicles as a function of time, which leads to insightful space-time diagrams. Additionally, it provides tools for identifying network characteristics such as the number and spatial distribution of lanes, and calculating important variables for the calibration of car-following models such as relative dynamic gaps and speed differences. Finally, it enables the extraction of useful information regarding signalized intersections, such as the duration of traffic light phases, and the length and dissipation time of queues.
 
@@ -44,6 +44,7 @@ Once a user provides this information in the appropriate format, which is thorou
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
