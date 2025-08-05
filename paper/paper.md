@@ -19,7 +19,7 @@ bibliography: paper.bib
 
 # Summary
 
-This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments, such as arterial roads and signalized intersections. UAVTrafficPy was developed within the ERC project "URANUS" to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
+This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments, such as arterial roads and signalized intersections. UAVTrafficPy was developed within the ERC-funded project [URANUS](https://uranus.ucy.ac.cy/) to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
 
 # Statement of need
 
@@ -31,7 +31,7 @@ On the other hand, the rapid deployment of coordinated and camera-equipped UAVs 
 
 # Software Functionality
 
-UAVTrafficPy was developed in Python, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV traffic datasets often come in compact, non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
+UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV traffic datasets often come in compact, non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
 
 Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include computing time-dependent speed and acceleration profiles, and reconstructing vehicle trajectories at signalized intersections based on the existent routes, which are depicted in \autoref{fig:1} and \autoref{fig:2} respectively. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset.
 
@@ -44,6 +44,7 @@ Once a user provides this information in the appropriate format, which is thorou
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
