@@ -13,13 +13,13 @@ affiliations:
  - name: KIOS Research and Innovation Center of Excellence, University of Cyprus, Nicosia, Cyprus
    index: 1
    ror: 037ez2r19
-date: 4 August 2025
+date: 5 August 2025
 bibliography: paper.bib
 ---
 
 # Summary
 
-This paper introduces UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool provides users with the ability to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a significant focus on signalized intersections in urban networks. UAVTrafficPy was developed within the ERC project "URANUS" to help researchers or students working in UAV-related transportation research with their tasks by providing ready-to-use tools for analysis and visualization.
+This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments, such as arterials and intersections. UAVTrafficPy was developed within the ERC project "URANUS" to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
 
 # Statement of need
 
@@ -27,7 +27,7 @@ The recent introduction of UAV-based data collection methods in transportation r
 
 On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks allows researchers to overcome these limitations, as they have the ability to acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that new and appropriate tools are developed. 
 
-[UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) is an initial attempt to bridge the gap between UAV-based data collection and meaningful traffic analysis. It provides users with tools for extracting and visualizing vehicle trajectories in various forms, calculating position-derivative quantities such as speeds and accelerations, and computing the cumulative distance travelled by vehicles as a function of time, which leads to insightful space-time diagrams. Additionally, it provides tools for identifying network characteristics such as the number and spatial distribution of lanes, calculating quantities that are useful for the calibration of car-following models such as relative dynamic gaps and speed differences. Finally, it enables the extraction of useful information regarding signalized intersections, such as the duration of traffic light phases, and the length and dissipation time of queues.
+[UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) is an initial attempt to bridge the gap between UAV-based data collection and meaningful traffic analysis. It provides users with tools for extracting and visualizing vehicle trajectories in various forms, calculating position-derivative quantities such as speeds and accelerations, and computing the cumulative distance travelled by vehicles as a function of time, which leads to insightful space-time diagrams. Additionally, it provides tools for identifying network characteristics such as the number and spatial distribution of lanes, and calculating important variables for the calibration of car-following models such as relative dynamic gaps and speed differences. Finally, it enables the extraction of useful information regarding signalized intersections, such as the duration of traffic light phases, and the length and dissipation time of queues.
 
 # Software Functionality
 
@@ -44,6 +44,7 @@ Once a user provides this information in the appropriate format, which is thorou
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
