@@ -23,7 +23,7 @@ This paper presents UAVTrafficPy, an open-source Python package for scientific a
 
 # Statement of need
 
-The recent introduction of UAV-based data collection methods in transportation research has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods. These conventional data collection methods include loop detectors beneath the road network, static cameras, as well as GPS or bluetooth signals from drivers' mobile devices. Despite their advantages, all of them suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, and the inability to capture and store high quality spatio-temporal information for individual vehicles, amongst others.
+The recent introduction of UAV-based data collection methods in transportation research [@BARBOUNAKIS202050],[@Krajewski2018] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods. These conventional data collection methods include loop detectors beneath the road network, static cameras, as well as GPS or bluetooth signals from drivers' mobile devices. Despite their advantages, all of them suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, and the inability to capture and store high quality spatio-temporal information for individual vehicles, amongst others.
 
 On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks allows researchers to overcome these limitations, as they have the ability to acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that new and appropriate tools are developed. 
 
@@ -44,6 +44,7 @@ Once a user provides this information in the appropriate format, which is thorou
 I would like to thank KIOS Research & Innovation Center of Excellence for funding my work through the URANUS project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124).
 
 # References
+
 
 
 
