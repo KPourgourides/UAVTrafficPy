@@ -19,9 +19,8 @@ authors:
     orcid: 0000-0002-3617-7962
     affiliation: 1
 affiliations:
- - name: KIOS Research and Innovation Center of Excellence, and the Department of Electrical and Computer Engineering, University of Cyprus.
+ - name: KIOS Research and Innovation Center of Excellence, and the Department of Electrical and Computer Engineering, University of Cyprus
    index: 1
-   ror: 037ez2r19
 date: 6 August 2025
 bibliography: paper.bib
 ---
@@ -53,6 +52,7 @@ Once a user provides this information in the appropriate format, which is thorou
 This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, KIOS CoE, No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them. 
 
 # References
+
 
 
 
