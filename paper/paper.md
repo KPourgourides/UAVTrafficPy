@@ -35,13 +35,13 @@ The introduction of UAV-based data collection methods in transportation research
 
 On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks enables researchers to overcome these limitations [@futuretransp1020019], as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that appropriate tools are developed. 
 
-There are several open-source software packages that address video analysis for UAV-based traffic monitoring [@BENJDIRA2022105095] and simulation of UAV-based data collection in traffic networks [@Tsioutis_Makridis_Timotheou_2025]. Despite this, to the best of the authors' knowledge, there are currently no open-source software packages that directly address the issue of post-video analysis and visualization of UAV-based traffic data.
+There are several open-source software packages that address video analysis for UAV-based traffic monitoring [@BENJDIRA2022105095] and simulation of UAV-based data collection in traffic networks [@Tsioutis_Makridis_Timotheou_2025]. Despite this, to the best of the authors' knowledge, there are currently no open-source software packages that directly address the post-video analysis and visualization of UAV-based traffic data.
 
 [UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) aims to bridge the gap between UAV-based data collection and meaningful traffic analysis. It provides users with tools for reconstructing and visualizing vehicle trajectories in various forms, calculating time-dependent speed and acceleration profiles, and computing the cumulative distance travelled by vehicles, leading to insightful space-time diagrams. Additionally, it provides tools for identifying network characteristics, such as the number and spatial distribution of lanes, and calculating important variables for the calibration of car-following models, such as relative dynamic gaps and speed differences between vehicles and their leaders. Finally, it enables the extraction of useful information regarding signalized intersections, such as the duration of traffic light phases, and the physical length and dissipation time of queues.
 
 # Software Functionality
 
-UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV traffic datasets often come in compact, non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
+UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV-based traffic datasets often come in compact and non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
 
 Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include computing time-dependent speed and acceleration profiles, and reconstructing vehicle trajectories at signalized intersections based on the existent routes, which are depicted in \autoref{fig:1} and \autoref{fig:2} respectively. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset [@BARMPOUNAKIS202050].
 
@@ -56,6 +56,7 @@ This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and,
 Also, I would like to express my graditude towards the [KIOS CoE](https://www.kios.ucy.ac.cy/) team, and especially my supervisors Dr. Yiolanda Englezou, Prof. Stelios Timotheou and Prof. Christos Panayiotou for their continuous guidance and support throughout the entirety of this project.
 
 # References
+
 
 
 
