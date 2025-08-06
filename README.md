@@ -18,9 +18,9 @@ UAVTrafficPy is an initial attempt to bridge the gap between UAV-based data coll
 
 ## Acknowledgements
 
-I would like to thank [KIOS Research & Innovation Center of Excellence](https://www.kios.ucy.ac.cy/) for funding my work through the [URANUS](https://uranus.ucy.ac.cy/) project, which received funding from the European Research Council (ERC) under the ERC Consolidator Grant scheme (Grant agreement No. 101088124). 
+This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, [KIOS CoE](https://www.kios.ucy.ac.cy/), No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
 
-“URANUS” (Real-Time Urban Mobility Management via Intelligent UAV-based Sensing) focuses on real-time, dynamic, and intelligent sensing of vehicular and pedestrian traffic via Unmanned Aerial Vehicles (UAVs), and the use of the collected information for urban mobility management.
+[URANUS](https://uranus.ucy.ac.cy/) (Real-Time Urban Mobility Management via Intelligent UAV-based Sensing) focuses on real-time, dynamic, and intelligent sensing of vehicular and pedestrian traffic via Unmanned Aerial Vehicles (UAVs), and the use of the collected information for urban mobility management.
 
 ## Table of contents
 
