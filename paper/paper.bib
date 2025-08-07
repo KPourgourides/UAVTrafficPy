@@ -1,4 +1,4 @@
-@article{BARMPOUNAKIS202050,
+@article{Barmpounakis2020,
   title = {On the new era of urban traffic monitoring with massive drone data: The pNEUMA large-scale field experiment},
   journal = {Transportation Research Part C: Emerging Technologies},
   volume = {111},
@@ -12,7 +12,7 @@
   abstract = {The new era of sharing information and “big data” has raised our expectations to make mobility more predictable and controllable through a better utilization of data and existing resources. The realization of these opportunities requires going beyond the existing traditional ways of collecting traffic data that are based either on fixed-location sensors or GPS devices with low spatial coverage or penetration rates and significant measurement errors, especially in congested urban areas. Unmanned Aerial Systems (UAS) or simply “drones” have been proposed as a pioneering tool of the Intelligent Transportation Systems (ITS) infrastructure due to their unique characteristics, but various challenges have kept these efforts only at a small size. This paper describes the system architecture and preliminary results of a first-of-its-kind experiment, nicknamed pNEUMA, to create the most complete urban dataset to study congestion. A swarm of 10 drones hovering over the central business district of Athens over multiple days to record traffic streams in a congested area of a 1.3 km2 area with more than 100 km-lanes of road network, around 100 busy intersections (signalized or not), many bus stops and close to half a million trajectories. The aim of the experiment is to record traffic streams in a multi-modal congested environment over an urban setting using UAS that can allow the deep investigation of critical traffic phenomena. The pNEUMA experiment develops a prototype system that offers immense opportunities for researchers many of which are beyond the interests and expertise of the authors. This open science initiative creates a unique observatory of traffic congestion, a scale an-order-of-magnitude higher than what was available till now, that researchers from different disciplines around the globe can use to develop and test their own models.}
   }
 
-@inproceedings{highDdataset,
+@inproceedings{Krajewski2018,
   title={The highD Dataset: A Drone Dataset of Naturalistic Vehicle Trajectories on German Highways for Validation of Highly Automated Driving Systems},
   author={Krajewski, Robert and Bock, Julian and Kloeker, Laurent and Eckstein, Lutz},
   booktitle={2018 21st International Conference on Intelligent Transportation Systems (ITSC)},
@@ -21,7 +21,7 @@
   doi={10.1109/ITSC.2018.8569552}
   }
 
-@ARTICLE{7676331,
+@article{Zhan2017,
   author={Zhan, Xianyuan and Zheng, Yu and Yi, Xiuwen and Ukkusuri, Satish V.},
   journal={IEEE Transactions on Knowledge and Data Engineering}, 
   title={Citywide Traffic Volume Estimation Using Trajectory Data}, 
@@ -33,7 +33,7 @@
   doi={10.1109/TKDE.2016.2621104}
   }
 
-@Article{futuretransp1020019,
+@article{Gupta2021,
   AUTHOR = {Gupta, Anunay and Afrin, Tanzina and Scully, Evan and Yodo, Nita},
   TITLE = {Advances of UAVs toward Future Transportation: The State-of-the-Art, Challenges, and Opportunities},
   JOURNAL = {Future Transportation},
@@ -47,7 +47,7 @@
   DOI = {10.3390/futuretransp1020019}
 }
 
-@article{BENJDIRA2022105095,
+@article{Benjdira2022,
   title = {TAU: A framework for video-based traffic analytics leveraging artificial intelligence and unmanned aerial systems},
   journal = {Engineering Applications of Artificial Intelligence},
   volume = {114},
@@ -61,7 +61,7 @@
   abstract = {Smart traffic engineering and intelligent transportation services are in increasing demand from governmental authorities to optimize traffic performance and thus reduce energy costs, increase the drivers’ safety and comfort, ensure traffic laws enforcement, and detect traffic violations. In this paper, we address this challenge, and we leverage the use of Artificial Intelligence (AI) and Unmanned Aerial Vehicles (UAVs) to develop an AI-integrated video analytics framework, called TAU (Traffic Analysis from UAVs), for automated traffic analytics and understanding. Unlike previous works on traffic video analytics, we propose an automated object detection and tracking pipeline from video processing to advanced traffic understanding using high-resolution UAV images. TAU combines six main contributions. First, it proposes a pre-processing algorithm to adapt the high-resolution UAV image as input to the object detector without lowering the resolution. This ensures an excellent detection accuracy from high-quality features, particularly the small size of detected objects from UAV images. Second, it introduces an algorithm for recalibrating the vehicle coordinates to ensure that vehicles are uniquely identified and tracked across the multiple crops of the same frame. Third, it presents a speed calculation algorithm based on accumulating information from successive frames. Fourth, TAU counts the number of vehicles per traffic zone based on the Ray Tracing algorithm. Fifth, TAU has a fully independent algorithm for crossroad arbitration based on the data gathered from the different zones surrounding it. Sixth, TAU introduces a set of algorithms for extracting twenty-four types of insights from the raw data collected. These insights facilitate the traffic understanding using curves, histograms, heatmaps, and animations. The present work presents a valuable added value for academic researchers and transportation engineers to automate the traffic video analytics process and extract useful insights to optimize traffic performance. TAU is a ready-to-use framework for any Transportation Engineer to better understand and manage daily road traffic (video demonstrations are provided here: https://youtu.be/wXJV0H7LviU and here: https://youtu.be/kGv0gmtVEbI). The source code is available at: https://github.com/bilel-bj/TAU.}
   }
 
-@article{Tsioutis_Makridis_Timotheou_2025,
+@article{Tsioutis2025,
   title={SUAVPy: A SUMO Plugin for UAV-Based Ground Traffic Sensing},
   volume={6},
   url={https://www.tib-op.org/ojs/index.php/scp/article/view/2610},
@@ -74,3 +74,82 @@
   pages={65–77}
   }
 
+@article{Li2025,
+  title = {TrajPT: A trajectory data-based pre-trained transformer model for learning multi-vehicle interactions},
+  journal = {Transportation Research Part C: Emerging Technologies},
+  volume = {171},
+  pages = {105013},
+  year = {2025},
+  issn = {0968-090X},
+  doi = {https://doi.org/10.1016/j.trc.2025.105013},
+  url = {https://www.sciencedirect.com/science/article/pii/S0968090X25000178},
+  author = {Yongwei Li and Yongzhi Jiang and Xinkai Wu},
+  keywords = {Autonomous driving, Pre-trained transformer model, Vehicle trajectory, Interaction, Motion prediction},
+  abstract = {Modeling and learning interactions with surrounding vehicles are critical for the safety and efficiency of autonomous vehicles. In this paper, we propose TrajPT, a Trajectory data-based Pre-trained Transformer model designed to learn spatial–temporal interactions among vehicles from large-scale real-world trajectory data. Inspired by pre-trained large language models, TrajPT adopts an autoregressive learning framework and a pre-training paradigm, and can be fine-tuned for different autonomous driving downstream tasks. To capture complex spatial–temporal interactions among vehicles, we utilize a spatial–temporal scene graph to encode observed vehicle trajectories and introduce a novel graph-based joint spatial–temporal attention module, which extracts spatial interactions within single frames and temporal dependencies across frames. TrajPT is pre-trained on pNEUMA, the largest publicly available vehicle trajectory dataset. We validate the performance of TrajPT by fine-tuning it on two downstream tasks: lane-changing prediction and trajectory prediction. Extensive experimental results demonstrate that the proposed TrajPT outperforms the baseline model and exhibits significant generalization performance across multiple datasets.}
+  }
+
+@article{Jiao2023,
+  title = {Inferring vehicle spacing in urban traffic from trajectory data},
+  journal = {Transportation Research Part C: Emerging Technologies},
+  volume = {155},
+  pages = {104289},
+  year = {2023},
+  issn = {0968-090X},
+  doi = {https://doi.org/10.1016/j.trc.2023.104289},
+  url = {https://www.sciencedirect.com/science/article/pii/S0968090X23002784},
+  author = {Yiru Jiao and Simeon C. Calvert and Sander {van Cranenburgh} and Hans {van Lint}},
+  keywords = {Urban traffic, Vehicle interaction, Two-dimensional spacing, Fundamental Diagram},
+  abstract = {This study presents a new method to infer the average two-dimensional (2D) spacing between interacting vehicles in urban traffic from trajectory data. In this context, 2D spacing reflects the amount of road space consumed by pairs of interacting vehicles, and is related to 2D density at the macroscopic level. Due to complex interaction and conflicts in urban traffic, the inherent assumptions in traditional traffic flow models, such as unidirectional flow and homogeneity, are often violated. Such violation challenges direct measurement of urban vehicle spacing. The proposed method addresses this challenge by focusing on the relative movement between interacting vehicles and aggregating the accumulated presence of vehicles in similar scenarios. We apply the method to a large-scale urban trajectory dataset called pNEUMA, and validate the consistency of the method through bootstrapping. By applying the method we obtain a new empirical relation between the average 2D spacing and the relative speeds between interacting vehicles. There are similarities between this empirical relation with the classical Fundamental Diagram of traffic flow in terms of shape and interpretation, and so we term it the “interaction Fundamental Diagram” (iFD). However, there are also key differences. The iFD does not represent steady-state (homogeneous and stationary) longitudinal behaviour; it describes the average amount of road space needed for vehicle interactions at different relative speeds. We believe these iFD relations contribute to understanding vehicle interaction in urban traffic, and can offer new insights for designing safer and more efficient urban intersections.}
+  }
+
+@article{Zhang2022,
+title = {A generative car-following model conditioned on driving styles},
+journal = {Transportation Research Part C: Emerging Technologies},
+volume = {145},
+pages = {103926},
+year = {2022},
+issn = {0968-090X},
+doi = {https://doi.org/10.1016/j.trc.2022.103926},
+url = {https://www.sciencedirect.com/science/article/pii/S0968090X22003394},
+author = {Yifan Zhang and Xinhong Chen and Jianping Wang and Zuduo Zheng and Kui Wu},
+keywords = {Human-like car-following behavior modeling, Driving style, Car-following model calibration, Microscopic traffic simulation},
+abstract = {Car-following (CF) modeling, an essential component in simulating human CF behaviors, has attracted increasing research interest in the past decades. This paper pushes the state of the art by proposing a novel generative hybrid CF model, which achieves high accuracy in characterizing dynamic human CF behaviors and is able to generate realistic human CF behaviors for any given observed or even unobserved driving style. Specifically, the ability of accurately capturing human CF behaviors is ensured by designing and calibrating an Intelligent Driver Model (IDM) with time-varying parameters. The reason behind is that such time-varying parameters can express both the inter-driver heterogeneity, i.e., diverse driving styles of different drivers, and the intra-driver heterogeneity, i.e., changing driving styles of the same driver. The ability of generating realistic human CF behaviors of any given observed driving style is achieved by applying a neural process (NP) based model. The ability of inferring CF behaviors of unobserved driving styles is supported by exploring the relationship between the calibrated time-varying IDM parameters and an intermediate variable of NP. To demonstrate the effectiveness of our proposed models, we conduct extensive experiments and comparisons, including CF model parameter calibration, CF behavior prediction, and trajectory simulation for different driving styles.}
+}
+
+@article{Mahajan2023,
+  author={Mahajan, Vishal and Barmpounakis, Emmanouil and Alam, Md. Rakibul and Geroliminis, Nikolas and Antoniou, Constantinos},
+  journal={IEEE Transactions on Intelligent Transportation Systems}, 
+  title={Treating Noise and Anomalies in Vehicle Trajectories From an Experiment With a Swarm of Drones}, 
+  year={2023},
+  volume={24},
+  number={9},
+  pages={9055-9067},
+  keywords={Trajectory;Drones;Smoothing methods;Low-pass filters;Behavioral sciences;Anomaly detection;Filtering;Drone data;trajectory data;anomaly detection;machine learning},
+  doi={10.1109/TITS.2023.3268712}
+  }
+
+@article{Clapes2023,
+title = {Empirical investigation of lane usage, lane changing and lane choice phenomena in a multimodal urban arterial},
+journal = {Transportation Research Part A: Policy and Practice},
+volume = {172},
+pages = {103674},
+year = {2023},
+issn = {0965-8564},
+doi = {https://doi.org/10.1016/j.tra.2023.103674},
+url = {https://www.sciencedirect.com/science/article/pii/S0965856423000940},
+author = {Jasso Espadaler-Clapés and Emmanouil Barmpounakis and Nikolas Geroliminis},
+keywords = {Unmanned aerial systems, Swarm of drones, Road safety, Traffic monitoring, Traffic flow modeling, Multimodal systems, Lane changing, Lane choice},
+abstract = {The combination of multimodal interactions, dynamic congestion and lane changing phenomena in an urban environment can have a strong impact on traffic flow dynamics, active road capacity and road safety. However, while there is a vast understanding of microscopic traffic models for motorways with respect to lane changes and lane choices, there are not many empirical observations of the phenomena at the urban scale. Recently, new data collection techniques with unmanned aerial systems have emerged offering unique opportunities to study complex traffic phenomena. This paper investigates the interrelation between lane changing and lane choice using the pNEUMA dataset in one of the busiest arterials in Athens, Greece. The main concept relies on the definition of two layers regarding how the multiple lanes of congested arterials are actually being used. Specifically, we show that the marked lanes on the arterial (marked layer) are influenced by the frictions created by static and moving bottlenecks (bus and taxi stops, illegal parking, etc.). Using an existing lane detection algorithm, we show that there is an active layer which is different to the marked lanes on the road affecting capacity in the macroscopic level and driving behavior in the microscopic level. The analysis on lane changing highlights the conflicting areas where more lane changes can occur. Furthermore, the particularity of Powered-Two-Wheelers’ lane changing behavior is examined and evidence on the PTW filtering phenomenon is provided. Following, the analysis on driver lane choice shows how turning vehicles approach the target lane and the differences between left- and right-turning vehicles.}
+}
+
+@ARTICLE{Hu2022,
+  author={Hu, Simon and Zhou, Qishen and Li, Junyi and Wang, Yibing and Roncoli, Claudio and Zhang, Lihui and Lehe, Lewis},
+  journal={IEEE Transactions on Intelligent Transportation Systems}, 
+  title={High Time-Resolution Queue Profile Estimation at Signalized Intersections Based on Extended Kalman Filtering}, 
+  year={2022},
+  volume={23},
+  number={11},
+  pages={21274-21290},
+  keywords={Estimation;Queueing analysis;Vehicle dynamics;Sensors;Data models;Real-time systems;Heuristic algorithms;Connected vehicles (CVs);queue profile estimation;dynamic shockwave propagation model;data-fusion-based shockwave sensing;extended Kalman filtering (EKF)},
+  doi={10.1109/TITS.2022.3173515}
+}
