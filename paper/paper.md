@@ -45,28 +45,29 @@ However, to the best of the authors' knowledge, there is currently no similar wo
 
 UAVTrafficPy provides users with tools for extracting, reconstructing and visualizing UAV-based traffic data on the level of individual vehicles, interactions between successive vehicles, and intersection dynamics.
 
-**Individual Vehicles.** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles,
+**Level 1: Individual Vehicles.** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles,
 compute cumulative distance travelled. and subsequently visualize space-time diagrams, and detect lane changes.
 
-**Interactions between successive vehicles.** Users can compute relative dynamic gaps and relative speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
+**Level 2: Interactions between successive vehicles.** Users can compute relative dynamic gaps and relative speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
 
-**Intersection Dynamics**. Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
+**Level 3: Intersection Dynamics**. Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
 
 UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV-based traffic datasets often come in compact and non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
 
-Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include computing time-dependent speed and acceleration profiles, and reconstructing vehicle trajectories at signalized intersections based on the existent routes, which are depicted in \autoref{fig:1} and \autoref{fig:2} respectively. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset [@BARMPOUNAKIS202050].
+Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include reconstructing vehicle trajectories based on their routes, and the visualization of traffic light phases within a signalized intersection, and the extraction of the lateral distriubtion of vehicles in a road, which are depicted in \autoref{fig:1}. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset [@Barmpounakis2020].
 
-![Reconstruction of UAV-based vehicle trajectories based on their routes in a signalized intersection. \label{fig:1}](images/trajectories.png)
+![](images/trajectories.png)
 
-![Speed and acceleration of a random vehicle as a function of time using its UAV-based trajectory. \label{fig:2}](images/speed_acceleration.png)
+![](images/trafficlightphases.png)
+
+![**Upper:** Reconstruction of UAV-based vehicle trajectories based on their routes within a signalized intersection. **Middle:** Lateral distribution of vehicles in a road, indicating the lane number and spatial extends. **Lower:** Visualization of the traffic light phases for a signalized intersection \label{fig:1}](images/lanes.png)
 
 # Acknowledgements
 
-This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, KIOS CoE, No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
-
-Also, I would like to express my graditude towards the [KIOS CoE](https://www.kios.ucy.ac.cy/) team, and especially my supervisors Dr. Yiolanda Englezou, Prof. Stelios Timotheou and Prof. Christos Panayiotou for their continuous guidance and support throughout the entirety of this project.
+This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, [KIOS CoE](https://www.kios.ucy.ac.cy/), No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
 
 # References
+
 
 
 
