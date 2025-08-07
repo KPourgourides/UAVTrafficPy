@@ -54,19 +54,20 @@ compute cumulative distance travelled. and subsequently visualize space-time dia
 
 UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV-based traffic datasets often come in compact and non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
 
-Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include reconstructing vehicle trajectories based on their routes, and the visualization of traffic light phases within a signalized intersection, and the extraction of the lateral distriubtion of vehicles in a road, which are depicted in \autoref{fig:1}. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset [@Barmpounakis2020].
+Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include the extraction of the lateral distriubtion of vehicles in a road \autoref{fig:1}, and the reconstruction of vehicle trajectories based routes, as well as the visualization of traffic light phases within a signalized intersection \autoref{fig:2}. These tasks were executed by using the file `20181024_d2_0900_0930.csv` from the open-source pNEUMA dataset [@Barmpounakis2020].
+
+![Lateral distribution of vehicles in a road, indicating the lane number and their spatial extend. \label{fig:1}](images/lanes.png)
 
 ![](images/trajectories.png)
 
-![](images/trafficlightphases.png)
-
-![**Upper:** Reconstruction of UAV-based vehicle trajectories based on their routes within a signalized intersection. **Middle:** Lateral distribution of vehicles in a road, indicating the lane number and spatial extends. **Lower:** Visualization of the traffic light phases for a signalized intersection \label{fig:1}](images/lanes.png)
+![**Upper:** Reconstruction of UAV-based vehicle trajectories based on their routes within a signalized intersection. **Lower:** Visualization of the traffic light phases for a signalized intersection \label{fig:2}](images/trafficlightphases.png)
 
 # Acknowledgements
 
 This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, [KIOS CoE](https://www.kios.ucy.ac.cy/), No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
 
 # References
+
 
 
 
