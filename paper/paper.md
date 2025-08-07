@@ -37,9 +37,9 @@ On the other hand, the rapid deployment of coordinated and camera-equipped UAVs 
 
 # State of the Field
 
-There are several published works that utilize UAV-based traffic data to accomplish a specific goal or address a particular issue, such as learning vehicle interactions using their trajectories [@Li2025], inferring successive vehicle spacings and their relative speeds[@Jiao2023], calibrating car-following models [@Zhang2022], treating data noise and anomalies [@Mahajan], investigating lane-related phenomena [@Clapes2023] and studying the resolution of queues at signalized intersections [@Hu2022]. Additionally, there are open-source software packages that address video analysis for UAV-based traffic monitoring [@Benjdira2022] and simulation of UAV-based data collection in traffic networks [@Tsioutis2025]. 
+There are several published works that utilize UAV-based traffic data to accomplish a specific goal or address a particular issue, such as studying vehicle interactions [@Li2025], inferring successive vehicle spacings and their relative speeds [@Jiao2023], calibrating car-following models [@Zhang2022], treating data noise and anomalies [@Mahajan2023], investigating lane-related phenomena [@Clapes2023], and studying the resolution of queues at signalized intersections [@Hu2022]. Additionally, there are open-source software packages that address video analysis for UAV-based traffic monitoring [@Benjdira2022] and simulation of UAV-based data collection in traffic networks [@Tsioutis2025]. 
 
-However, to the best of the authors' knowledge, there is currently no similar work to UAVTrafficPy, which is a standalone, open-source Python package, that provides tools for scientific analysis and visualization of post-video UAV-based traffic data on multiple levels.
+However, to the best of the authors' knowledge, there is currently no similar work to UAVTrafficPy, which is a standalone, open-source Python package that provides tools for scientific analysis and visualization of post-video UAV-based traffic data on multiple levels in a single platform.
 
 # Software Functionality
 
@@ -67,6 +67,7 @@ This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and,
 Also, I would like to express my graditude towards the [KIOS CoE](https://www.kios.ucy.ac.cy/) team, and especially my supervisors Dr. Yiolanda Englezou, Prof. Stelios Timotheou and Prof. Christos Panayiotou for their continuous guidance and support throughout the entirety of this project.
 
 # References
+
 
 
 
