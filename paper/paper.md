@@ -1,5 +1,5 @@
 ---
-title: 'UAVTrafficPy: Package for analysis & visualization of UAV-based traffic data in Python'
+title: 'UAVTrafficPy: A Python package for analysis and visualization of UAV-based traffic data'
 tags:
   - Python
   - data science
@@ -27,19 +27,30 @@ bibliography: paper.bib
 
 # Summary
 
-This paper presents UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data. This tool enables users to extract important information and make insightful visualizations regarding UAV-based traffic datasets, with a primary focus on urban environments such as arterial roads and signalized intersections. UAVTrafficPy was developed within the ERC-funded project [URANUS](https://uranus.ucy.ac.cy/) to support researchers and students in UAV-driven transportation research, by offering a ready-to-use framework for data analysis and visualization.
+This paper introduces UAVTrafficPy, an open-source Python package for scientific analysis and visualization of UAV-based traffic data, with a focus on urban environments, such as arterial roads and signalized intersections. The package provides tools to extract, reconstruct and visualize traffic information at multiple levels: individual vehicles, interactions between successive vehicles, and intersection dynamics.
 
 # Statement of need
 
-The introduction of UAV-based data collection methods in transportation research (@BARMPOUNAKIS202050, @highDdataset) has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles. Usually, they have to be combined together to compensate for their inadequencies and deliver reliable results [@7676331].
+The introduction of UAV-based data collection methods in transportation research [@Barmpounakis2020] [@Krajewski2018] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles. Usually, they have to be combined together to compensate for their inadequencies and deliver reliable results [@Zhan2017].
 
-On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks enables researchers to overcome these limitations [@futuretransp1020019], as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of data science in transportation, provided that appropriate tools are developed. 
+On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks enables researchers to overcome these limitations, as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution [@Gupta2021]. This can transform the landscape of traffic analysis in transportation, provided that appropriate tools are developed. [UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) aims to bridge the gap between UAV-based data collection and meaningful, hollistic traffic analysis on multiple levels.
 
-There are several open-source software packages that address video analysis for UAV-based traffic monitoring [@BENJDIRA2022105095] and simulation of UAV-based data collection in traffic networks [@Tsioutis_Makridis_Timotheou_2025]. Despite this, to the best of the authors' knowledge, there are currently no open-source software packages that directly address the post-video analysis and visualization of UAV-based traffic data.
+# State of the Field
 
-[UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy) aims to bridge the gap between UAV-based data collection and meaningful traffic analysis. It provides users with tools for reconstructing and visualizing vehicle trajectories in various forms, calculating time-dependent speed and acceleration profiles, and computing the cumulative distance travelled by vehicles, leading to insightful space-time diagrams. Additionally, it provides tools for identifying network characteristics, such as the number and spatial distribution of lanes, and calculating important variables for the calibration of car-following models, such as relative dynamic gaps and speed differences between vehicles and their leaders. Finally, it enables the extraction of useful information regarding signalized intersections, such as the duration of traffic light phases, and the physical length and dissipation time of queues.
+There are several published works that utilize UAV-based traffic data to accomplish a specific goal or address a particular issue, such as learning vehicle interactions using their trajectories [@Li2025], inferring successive vehicle spacings and their relative speeds[@Jiao2023], calibrating car-following models [@Zhang2022], treating data noise and anomalies [@Mahajan], investigating lane-related phenomena [@Clapes2023] and studying the resolution of queues at signalized intersections [@Hu2022]. Additionally, there are open-source software packages that address video analysis for UAV-based traffic monitoring [@Benjdira2022] and simulation of UAV-based data collection in traffic networks [@Tsioutis2025]. 
+
+However, to the best of the authors' knowledge, there is currently no similar work to UAVTrafficPy, which is a standalone, open-source Python package, that provides tools for scientific analysis and visualization of post-video UAV-based traffic data on multiple levels.
 
 # Software Functionality
+
+UAVTrafficPy provides users with tools for extracting, reconstructing and visualizing UAV-based traffic data on the level of individual vehicles, interactions between successive vehicles, and intersection dynamics.
+
+**Individual Vehicles.** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles,
+compute cumulative distance travelled. and subsequently visualize space-time diagrams, and detect lane changes.
+
+**Interactions between successive vehicles.** Users can compute relative dynamic gaps and relative speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
+
+**Intersection Dynamics**. Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
 
 UAVTrafficPy was developed and tested in Python 3.12, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. Since UAV-based traffic datasets often come in compact and non-intuitive formats that vary significantly across sources, UAVTrafficPy introduces a universal input structure based on Python dictionaries. The tool requires only minimal information to operate, such as vehicle IDs, vehicle types (e.g., car, motorcycle etc.), and 2D positional coordinates (longitude and latitude in the WGS84 system) labeled by time for every vehicle. 
 
@@ -56,6 +67,7 @@ This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and,
 Also, I would like to express my graditude towards the [KIOS CoE](https://www.kios.ucy.ac.cy/) team, and especially my supervisors Dr. Yiolanda Englezou, Prof. Stelios Timotheou and Prof. Christos Panayiotou for their continuous guidance and support throughout the entirety of this project.
 
 # References
+
 
 
 
