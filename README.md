@@ -147,7 +147,7 @@ The last piece of information we need to gather is the `time_axis` of the record
 
 `time_axis`  = $[t^{\text{start}},...,t^{\text{end}}]$
 
-The length of the `time_axis` is equal to the refresh rate of the drone's camera times the duration of the recording in seconds. For example, if the recording was conducted with a 60 FPS camera for 10 minutes, `time_axis` will include 60$[sec^{-1}] \times$ 10 $\times$ 60 $sec$  = 36000 time steps. Once we have gathered all the above information, we store it in a dictionary in the following fashion
+The length of the `time_axis` is equal to the refresh rate of the drone's camera times the duration of the recording in seconds. For example, if the recording was conducted with a 60 FPS camera for 10 minutes, `time_axis` will include 60 $sec^{-1}$ $\times$ 10 $\times$ 60 $sec$  = 36000 time steps. Once we have gathered all the above information, we store it in a dictionary in the following fashion
 
 ```
 spatio_temporal_info = {'bbox':bbox, 'intersection center':intersection_center', 'time axis':time_axis}                  
