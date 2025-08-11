@@ -31,7 +31,7 @@ This paper introduces [UAVTrafficPy](https://github.com/KPourgourides/UAVTraffic
 
 # Statement of need
 
-The introduction of UAV-based data collection methods in transportation research [@Barmpounakis2020] [@Krajewski2018] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles. Usually, they have to be combined together to compensate for their inadequencies and deliver reliable results [@Zhan2017].
+The introduction of UAV-based data collection methods in transportation research [@Barmpounakis2020; @Krajewski2018] has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks, such as sparse data inflow, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles. Usually, they have to be combined together to compensate for their inadequencies and deliver reliable results [@Zhan2017].
 
 On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks enables researchers to overcome these limitations, as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution [@Gupta2021]. This can transform the landscape of traffic analysis in transportation, provided that appropriate tools are developed. UAVTrafficPy aims to bridge the gap between UAV-based data collection and meaningful, hollistic traffic analysis across multiple analytical scales.
 
@@ -64,6 +64,7 @@ UAVTrafficPy was developed and tested in Python 3.12, it is a standalone package
 This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, [KIOS CoE](https://www.kios.ucy.ac.cy/), No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
 
 # References
+
 
 
 
