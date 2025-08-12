@@ -4,6 +4,10 @@ This file is supplementary and NOT a core file of the UAVTrafficPy project.
 Users can run this test file to perform some analysis and visualization tasks and check if it runs as expected.
 The dataset used is in tests/dataset_example and is a small fraction from a pNEUMA dataset just to run the tests.
 """
+
+import sys
+sys.path.append('path/to/UAVTrafficPy')
+
 import random
 import numpy as np
 
@@ -11,7 +15,7 @@ from tool import uavtrafficpy
 from tests import dataload_example
 tool =  uavtrafficpy.Master()
 
-raw_data = dataload_example.get_info_pneuma(file_path=r'tests/dataset_example.csv',sampling_period=0.2,time_decimals=1,position_smoothing=2)
+raw_data = dataload_example.get_info_pneuma(file_path=r'UAVTrafficPy/tests/dataset_example.csv',sampling_period=0.2,time_decimals=1,position_smoothing=2)
 
 """necessary information that needs to be provided by the user to proceed with the tool"""
 #=================================================================
@@ -57,3 +61,6 @@ distance_travelled = analysis.get_distance_travelled()[data.get('id').index(vehi
 print('-'*200)
 print(f'The vehicle with id {vehicle_id} had an average speed of {np.mean(speed):.2f}km/h, maximum acceleration {max(acceleration):.2f}m/s^2, and travelled a total of {max(distance_travelled):.2f} meters while in the recording. Thanks for testing this software!')
 print('-'*200)
+
+
+
