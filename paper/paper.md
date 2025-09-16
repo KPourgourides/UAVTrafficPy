@@ -52,7 +52,7 @@ UAVTrafficPy offers tools for extracting, reconstructing and visualizing UAV-bas
 
 UAVTrafficPy was developed and tested in Python 3.12; it is a standalone package, and not an extension of any already existing software. It requires only minimal information to operate, such as vehicle IDs, vehicle types, and 2D positional coordinates in the WGS84 system, labeled by the time stamp for every vehicle. Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include the reconstruction of vehicle trajectories based on routes (\autoref{fig:1}), the visualization of traffic light phases (\autoref{fig:2}) of a signalized intersection, and the extraction of the lateral distribution of vehicles in a road (\autoref{fig:3}) for the recognition of lane characteristics. Figures 1-3 where generated using data from the file `20181024_d2_0900_0930.csv` of the pNEUMA open-source dataset [@Barmpounakis2020].
 
-![Reconstruction of UAV-based vehicle trajectories based on their routes within a signalized intersection. \label{fig:1}](images/trajectories.png)
+![Reconstruction of UAV-based vehicle trajectories based on their routes within a signalized intersection. \label{fig:1}](images/cctrajectories2.png)
 
 ![Visualization of the traffic light phases for a signalized intersection. \label{fig:2}](images/tlp.png)
 
@@ -63,6 +63,7 @@ UAVTrafficPy was developed and tested in Python 3.12; it is a standalone package
 This work is supported by the European Union (i. ERC, URANUS, No. 101088124 and, ii. Horizon 2020 Teaming, [KIOS CoE](https://www.kios.ucy.ac.cy/), No. 739551), and the Government of the Republic of Cyprus through the Deputy Ministry of Research, Innovation, and Digital Strategy. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
 
 # References
+
 
 
 
