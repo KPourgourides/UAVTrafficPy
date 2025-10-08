@@ -8,6 +8,8 @@
   <img src="pictures/erc.png" width="15%"/>
 </p>
 
+## Introduction
+
 The introduction of UAV-based data collection methods in transportation research has unlocked new possibilities which were inaccessible in the past due to the limitations of traditional sensor-based methods, such as loop detectors, static cameras and probe vehicles equiped with tracking technologies. These conventional methods suffer from different drawbacks such as sparsity of data, limited coverage of the traffic network, high installation and maintenance costs, and the inability to capture and store high quality spatio-temporal information for individual vehicles. Usually, they have to be combined together to compensate for their inadequencies and deliver reliable results.
 
 On the other hand, the rapid deployment of coordinated and camera-equipped UAVs above traffic networks enables researchers to overcome these limitations, as they can acquire large volumes of data for all individual vehicles in a potentially large area, with high spatio-temporal resolution. This can transform the landscape of traffic analysis in transportation, provided that appropriate tools are developed. 
