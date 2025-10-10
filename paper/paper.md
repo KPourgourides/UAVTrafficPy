@@ -27,7 +27,7 @@ bibliography: paper.bib
 
 # Summary
 
-This paper introduces [UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy), an open-source Python package for scientific analysis and visualization of UAV-based traffic data, with a focus on urban environments, such as arterial roads and signalized intersections. The package offers tools to extract, reconstruct, and visualize UAV-based traffic information across multiple analytical scales: (a) microscopic – focusing on the behavior and movement of individual vehicles, (b) mesoscopic – examining interactions between successive vehicles, and (c) macroscopic – analyzing traffic dynamics at the intersection level.
+This paper introduces [UAVTrafficPy](https://github.com/KPourgourides/UAVTrafficPy), an open-source Python package for scientific analysis and visualization of UAV-based traffic data, with a focus on urban environments, such as arterial roads and signalized intersections. The package offers tools to extract, reconstruct, and visualize UAV-based traffic information by utilizing only basic inputs such as vehicle IDs, types, and their time-dependent positional coordinates. These tools operate across multiple analytical scales: (a) microscopic: focusing on the behaviour and movement of individual vehicles, (b) mesoscopic: examining interactions between successive vehicles, and (c) macroscopic: analyzing traffic dynamics at the intersection level.
 
 # Statement of need
 
@@ -44,11 +44,11 @@ However, to the best of the authors' knowledge, there is currently no work simil
 
 UAVTrafficPy offers tools for extracting, reconstructing and visualizing UAV-based traffic data across multiple analytical scales as follows.
 
-**(a) Microscopic – *focusing on the behavior and movement of individual vehicles.*** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles, compute cumulative distance travelled, visualize space-time diagrams, and detect lane changes.
+**(a) Microscopic: *focusing on the behavior and movement of individual vehicles.*** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles, compute cumulative distance travelled, visualize space-time diagrams, and detect lane changes.
 
-**(b) Mesoscopic – *examining interactions between successive vehicles.*** Users can compute relative dynamic gaps and speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
+**(b) Mesoscopic: *examining interactions between successive vehicles.*** Users can compute relative dynamic gaps and speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
 
-**(c) Macroscopic – *analyzing traffic dynamics at the intersection level.*** Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
+**(c) Macroscopic: *analyzing traffic dynamics at the intersection level.*** Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
 
 UAVTrafficPy was developed and tested in Python 3.12; it is a standalone package, and not an extension of any already existing software. It requires only minimal information to operate, such as vehicle IDs, vehicle types, and 2D positional coordinates in the WGS84 system, labeled by the time stamp for every vehicle. Once a user provides this information in the appropriate format, which is thoroughly explained in the [walkthrough](https://github.com/KPourgourides/UAVTrafficPy?tab=readme-ov-file#acquiring-the-data-in-the-correct-format) on the repository's frontpage, UAVTrafficPy can perform a wide range of tasks. Examples include the reconstruction of vehicle trajectories based on routes (\autoref{fig:1}), the visualization of traffic light phases (\autoref{fig:2}) of a signalized intersection, and the extraction of the lateral distribution of vehicles in a road (\autoref{fig:3}) for the recognition of lane characteristics. Figures 1-3 where generated using data from the file `20181024_d2_0900_0930.csv` of the pNEUMA open-source dataset [@Barmpounakis2020].
 
