@@ -16,11 +16,11 @@ On the other hand, the rapid deployment of coordinated and camera-equipped UAVs 
 
 UAVTrafficPy offers tools for extracting, reconstructing and visualizing UAV-based traffic data across multiple analytical scales as follows.
 
-**(a) Microscopic – focusing on the behavior and movement of individual vehicles.** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles, compute cumulative distance travelled, visualize space-time diagrams, and detect lane changes.
+**(a) Microscopic: *focusing on the behavior and movement of individual vehicles.*** Users can reconstruct and visualize trajectories, calculate time-dependent speed and acceleration profiles, compute cumulative distance travelled, visualize space-time diagrams, and detect lane changes.
 
-**(b) Mesoscopic – examining interactions between successive vehicles.** Users can compute relative dynamic gaps and speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
+**(b) Mesoscopic: *examining interactions between successive vehicles.*** Users can compute relative dynamic gaps and speed differences between successive vehicles, two quantities that are commonly used as variables in the calibration of car-following models.
 
-**(c) Macroscopic – analyzing traffic dynamics at the intersection level**. Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
+**(c) Macroscopic: *analyzing traffic dynamics at the intersection level***. Users can calculate turn ratios, extract information on traffic light phases and cycles, and compute queue-wise information such as the number of queued vehicles, the queue length, and finally the queue dissipation time.
 
 `UAVTrafficPy` was developed and tested with Python >=3.12 on Windows, and acts as a standalone package for analysis and visualization of UAV-based traffic data. It is not an extension of any already existing software. 
 
