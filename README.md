@@ -88,13 +88,13 @@ such as the **IDs** (unique numbers) and the **types** (e.g., car, motorcycle, b
 
 `UAVTrafficPy` takes the above data as input in order to perform analysis and visualization tasks. The correct way to pass the data to `UAVTrafficPy` is to create a **dictionary**, where each key corresponds to a different piece of information (e.g., IDs, type, positions, time). For example,
 
-```
+```Python
 data = {'id':id, 'vtype':vtype, 'x':X, 'y':Y, 'time':T}
 ```
 
 Each key of this dictionary corresponds to a list. For **id** and **vtype** the lists contain integer and string elements which respectively correspond to a unique number and a type for each vehicle. For example,
 
-```
+```Python
 data.get('id') = [0,1,...,N]
 
 data.get('vtype') = ['Car','Motorcycle',...,'Bus']
@@ -141,13 +141,15 @@ Before proceeding further, we must acquire some important spatio-temporal inform
 define *(are the vertices of)* a box that encloses the intersection. It is important that the box edges perpendiculary intersect the roads the intersection. 
 The tool will use the `bbox` later to only keep data for vehicles that have traversed it at some point in the recording, and discard the rest that are irrelevant to the intersection, thus reducing the original dataset, and making future analysis & visualization steps quicker and more efficient. The `bbox` has the following form
 
-```
+```Python
 bbox = [(ll_y,ll_x),(lr_y,lr_x),(ur_y,ur_x),(ul_y,ul_x)]
 ```
 
 Where ll, lr, ur, and ul respectively correspond to lower left, lower right, upper right, and upper left, and we can pick up these coordinates from GoogleMaps. Additionally, we must provide a tuple with the center coordinates of the intersection, which will be used for some specific tasks later.
 
-`intersection_center = (y_center,x_center)`
+```Python
+intersection_center = (y_center,x_center)
+```
 
 The last piece of information we need to gather is the `time_axis` of the recording. It is a list that contains all the time steps of the recording, independent of when individual vehicles entered or exited the intersection. Mathematically, the individual time axes of different vehicles, $[T^0,...,T^N]$, are subsets of the global `time_axis`. It is defined as
 
@@ -155,7 +157,7 @@ The last piece of information we need to gather is the `time_axis` of the record
 
 The length of the `time_axis` is equal to the refresh rate of the drone's camera times the duration of the recording in seconds. For example, if the recording was conducted with a 60 FPS camera for 10 minutes, `time_axis` will include 60 $sec^{-1}$ $\times$ 10 $\times$ 60 $sec$  = 36000 time steps. Once we have gathered all the above information, we store it in a dictionary in the following fashion
 
-```
+```Python
 spatio_temporal_info = {'bbox':bbox, 'intersection center':intersection_center', 'time axis':time_axis}                  
 ```
 
@@ -165,14 +167,14 @@ spatio_temporal_info = {'bbox':bbox, 'intersection center':intersection_center',
 
 To load the tool in the Python environment, we run the following commands
 
-```
+```Python
 from UAVTrafficPy.tool import uavtrafficpy
 tool = uavtrafficpy.Master()
 ```
 
 To set up the analysis and visualization classes, we simply run the following
 
-```
+```Python
 analysis = tool.analysis(raw_data,spatio_temporal_info)
 visualization = tool.visualization(raw_data,spatio_temporal_info)
 ```
@@ -184,12 +186,16 @@ Where `raw_data` is the data directory in the correct form, as described above.
 
 In order to load the data only in the area of interest as dictated by the `bbox`, in this case the intersection, we run the following command
 
-`data = tool.dataloader(raw_data,spatio_temporal_info).get_bounded_data()`
+```Python
+data = tool.dataloader(raw_data,spatio_temporal_info).get_bounded_data()
+```
 
 Optionally, we can apply some filters to `raw_data` to flush out parked vehicles, as they do not contribute in the traffic and might slow down the analysis. A vehicle is considered to be parked if it spent more than 95% of its presence in the recording being immovable. 
 This is achieved with the following command
 
-`data = tool.dataloader(raw_data,spatio_temporal_info).get_filtered_data()`
+```Python
+data = tool.dataloader(raw_data,spatio_temporal_info).get_filtered_data()
+```
 
 which both bounds and filters the data. We can also optionally pass the argument `cursed_ids` to `get_filtered_data()`, where we can list any vehicle IDs that we
 desire to have explicitly removed from the dataset, even if they do not satisfy the parking condition. 
@@ -207,7 +213,9 @@ from the lower part of the intersection and proceeding clockwise. An od pair is 
 example, if a vehicle enters the intersection within triangle 1 and exits it within triangle 3 *(driving forward on
 Panepistimiou Ave.)*, then the assigned od pair will be `(1,3)`. We can visualize the different od pairs with the following command
 
-`visualization.draw_trajectories_od()`
+```Python
+visualization.draw_trajectories_od()
+```
 
 <p align="center">
   <img src="pictures/odtrajectories.png" width="65%"/>
@@ -217,7 +225,9 @@ We can use the above plot to identify the correct od pairs for our intersection.
 `(1,2)` *(Initially driving on Panepistimiou Ave. and then turning leftwards into Omirou Str.)*, `(4,3)` *(Initially driving on
 Omirou Str. and then turning rightwards into Panepistimiou Ave.)*, and finally `(4,2)` *(Driving forward on Omirou Str.)*. We can visualize the vehicle trajectories with different colors based on their od pair for clarity by running the following command
 
-`visualization.draw_trajectories_cc(valid_od_pairs)`
+```Python
+visualization.draw_trajectories_cc(valid_od_pairs)
+````
 
 <p align="center">
   <img src="pictures/cctrajectories.png" width="65%"/>
@@ -231,7 +241,7 @@ Where blue, orange, green and red respectively correspond to od pairs `(1,3)`, `
 
 The next step is to separate the `data` dictionary into smaller sub-dictionaries based on the different origins / entry points. This step will be helpful later on when we will conduct origin-specific analyses. In our case, we must make two data sub-dictionaries, `data_a` and `data_b`, for od pairs `(1,3),(1,2)` and `(4,3),(4,2)` respectively. To do this, we run the following commands
 
-```
+```Python
 data_a = analysis.get_od_data(desirable_pairs=[(1,3),(1,2)])
 data_b = analysis.get_od_data(desirable_pairs=[(4,3),(4,2)])
 ```
@@ -240,7 +250,7 @@ In the following steps of the analysis and visualization process, the methods we
 two data sub-dictionaries, and their variable names will end in either `_a` or `_b` depending on which sub-dictionary we use. To do this, we set up separate analysis and visualization classes with the following
 commands
 
-```
+```Python
 analysis_a = tool.analysis(data_a,spatio_temporal_info)
 visualization_a = tool.visualization(data_a,spatio_temporal_info)
 
@@ -259,7 +269,9 @@ quantity is calculated for every vehicle in the road. The distribution of this q
 peaks centered about the lateral center of each corresponding lane. Each peak represents one existent lane, and
 thus the total number of peaks is equal to the number of lanes in the road. For example, to visualize this distribution for Panepistimiou Ave, we simply run the following command
 
-`lane_info_a = analysis_a.get_lane_info(flow_direction='up')`
+```Python
+lane_info_a = analysis_a.get_lane_info(flow_direction='up')
+```
 
 Where `flow_direction` is one of `['up','down','left','right]`; flow towards the north corresponds to `'up'`, towards the south corresponds to `down`, etc.. Initially, we will see this histogram
 
@@ -285,7 +297,7 @@ We expected that, for each street, counts that belong to the same phase are regi
 window, and that there are no registered counts after the window is over for multiple time steps, until the next
 cycle repetition. To execute the above task, we run the following commands
 
-```
+```Python
 flow_info_a = analysis_a.get_flow_info(detector_position_a)
 flow_info_b = analysis_b.get_flow_info(detector_position_b)
 ```
@@ -297,14 +309,14 @@ the `time_axis`, the number of registered counts between the current and previou
 the IDs of the vehicles responsible for the registered count hits. The `id` list is empty if 0 counts were
 registered in the corresponding time interval. For example,
 
-```
+```Python
 flow_info_a[time_axis.index(24)] = {'time stamp': 24.0, 'flow': 4, 'id': [71,128,142,145]}
 ```
 
 Here, 4 vehicles in Panepistimiou Ave drove past the traffic light between the 23rd and 24th second of the recording. This information is utilized to alter the flow detectors outputs into binary *(1 if there were registered count hits, 0 if there were not)*, and group them together. The different groups of registered counts represent the different traffic light phases, and the duration of each
 phase is equal to that of the corresponding time window. In order to do that, we run the following commands
 
-```
+```Python
 flow_a,norm_flow_a = analysis_a.get_normalized_flow(threshold=15)
 flow_b,norm_flow_b = analysis_b.get_normalized_flow(threshold=15)
 ```
@@ -313,7 +325,7 @@ The `threshold` argument here refers to the maximum accepted distance *(in time)
 the same group. The output of both `flow_a`,`flow_b` is a list with the unnormalized hits per step of the `time_axis`, and the output of both `norm_flow_a`,`norm_flow_b`
 is also a list, but this time with the normalized and grouped hits per step of the `time_axis`. To visualize the above, we run the commands
 
-```
+```Python
 visualization.draw_traffic_light_phases(norm_flow_a,norm_flow_b,flow_a,flow_b)
 ```
 
@@ -323,7 +335,7 @@ The black and red counts respectively correspond to Panepistimiou Ave and Omirou
 
 To translate the above figure into formal traffic light phase data, we run the following commands
 
-```
+```Python
 tlp_a = analysis_a.get_traffic_light_phases()
 tlp_b = analysis_b.get_traffic_light_phases()
 ```
@@ -333,7 +345,7 @@ The output of both `tlp_a`, `tlp_b` is a list of dictionaries, where each dictio
 spective traffic light turned green, the duration of green, the moment it turned red, the duration of red, and the
 entire phase duration *(green until next green)*, all in seconds. For example,
 
-```
+```Python
 tlp_a[0] = {'Green':9.0, 'Duration ON':61.0, 'Red':70.0, 'Duration OFF':32.0, 'Phase Duration':93.0}
 ```
 
@@ -352,7 +364,9 @@ For Panepistimiou Ave, the average duration of the green light, red light and en
 Next, we combine `tlp_a`, `tlp_b`  in order to get the information on the full cycles, i.e. the
 subsequent completion of the 2 individual phases. To do so, we run the following command
 
-`cycles = analysis.get_traffic_light_cycles(tlp_a,tlp_b)`
+```Python
+cycles = analysis.get_traffic_light_cycles(tlp_a,tlp_b)
+```
 
 The output of `cycles` is a list of dictionaries, where each dictionary has the keys `Start`,`Break`,
 `Continue`,`Stop`,`End`, which respectively correspond to the moment the cycle started *(i.e. the first phase started)*, the
@@ -360,7 +374,7 @@ moment the cycle stops temporarily *(i.e. the first phase goes into red)*, the m
 second phase started)*, the moment the cycle stops *(i.e. the second phase goes into red)*, and finally, the moment
 the cycle restarts *(i.e. the first phase has re-started)*, all in seconds. For example,
 
-```
+```Python
 cycles[0] = {'Start': 9.0, 'Break': 70.0, 'Continue': 76.0, 'Stop': 96.0, 'End': 102.0}
 ```
 
@@ -390,7 +404,7 @@ are sorted with respect to increasing latitude. Then, once the vehicles are sort
 or speed differences is trivial due to full knowledge of position coordinates and speeds. The above tasks can be
 executed for any time step in the recording. To do the above, we run the following commands
 
-```
+```Python
 sorted_id_a = analysis_a.get_sorted_id()
 gaps_a = analysis_a.get_gaps()
 
@@ -402,7 +416,7 @@ We are not going to calibrate any car-following models, but to us this informati
 has the keys `time stamp`, and `lane 0` through `lane L`, where L+1 the total number of lanes. The `time
 stamp` corresponds to the current step of the `time_axis`, and each lane-specific key is a list with the sorted IDs or gaps, in meters. For example,
 
-```
+```Python
 sorted_id_a[time_axis.index(tlp_a[7].get('Green'))] = {'time stamp':551.0, 'lane 0':None, 'lane 1':[1778], 'lane 2':[1922, 2021], 'lane 3':[2045, 1659], 'lane 4':[2062]}
 gaps_a[time_axis.index(tlp_a[7].get('Green'))] = {'time stamp':551.0, 'lane 0':None, 'lane 1':[-1.0], 'lane 2':[9.4, -1.0], 'lane 3':[14.7, -1.0], 'lane 4':[-1.0]}
 ```
@@ -428,7 +442,7 @@ The rightmost motorcycle is not considered to be in the queue because it violate
 
 To formally extract the queue-wise information, we run the following commands
 
-```
+```Python
 queue_info_a = analysis_a.get_queue_info(speed_threshold,gap_threshold)
 queue_info_b = analysis_b.get_queue_info(speed_threshold,gap_threshold)
 ```
@@ -444,7 +458,7 @@ we derived earlier, whereas the `Dissipation Duration` is the time it
 takes for all the queued vehicles to move past the green light pole. If only a part of the queue dissipates before the
 light turns red again, the queue dissipation duration is then equal to the duration of the green light. For example,
 
-```
+```Python
 queue_info_b[6] = [{'Lane':0, 'Queued Vehicles':6, 'Queue Length':38.0, 'Queued IDs':[2192, 2166, 2139, 2067, 2029, 1784], 'Dissipation Duration':11.0}]
 ```
 
